@@ -16,23 +16,25 @@
   <meta name="author" content="nqoinaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="算是一个新的开始吧，以前在csdn上写博客，心血来潮想搭个人博客。一番捣鼓后，用的是Hexo框架fluid主题，架设在github pages上，整了nqoinaen.cn这个域名。希望自己以后能认真对待这个博客吧。">
+    <meta name="description" content="某个国外的比赛，做着玩玩">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一段新旅程">
-<meta property="og:url" content="https://nqoinaen.github.io/2022/10/25/%E6%96%B0%E7%9A%84%E6%97%85%E7%A8%8B/index.html">
+<meta property="og:title" content="CTF EKOPARTY 2022">
+<meta property="og:url" content="https://nqoinaen.github.io/2022/11/03/CTFEKOPARTY2022/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
-<meta property="og:description" content="算是一个新的开始吧，以前在csdn上写博客，心血来潮想搭个人博客。一番捣鼓后，用的是Hexo框架fluid主题，架设在github pages上，整了nqoinaen.cn这个域名。希望自己以后能认真对待这个博客吧。">
+<meta property="og:description" content="某个国外的比赛，做着玩玩">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-10-25T11:09:07.000Z">
-<meta property="article:modified_time" content="2022-11-03T14:39:40.773Z">
+<meta property="og:image" content="https://nqoinaen.github.io/img/logo_ekoparty.png">
+<meta property="article:published_time" content="2022-11-03T05:13:44.000Z">
+<meta property="article:modified_time" content="2022-11-03T14:39:15.359Z">
 <meta property="article:author" content="nqoinaen">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nqoinaen.github.io/img/logo_ekoparty.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>一段新旅程 - nqoinaen&#39;s blog</title>
+  <title>CTF EKOPARTY 2022 - nqoinaen&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -218,13 +220,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/7.jpeg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/logo_ekoparty.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="一段新旅程"></span>
+            <span id="subtitle" data-typed-text="CTF EKOPARTY 2022"></span>
           
         </div>
 
@@ -235,8 +237,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-10-25 19:09" pubdate>
-          2022年10月25日 晚上
+        <time datetime="2022-11-03 13:13" pubdate>
+          2022年11月3日 下午
         </time>
       </span>
     
@@ -247,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          107 字
+          1.4k 字
         
       </span>
     
@@ -258,7 +260,7 @@
         
         
         
-          1 分钟
+          3 分钟
         
       </span>
     
@@ -304,7 +306,7 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">一段新旅程</h1>
+            <h1 style="display: none">CTF EKOPARTY 2022</h1>
             
               <p class="note note-info">
                 
@@ -317,15 +319,78 @@
             
               <div class="markdown-body">
                 
-                <p><strong>算是一个新的开始吧</strong>，以前在<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108?type=blog">csdn</a>上写博客，心血来潮想搭个人博客。一番捣鼓后，用的是<code>Hexo</code>框架<code>fluid</code>主题，架设在<code>github pages</code>上，整了nqoinaen.cn这个域名。<strong>希望自己以后能认真对待这个博客吧。</strong></p>
+                <h2 id="前言：">前言：</h2>
+<p>好像没有pwn，随便找其他题型玩玩，但感觉学不到什么东西</p>
+<p>（提前放了，不过也没人会看吧，多图警告）</p>
+<h2 id="Square">Square</h2>
+<blockquote>
+<p>While the photographer was enjoying a delicious cup of coffee in the main square of a Colombian city, he manages to turn on his camera and take a photo at sunset. Days later, he wanted to remember the name of the monument that is in the center of the square, but he did not remember it.</p>
+<p>Could you help the photographer to identify the name of the monument’s person?</p>
+</blockquote>
+<p>当摄影师在哥伦比亚城市的主要广场上享用一杯美味的咖啡时，他设法打开相机并在日落时分拍照。几天后，他想记住广场中心的纪念碑的名字，但他不记得了。 你能帮摄影师辨认出纪念碑的人名吗？</p>
+<p>给出一张图片，找名字</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/square.png" srcset="/img/loading.gif" lazyload alt="square"></p>
+<p>那我就谷歌地图上找哥伦比亚的城市</p>
+<p>然后我找着发现帕斯托这城市介绍的某张图就是这位置</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/psk.png" srcset="/img/loading.gif" lazyload alt="psk"></p>
+<p>发现是在Plaza de Nariño公园</p>
+<p>然后谷歌全景地图跟进</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/psk3-1667454225725.png" srcset="/img/loading.gif" lazyload alt="psk3"></p>
+<p>发现是这个伟人</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/psk4-1667454243055.png" srcset="/img/loading.gif" lazyload alt="psk4"></p>
+<p>所以flag是</p>
+<p>EKO{antonio_nariño}</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/psk5.png" srcset="/img/loading.gif" lazyload alt="psk5"></p>
+<h2 id="Yankee">Yankee</h2>
+<blockquote>
+<p>In October, a scandal broke out in Peru because fake tickets were sold for the concert of Daddy Yankee, who is a reggaeton singer announcing his latest concert tour.<br>
+According to reliable sources in Peru, the cybercriminal group that created this portal and collected the money was under the command of an 18-year-old person. Could you help identify this person by her Documento Nacional de Identidad (DNI)?</p>
+</blockquote>
+<p>10月，秘鲁爆发了丑闻，因为爸爸洋基的音乐会出售了假票，洋基爸爸是一名雷鬼歌手，宣布了他的最新巡回演唱会。 根据秘鲁的可靠消息来源，创建该门户网站并收取资金的网络犯罪集团是在一名 18 岁的人指挥下进行的。你能通过她的国家身份文件（DNI）帮助识别这个人吗？</p>
+<p>我还以为要用什么不正常途径搞来，结果google一下</p>
+<p>她自己把DNI写出来了233</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/dni.png" srcset="/img/loading.gif" lazyload alt="dni"></p>
+<p>flag：EKO{72266384}</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/yankee-1667457113039.png" srcset="/img/loading.gif" lazyload alt="yankee"></p>
+<h2 id="Bounties">Bounties</h2>
+<blockquote>
+<p>A few decades ago, a book writer found a way to improve the quality of his books, giving away a check with a value of $2.56 to anyone who will be able to identify and report bugs in his master piece, are you able to identify this guy?</p>
+</blockquote>
+<p>几十年前，一位作家找到了一种提高书籍质量的方法，将一张价值 2.56 美元的支票赠送给任何能够识别和报告其杰作中的错误的人，你能识别这个人吗？</p>
+<p>一搜就有</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/bount.png" srcset="/img/loading.gif" lazyload alt="bount"></p>
+<p>flag：EKO{donald_knuth}</p>
+<p><img src="/2022/11/03/CTFEKOPARTY2022/bount1.png" srcset="/img/loading.gif" lazyload alt="bount1"></p>
 <script src="https://utteranc.es/client.js" repo="nqoinaen/comment" issue-term="pathname" theme="github-light" crossorigin="anonymous" async>
 </script>
+
                 
               </div>
             
             <hr/>
             <div>
               <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf%E6%AF%94%E8%B5%9B/" class="category-chain-item">ctf比赛</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
   
   
 </div>
@@ -336,8 +401,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>一段新旅程</div>
-      <div>https://nqoinaen.github.io/2022/10/25/新的旅程/</div>
+      <div>CTF EKOPARTY 2022</div>
+      <div>https://nqoinaen.github.io/2022/11/03/CTFEKOPARTY2022/</div>
     </div>
     <div class="license-meta">
       
@@ -349,7 +414,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年10月25日</div>
+          <div>2022年11月3日</div>
         </div>
       
       
@@ -386,15 +451,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/" title="DASCTF X GFCTF 2022十月挑战赛pwn">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">DASCTF X GFCTF 2022十月挑战赛pwn</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2022/10/31/2022%E7%AC%AC%E4%B8%89%E5%B1%8A%E7%A5%A5%E4%BA%91%E6%9D%AF%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%A4%A7%E8%B5%9Bpwn/" title="2022第三届祥云杯网络安全大赛pwn">
+                        <span class="hidden-mobile">2022第三届祥云杯网络安全大赛pwn</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
