@@ -16,26 +16,26 @@
   <meta name="author" content="nqoinaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言： 本篇是关于kernel ROP的，先做一题2018 强网杯 - core，也是本人的第一道kernel pwn，后续遇到同样类型的题目会放到这 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki">
+    <meta name="description" content="前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="0x02 kernel ROP">
+<meta property="og:title" content="0x02 kernel ROP-base">
 <meta property="og:url" content="https://nqoinaen.github.io/2022/11/05/0x02kernelROP/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
-<meta property="og:description" content="前言： 本篇是关于kernel ROP的，先做一题2018 强网杯 - core，也是本人的第一道kernel pwn，后续遇到同样类型的题目会放到这 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki">
+<meta property="og:description" content="前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://nqoinaen.github.io/img/2018coreROOT.png">
+<meta property="og:image" content="https://nqoinaen.github.io/img/img2.jpg">
 <meta property="article:published_time" content="2022-11-05T10:24:15.000Z">
-<meta property="article:modified_time" content="2022-11-08T05:15:29.134Z">
+<meta property="article:modified_time" content="2022-11-10T05:55:50.259Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernelROP">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nqoinaen.github.io/img/2018coreROOT.png">
+<meta name="twitter:image" content="https://nqoinaen.github.io/img/img2.jpg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>0x02 kernel ROP - nqoinaen&#39;s blog</title>
+  <title>0x02 kernel ROP-base - nqoinaen&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -227,7 +227,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="0x02 kernel ROP"></span>
+            <span id="subtitle" data-typed-text="0x02 kernel ROP-base"></span>
           
         </div>
 
@@ -307,12 +307,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">0x02 kernel ROP</h1>
+            <h1 style="display: none">0x02 kernel ROP-base</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年11月8日 下午
+                    本文最后更新于：2022年11月10日 下午
                   
                 
               </p>
@@ -321,7 +321,7 @@
               <div class="markdown-body">
                 
                 <h2 id="前言：">前言：</h2>
-<p>本篇是关于kernel ROP的，先做一题2018 强网杯 - core，也是本人的第一道kernel pwn，后续遇到同样类型的题目会放到这</p>
+<p>本篇是关于kernel ROP的的第一篇</p>
 <p>内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0))</p>
 <p>且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互</p>
 <h2 id="2018-强网杯-core">2018 强网杯 - core</h2>
@@ -456,7 +456,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>0x02 kernel ROP</div>
+      <div>0x02 kernel ROP-base</div>
       <div>https://nqoinaen.github.io/2022/11/05/0x02kernelROP/</div>
     </div>
     <div class="license-meta">
@@ -475,7 +475,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年11月8日</div>
+          <div>2022年11月10日</div>
         </div>
       
       
@@ -506,9 +506,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/11/08/0x03kenelRet2usr/" title="0x03 kernelRet2usr">
+                      <a href="/2022/11/08/0x03kenelRet2usr/" title="0x03 kernel ROP-Ret2usr&amp;pass-SMEP">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">0x03 kernelRet2usr</span>
+                        <span class="hidden-mobile">0x03 kernel ROP-Ret2usr&amp;pass-SMEP</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -516,8 +516,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/11/04/0x01kernel%E5%AD%A6%E4%B9%A0/" title="0x01kernel学习">
-                        <span class="hidden-mobile">0x01kernel学习</span>
+                      <a href="/2022/11/04/0x01kernel%E5%AD%A6%E4%B9%A0/" title="0x01 kernel学习">
+                        <span class="hidden-mobile">0x01 kernel学习</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

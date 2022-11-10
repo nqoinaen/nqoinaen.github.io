@@ -250,8 +250,75 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/11/10/0x04kernelUAF/" target="_self">
+          <img src="/img/lucy1.jpeg" srcset="/img/loading.gif" lazyload alt="0x04 kernel UAF">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/11/10/0x04kernelUAF/" target="_self">
+          0x04 kernel UAF
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/11/10/0x04kernelUAF/" target="_self">
+        <div>
+          前言: 本篇是关于kernel UAF，内核中常用分配函数是kmalloc，用的分配器是slub CISCN2017 - babydriver 0x01程序分析 解压下cpio,顺便用extract-vmlinux解压bzImage出vmlinux 1234567891011mkdir corecd coremv ../rootfs.cpio rootfs.cpio.gzgunzip ./root
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-11-10 13:40" pubdate>
+              2022-11-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/kernel/" class="category-chain-item">kernel</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/kernelUAF/">#kernelUAF</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/08/0x03kenelRet2usr/" target="_self">
-          <img src="/img/2018coreROOT.png" srcset="/img/loading.gif" lazyload alt="0x03 kernelRet2usr">
+          <img src="/img/img1.jpg" srcset="/img/loading.gif" lazyload alt="0x03 kernel ROP-Ret2usr&amp;pass-SMEP">
         </a>
       </div>
     
@@ -259,14 +326,14 @@
       <h1 class="index-header">
         
         <a href="/2022/11/08/0x03kenelRet2usr/" target="_self">
-          0x03 kernelRet2usr
+          0x03 kernel ROP-Ret2usr&amp;pass-SMEP
         </a>
       </h1>
 
       
       <a class="index-excerpt " href="/2022/11/08/0x03kenelRet2usr/" target="_self">
         <div>
-          前言 参考wiki ret2usr 攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向内核代码或数据流指向用户控件，以 ring 0 特权执行用户空间代码完成提权等操作 虽然为了防止ret2usr，开发者加了smep保护（Supervisor Mode Execution Protection），作用是当 CPU 处于 ring0 模式时，执行 用户空间的代码 会
+          前言： 参考wiki，arttnba3 ret2usr 攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向内核代码或数据流指向用户控件，以 ring 0 特权执行用户空间代码完成提权等操作 虽然为了防止ret2usr，开发者加了smep保护（Supervisor Mode Execution Protection），作用是当 CPU 处于 ring0 模式时，执行
         </div>
       </a>
 
@@ -318,7 +385,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/05/0x02kernelROP/" target="_self">
-          <img src="/img/2018coreROOT.png" srcset="/img/loading.gif" lazyload alt="0x02 kernel ROP">
+          <img src="/img/img2.jpg" srcset="/img/loading.gif" lazyload alt="0x02 kernel ROP-base">
         </a>
       </div>
     
@@ -326,14 +393,14 @@
       <h1 class="index-header">
         
         <a href="/2022/11/05/0x02kernelROP/" target="_self">
-          0x02 kernel ROP
+          0x02 kernel ROP-base
         </a>
       </h1>
 
       
       <a class="index-excerpt " href="/2022/11/05/0x02kernelROP/" target="_self">
         <div>
-          前言： 本篇是关于kernel ROP的，先做一题2018 强网杯 - core，也是本人的第一道kernel pwn，后续遇到同样类型的题目会放到这 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki
+          前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi
         </div>
       </a>
 
@@ -385,7 +452,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/04/0x01kernel%E5%AD%A6%E4%B9%A0/" target="_self">
-          <img src="/img/linuxkernel.png" srcset="/img/loading.gif" lazyload alt="0x01kernel学习">
+          <img src="/img/linuxkernel.png" srcset="/img/loading.gif" lazyload alt="0x01 kernel学习">
         </a>
       </div>
     
@@ -393,7 +460,7 @@
       <h1 class="index-header">
         
         <a href="/2022/11/04/0x01kernel%E5%AD%A6%E4%B9%A0/" target="_self">
-          0x01kernel学习
+          0x01 kernel学习
         </a>
       </h1>
 
@@ -577,79 +644,6 @@
               <a href="/tags/orw/">#orw</a>
             
               <a href="/tags/ret2setconext/">#ret2setconext</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/" target="_self">
-          <img src="/img/20221013085537.jpg" srcset="/img/loading.gif" lazyload alt="DASCTF X GFCTF 2022十月挑战赛pwn">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/" target="_self">
-          DASCTF X GFCTF 2022十月挑战赛pwn
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/10/28/DASCTF%20X%20GFCTF%202022%E5%8D%81%E6%9C%88%E6%8C%91%E6%88%98%E8%B5%9B/" target="_self">
-        <div>
-          一道都不会，咋办🤔
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-10-28 14:26" pubdate>
-              2022-10-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf%E6%AF%94%E8%B5%9B/" class="category-chain-item">ctf比赛</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/IO-leak/">#IO_leak</a>
-            
-              <a href="/tags/rop/">#rop</a>
-            
-              <a href="/tags/shellocde/">#shellocde</a>
-            
-              <a href="/tags/house-of-botcake/">#house of botcake</a>
             
           </div>
         
