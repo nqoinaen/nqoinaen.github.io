@@ -20,7 +20,11 @@
     
     <tags>
       
+      <tag>IO_leak</tag>
+      
       <tag>orw</tag>
+      
+      <tag>shellocde</tag>
       
       <tag>ret2libc</tag>
       
@@ -33,6 +37,8 @@
       <tag>整数溢出</tag>
       
       <tag>数组越界</tag>
+      
+      <tag>ret2csu</tag>
       
     </tags>
     
