@@ -250,6 +250,73 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/11/19/0x06kernelheapoverflow/" target="_self">
+          <img src="/img/img4.jpg" srcset="/img/loading.gif" lazyload alt="0x06 kernel heap-Heap OverFlow">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/11/19/0x06kernelheapoverflow/" target="_self">
+          0x06 kernel heap-Heap OverFlow
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/11/19/0x06kernelheapoverflow/" target="_self">
+        <div>
+          前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep/smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-11-19 13:01" pubdate>
+              2022-11-19
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/kernel-heap-overflow/">#kernel heap overflow</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/16/newstarctf2022/" target="_self">
           <img src="/img/2022newstarctf.png" srcset="/img/loading.gif" lazyload alt="2022NewStarCTF PWN">
         </a>
@@ -305,11 +372,11 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
+              <a href="/tags/shellocde/">#shellocde</a>
+            
               <a href="/tags/IO-leak/">#IO_leak</a>
             
               <a href="/tags/orw/">#orw</a>
-            
-              <a href="/tags/shellocde/">#shellocde</a>
             
               <a href="/tags/ret2libc/">#ret2libc</a>
             
@@ -442,7 +509,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/kernel/" class="category-chain-item">kernel</a>
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
   
   
 
@@ -509,7 +576,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/kernel/" class="category-chain-item">kernel</a>
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
   
   
 
@@ -576,7 +643,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/kernel/" class="category-chain-item">kernel</a>
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
   
   
 
@@ -592,73 +659,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/ret2usr/">#ret2usr</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/05/0x02kernelROP/" target="_self">
-          <img src="/img/img2.jpg" srcset="/img/loading.gif" lazyload alt="0x02 kernel ROP-base">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/05/0x02kernelROP/" target="_self">
-          0x02 kernel ROP-base
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/05/0x02kernelROP/" target="_self">
-        <div>
-          前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-05 18:24" pubdate>
-              2022-11-05
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/kernel/" class="category-chain-item">kernel</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/kernelROP/">#kernelROP</a>
             
           </div>
         

