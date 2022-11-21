@@ -20,7 +20,7 @@
     
     <tags>
       
-      <tag>kernel heap overflow</tag>
+      <tag>kernel 条件竞争</tag>
       
     </tags>
     
@@ -282,13 +282,13 @@
     
     <tags>
       
-      <tag>rop</tag>
-      
       <tag>off by null</tag>
       
       <tag>IO_leak</tag>
       
       <tag>fastbin reverse into tcache</tag>
+      
+      <tag>rop</tag>
       
       <tag>orw</tag>
       
@@ -317,9 +317,9 @@
     
     <tags>
       
-      <tag>rop</tag>
-      
       <tag>IO_leak</tag>
+      
+      <tag>rop</tag>
       
       <tag>shellocde</tag>
       
