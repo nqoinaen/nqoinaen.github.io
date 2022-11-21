@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>0x07 kernel 条件竞争</title>
+    <link href="/2022/11/20/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/"/>
+    <url>/2022/11/20/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/</url>
+    
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>本篇是关于kernel pwn中的条件竞争，由于是我们在用户态编写程序与内核交互，所以我们可以启动多个线程同时运行，以达到条件竞争</p><h2 id="double-fetch">double fetch</h2><p>double fetch可以理解为两次或多次对同一个对象取值</p><p>例：内核对一个对象第一次取值进行合法性检测，第二次取值进行使用</p><p>我们可以在第一次取值后对值进行修改成恶意数据，在第二次使用时执行我们的恶意数据</p><blockquote><p>通过在 first fetch 与 second fetch 之间的空挡修改数据从而改变内核执行流的利用手法便被称之为<code>double fetch</code></p></blockquote><h3 id="0CTF2018-Final-baby-kernel">0CTF2018 Final-baby kernel</h3><p>几年前的题目就是亲切，现在题目都是什么妖魔鬼怪</p><h4 id="0x01程序分析">0x01程序分析</h4><p>而单进程的内核很难触发double fetch漏洞，因此需要在QEMU启动时设置好内核和进程数如</p><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">-m 256M -smp 2,<span class="hljs-attribute">cores</span>=2,threads=1  \<br></code></pre></td></tr></table></figure><p>保护什么都没开</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell">qemu-system-x86_64 \<br>-m 256M -smp 2,cores=2,threads=1  \<br>-kernel ./vmlinuz-4.15.0-22-generic \<br>-initrd  ./core.cpio \<br>-append &quot;root=/dev/ram rw console=ttyS0 oops=panic panic=1 quiet&quot; \<br>-cpu qemu64 \<br>-netdev user,id=t0, -device e1000,netdev=t0,id=nic0 \<br>-nographic  \<br></code></pre></td></tr></table></figure><p>载入了baby.ko驱动</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>mount -t proc none /proc<br>mount -t sysfs none /sys<br>mount -t devtmpfs devtmpfs /dev<br>echo &quot;flag&#123;this_is_a_sample_flag&#125;&quot; &gt; flag<br>chown root:root flag<br>chmod 400 flag<br>exec 0&lt;/dev/console<br>exec 1&gt;/dev/console<br>exec 2&gt;/dev/console<br><br>insmod baby.ko<br>chmod 777 /dev/baby<br>echo -e &quot;\nBoot took $(cut -d&#x27; &#x27; -f1 /proc/uptime) seconds\n&quot;<br>setsid cttyhack setuidgid 1000 sh<br><br>umount /proc<br>umount /sys<br>poweroff -d 0  -f<br></code></pre></td></tr></table></figure><p>baby.ko驱动里只定义了baby_ioctl，里面是这个函数</p><p><img src="/2022/11/20/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/1.png" alt="1"></p><p><strong>分析一下它做了啥：</strong></p><p>如果选项0x6666会告诉我们题目给的flag的地址</p><p>如果选项0x1337,一开始会有三个检查</p><p><strong>前两个检查</strong>用了<code>_chk_range_not_ok</code>函数</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//_chk_range_not_ok函数</span><br><span class="hljs-type">bool</span> __fastcall _chk_range_not_ok(__int64 a1, __int64 a2, <span class="hljs-type">unsigned</span> __int64 a3)<br>&#123;<br>  <span class="hljs-type">bool</span> v3; <span class="hljs-comment">// cf</span><br>  <span class="hljs-type">unsigned</span> __int64 v4; <span class="hljs-comment">// rdi</span><br><br>  v3 = __CFADD__(a2, a1);<br>  v4 = a2 + a1;<br>  <span class="hljs-keyword">return</span> v3 || a3 &lt; v4;<br>&#125;<br></code></pre></td></tr></table></figure><p>这里面的<code>__CFADD__</code>在ida的宏定义是</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// carry flag of addition (x+y)</span><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>, <span class="hljs-keyword">class</span> <span class="hljs-title class_">U</span>&gt; int8 __CFADD__(T x, U y)<br>&#123;<br>  <span class="hljs-type">int</span> size = <span class="hljs-built_in">sizeof</span>(T) &gt; <span class="hljs-built_in">sizeof</span>(U) ? <span class="hljs-built_in">sizeof</span>(T) : <span class="hljs-built_in">sizeof</span>(U);<br>  <span class="hljs-keyword">if</span> ( size == <span class="hljs-number">1</span> )<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">uint8</span>(x) &gt; <span class="hljs-built_in">uint8</span>(x+y);<br>  <span class="hljs-keyword">if</span> ( size == <span class="hljs-number">2</span> )<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">uint16</span>(x) &gt; <span class="hljs-built_in">uint16</span>(x+y);<br>  <span class="hljs-keyword">if</span> ( size == <span class="hljs-number">4</span> )<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">uint32</span>(x) &gt; <span class="hljs-built_in">uint32</span>(x+y);<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">uint64</span>(x) &gt; <span class="hljs-built_in">uint64</span>(x+y);<br>&#125;<br></code></pre></td></tr></table></figure><p>add 指令会影响 CF（产生进位/借位）和 OF（两数最高位相同，结果最高位改变）标志位，v3获得的就是两数相加的 CF 位，这里一般为0,所以可以不管这个</p><p>a3我们要输入的是结构，结构分析后发现是</p><p>也就是存flag_str的指针，和flag的长度</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span>&#123;</span><br><span class="hljs-type">char</span> * flag_str<br><span class="hljs-type">int</span> flag_len<br>&#125;<br></code></pre></td></tr></table></figure><p>总的来讲</p><p><strong>第一个检查</strong>判断我们输入的结构体是否在用户空间</p><p><strong>第二个检查</strong>判断我们输入的flag_str是否在用户空间</p><p><strong>第三个检查</strong>判断我们输入的flag_str的len是否等于题目给的flag的长度</p><p>所有检查通过后对逐个字符与题目给的flag进行比较，都比较成功了的话打印题目的flag</p><h4 id="0x02解法1：条件竞争">0x02解法1：条件竞争</h4><h4 id="0x03解法2：测信道攻击">0x03解法2：测信道攻击</h4>]]></content>
+    
+    
+    <categories>
+      
+      <category>kernel pwn</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>kernel heap overflow</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>0x06 kernel heap-Heap OverFlow</title>
     <link href="/2022/11/19/0x06kernelheapoverflow/"/>
     <url>/2022/11/19/0x06kernelheapoverflow/</url>
@@ -45,11 +70,11 @@
     
     <tags>
       
-      <tag>shellocde</tag>
-      
       <tag>IO_leak</tag>
       
       <tag>orw</tag>
+      
+      <tag>shellocde</tag>
       
       <tag>ret2libc</tag>
       
@@ -259,9 +284,9 @@
       
       <tag>rop</tag>
       
-      <tag>IO_leak</tag>
-      
       <tag>off by null</tag>
+      
+      <tag>IO_leak</tag>
       
       <tag>fastbin reverse into tcache</tag>
       
@@ -294,11 +319,11 @@
       
       <tag>rop</tag>
       
+      <tag>IO_leak</tag>
+      
       <tag>shellocde</tag>
       
       <tag>house of botcake</tag>
-      
-      <tag>IO_leak</tag>
       
     </tags>
     
