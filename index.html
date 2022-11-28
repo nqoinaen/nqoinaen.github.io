@@ -250,6 +250,140 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
+          <img src="/img/img6.png" srcset="/img/loading.gif" lazyload alt="2022安洵杯pwn">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
+          2022安洵杯pwn
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
+        <div>
+          前言： 也只是解了一题，后续复现下  babyarm 一开始环境没装好，也没学过arm rop，整了三个小时还是解出来了，主要这题不难。 分析： 本题是32位arm架构 最先有个base64加密，检测通过后能栈溢出  233其实就只是编码表0~9的位置变了一下 网上找了个python实现的程序解密一下得到s1mpl3Dec0d4r  1.ret2libc arm架构的rop虽然不熟，但原理都是一样
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-11-28 17:42" pubdate>
+              2022-11-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf%E6%AF%94%E8%B5%9B/" class="category-chain-item">ctf比赛</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/arm/">#arm</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/11/28/2022DAS11/" target="_self">
+          <img src="/img/img7.jpg" srcset="/img/loading.gif" lazyload alt="DASCTF NOV X联合出题人2022年度积分榜争夺赛pwn">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/11/28/2022DAS11/" target="_self">
+          DASCTF NOV X联合出题人2022年度积分榜争夺赛pwn
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/11/28/2022DAS11/" target="_self">
+        <div>
+          前言： 这周比赛和安洵的冲突了，菜鸡做了个签到题，后续题目来复现下  签个到 首先一开始我们数9个char覆盖canary最后两个位能把canary泄露  其次，漏洞存在于输入函数里，如果我们的size输入为0的话-1就是一个极大值,可以堆溢出  正常读写的话第二个strncmp是满足不了的,因为低四字节固定为0x00000886 可以堆溢出改下一个堆的fd为canary即可  123456789
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-11-28 17:22" pubdate>
+              2022-11-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf%E6%AF%94%E8%B5%9B/" class="category-chain-item">ctf比赛</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/heap-overflow/">#heap overflow</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/21/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/" target="_self">
           <img src="/img/img5.jpeg" srcset="/img/loading.gif" lazyload alt="0x07 kernel 条件竞争">
         </a>
@@ -443,8 +577,6 @@
             
               <a href="/tags/orw/">#orw</a>
             
-              <a href="/tags/shellocde/">#shellocde</a>
-            
               <a href="/tags/ret2libc/">#ret2libc</a>
             
               <a href="/tags/ret2shellocde/">#ret2shellocde</a>
@@ -458,6 +590,8 @@
               <a href="/tags/%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C/">#数组越界</a>
             
               <a href="/tags/ret2csu/">#ret2csu</a>
+            
+              <a href="/tags/shellocde/">#shellocde</a>
             
           </div>
         
@@ -525,140 +659,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/rop/">#rop</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/12/0x05kernelRet2dir/" target="_self">
-          <img src="/img/img3.jpg" srcset="/img/loading.gif" lazyload alt="0x05 kernel ROP-Ret2dir">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/12/0x05kernelRet2dir/" target="_self">
-          0x05 kernel ROP-Ret2dir
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/12/0x05kernelRet2dir/" target="_self">
-        <div>
-          前言: 参考arttnba3，L3H_CoLin ret2dir即 return to direct mapping area，在内核空间中都能通过这块内存区域访问到，我们只需要在用户空间布置恶意数据，之后再在内核空间的这块区域中找到我们的用户空间数据对应的内核空间地址即可，这便是 ret2dir ——通过内核空间地址访问到用户空间数据 MINI-LCTF2022 - kgadget 0x01程序
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-12 13:50" pubdate>
-              2022-11-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ret2dir/">#ret2dir</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/10/0x04kernelUAF/" target="_self">
-          <img src="/img/lucy1.jpeg" srcset="/img/loading.gif" lazyload alt="0x04 kernel UAF">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/10/0x04kernelUAF/" target="_self">
-          0x04 kernel UAF
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/10/0x04kernelUAF/" target="_self">
-        <div>
-          前言: 本篇是关于kernel UAF，内核中常用分配函数是kmalloc，用的分配器是slub CISCN2017 - babydriver 0x01程序分析 解压下cpio,顺便用extract-vmlinux解压bzImage出vmlinux 1234567891011mkdir corecd coremv ../rootfs.cpio rootfs.cpio.gzgunzip ./root
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-10 13:40" pubdate>
-              2022-11-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/kernelUAF/">#kernelUAF</a>
             
           </div>
         
