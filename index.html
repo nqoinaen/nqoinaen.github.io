@@ -250,6 +250,66 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/12/01/four-chain-kernel/" target="_self">
+          <img src="/img/img8.jpg" srcset="/img/loading.gif" lazyload alt="⛓️ Fourchain-Kernel">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/12/01/four-chain-kernel/" target="_self">
+          ⛓️ Fourchain-Kernel
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/12/01/four-chain-kernel/" target="_self">
+        <div>
+          是湾湾举办的HITCONCTF的某道pwn捏
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-12-01 20:02" pubdate>
+              2022-12-01
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/kernel-pwn/" class="category-chain-item">kernel pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
           <img src="/img/img6.png" srcset="/img/loading.gif" lazyload alt="2022安洵杯pwn">
         </a>
@@ -266,7 +326,7 @@
       
       <a class="index-excerpt " href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
         <div>
-          前言： 也只是解了一题，后续复现下  babyarm 一开始环境没装好，也没学过arm rop，整了三个小时还是解出来了，主要这题不难。 分析： 本题是32位arm架构 最先有个base64加密，检测通过后能栈溢出  233其实就只是编码表0~9的位置变了一下 网上找了个python实现的程序解密一下得到s1mpl3Dec0d4r  1.ret2libc arm架构的rop虽然不熟，但原理都是一样
+          前言： 也只是解了一题，后续复现下，官方wp  babyarm 一开始环境没装好，也没学过arm rop，整了三个小时还是解出来了，主要这题不难。 分析： 本题是32位arm架构 最先有个base64加密，检测通过后能栈溢出  233其实就只是编码表0~9的位置变了一下 网上找了个python实现的程序解密一下得到s1mpl3Dec0d4r  1.ret2libc arm架构的rop虽然不熟，但原
         </div>
       </a>
 
@@ -592,73 +652,6 @@
               <a href="/tags/%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C/">#数组越界</a>
             
               <a href="/tags/ret2csu/">#ret2csu</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/15/koncha/" target="_self">
-          <img src="/img/2022SECCON.png" srcset="/img/loading.gif" lazyload alt="koncha">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/15/koncha/" target="_self">
-          koncha
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/15/koncha/" target="_self">
-        <div>
-          前言 这是SECCON CTF 2022的一道warm up pwn，第一个scanf打回车能泄露libc。比赛时钻牛角尖了，没想到这个trick，看到最后scanf ret的地址是libc段，想着改后三字节为og，爆破三位，不知道是哪里错误了，就是爆不出来 程序源码： 12345678910111213141516171819202122232425#include &lt;stdio.h&gt
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-15 21:17" pubdate>
-              2022-11-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/glibc-pwn/" class="category-chain-item">glibc pwn</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/rop/">#rop</a>
             
           </div>
         

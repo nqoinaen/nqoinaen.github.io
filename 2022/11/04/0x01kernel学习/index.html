@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/linuxkernel.png">
 <meta property="article:published_time" content="2022-11-04T12:41:56.000Z">
-<meta property="article:modified_time" content="2022-11-19T12:12:27.621Z">
+<meta property="article:modified_time" content="2022-12-02T09:02:30.686Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernel">
 <meta name="twitter:card" content="summary_large_image">
@@ -312,7 +312,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年11月19日 晚上
+                    本文最后更新于：2022年12月2日 下午
                   
                 
               </p>
@@ -435,8 +435,7 @@
 <h3 id="5、调试内核模块">5、调试内核模块</h3>
 <p>…略略略，后面的用到再学吧😵</p>
 <p>先去找道题练练手</p>
-<script src="https://utteranc.es/client.js" repo="nqoinaen/comment" issue-term="pathname" theme="github-light" crossorigin="anonymous" async>
-</script>
+
                 
               </div>
             
@@ -500,7 +499,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年11月19日</div>
+          <div>2022年12月2日</div>
         </div>
       
       
@@ -555,29 +554,25 @@
             
   <article id="comments" lazyload>
     
+  <div id="valine"></div>
   <script type="text/javascript">
-    Fluid.utils.loadComments('#comments', function() {
-      var light = 'github-light';
-      var dark = 'github-dark';
-      var schema = document.documentElement.getAttribute('data-user-color-scheme');
-      if (schema === 'dark') {
-        schema = dark;
-      } else {
-        schema = light;
-      }
-      window.UtterancesThemeLight = light;
-      window.UtterancesThemeDark = dark;
-      var s = document.createElement('script');
-      s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'nqoinaen.github.io');
-      s.setAttribute('issue-term', 'pathname');
-      
-      s.setAttribute('label', 'utterances');
-      
-      s.setAttribute('theme', schema);
-      s.setAttribute('crossorigin', 'anonymous');
-      document.getElementById('comments').appendChild(s);
-    })
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"HQkzhCx71cjxSdXQfz0GrQxn-9Nh9j0Va","appKey":"vsNZcbA7YhzyMPIzfOM68B3I","path":"window.location.pathname","placeholder":"欢迎评论:)","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":true},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
   </script>
   <noscript>Please enable JavaScript to view the comments</noscript>
 
