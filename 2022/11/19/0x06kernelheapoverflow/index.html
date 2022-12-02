@@ -16,16 +16,16 @@
   <meta name="author" content="nqoinaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep&#x2F;smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm">
+    <meta name="description" content="内核堆溢出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="0x06 kernel heap-Heap OverFlow">
 <meta property="og:url" content="https://nqoinaen.github.io/2022/11/19/0x06kernelheapoverflow/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
-<meta property="og:description" content="前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep&#x2F;smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm">
+<meta property="og:description" content="内核堆溢出">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img4.jpg">
 <meta property="article:published_time" content="2022-11-19T05:01:03.000Z">
-<meta property="article:modified_time" content="2022-12-02T09:03:20.639Z">
+<meta property="article:modified_time" content="2022-12-02T09:45:08.339Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernel heap overflow">
 <meta name="twitter:card" content="summary_large_image">

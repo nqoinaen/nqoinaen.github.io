@@ -266,7 +266,7 @@
       
       <a class="index-excerpt " href="/2022/11/15/koncha/" target="_self">
         <div>
-          前言 这是SECCON CTF 2022的一道warm up pwn，第一个scanf打回车能泄露libc。比赛时钻牛角尖了，没想到这个trick，看到最后scanf ret的地址是libc段，想着改后三字节为og，爆破三位，不知道是哪里错误了，就是爆不出来 程序源码： 12345678910111213141516171819202122232425#include &lt;stdio.h&gt
+          SECCONCTF的热身pwn题
         </div>
       </a>
 
@@ -333,7 +333,7 @@
       
       <a class="index-excerpt " href="/2022/11/12/0x05kernelRet2dir/" target="_self">
         <div>
-          前言: 参考arttnba3，L3H_CoLin ret2dir即 return to direct mapping area，在内核空间中都能通过这块内存区域访问到，我们只需要在用户空间布置恶意数据，之后再在内核空间的这块区域中找到我们的用户空间数据对应的内核空间地址即可，这便是 ret2dir ——通过内核空间地址访问到用户空间数据 MINI-LCTF2022 - kgadget 0x01程序
+          return to direct mapping area
         </div>
       </a>
 
@@ -400,7 +400,7 @@
       
       <a class="index-excerpt " href="/2022/11/10/0x04kernelUAF/" target="_self">
         <div>
-          前言: 本篇是关于kernel UAF，内核中常用分配函数是kmalloc，用的分配器是slub CISCN2017 - babydriver 0x01程序分析 解压下cpio,顺便用extract-vmlinux解压bzImage出vmlinux 1234567891011mkdir corecd coremv ../rootfs.cpio rootfs.cpio.gzgunzip ./root
+          kernel中的uaf
         </div>
       </a>
 
@@ -467,7 +467,7 @@
       
       <a class="index-excerpt " href="/2022/11/08/0x03kenelRet2usr/" target="_self">
         <div>
-          前言： 参考wiki，arttnba3 ret2usr 攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向内核代码或数据流指向用户控件，以 ring 0 特权执行用户空间代码完成提权等操作 虽然为了防止ret2usr，开发者加了smep保护（Supervisor Mode Execution Protection），作用是当 CPU 处于 ring0 模式时，执行
+          ret2usr?
         </div>
       </a>
 
@@ -534,7 +534,7 @@
       
       <a class="index-excerpt " href="/2022/11/05/0x02kernelROP/" target="_self">
         <div>
-          前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi
+          kernel如何去ROP呢
         </div>
       </a>
 

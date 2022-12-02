@@ -326,7 +326,7 @@
       
       <a class="index-excerpt " href="/2022/11/28/2022%E5%AE%89%E6%B4%B5%E6%9D%AF/" target="_self">
         <div>
-          前言： 也只是解了一题，后续复现下，官方wp  babyarm 一开始环境没装好，也没学过arm rop，整了三个小时还是解出来了，主要这题不难。 分析： 本题是32位arm架构 最先有个base64加密，检测通过后能栈溢出  233其实就只是编码表0~9的位置变了一下 网上找了个python实现的程序解密一下得到s1mpl3Dec0d4r  1.ret2libc arm架构的rop虽然不熟，但原
+          成信大的比赛
         </div>
       </a>
 
@@ -393,7 +393,7 @@
       
       <a class="index-excerpt " href="/2022/11/28/2022DAS11/" target="_self">
         <div>
-          前言： 这周比赛和安洵的冲突了，菜鸡做了个签到题，后续题目来复现下  签个到 首先一开始我们数9个char覆盖canary最后两个位能把canary泄露  其次，漏洞存在于输入函数里，如果我们的size输入为0的话-1就是一个极大值,可以堆溢出  正常读写的话第二个strncmp是满足不了的,因为低四字节固定为0x00000886 可以堆溢出改下一个堆的fd为canary即可  123456789
+          2022安恒十一月赛
         </div>
       </a>
 
@@ -460,7 +460,7 @@
       
       <a class="index-excerpt " href="/2022/11/21/0x07kernel%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89/" target="_self">
         <div>
-          前言 本篇是关于kernel pwn中的条件竞争，由于是我们在用户态编写程序与内核交互，所以我们可以启动多个线程同时运行，以达到条件竞争 double fetch double fetch可以理解为两次或多次对同一个对象取值 例：内核对一个对象第一次取值进行合法性检测，第二次取值进行使用 我们可以在第一次取值后对值进行修改成恶意数据，在第二次使用时执行我们的恶意数据  通过在 first fetc
+          条件竞争
         </div>
       </a>
 
@@ -527,7 +527,7 @@
       
       <a class="index-excerpt " href="/2022/11/19/0x06kernelheapoverflow/" target="_self">
         <div>
-          前言 参考arttnba3，Roland 本篇为内核的堆溢出 InCTF2021 - Kqueue 解压打包要在root下进行，不然可能遇到各种奇怪的权限问题 0x01程序分析 只装载了这个LKM，按套路漏洞就在这里面  1.保护 开启了kaslr，没开启smep/smap,KPTI 12345678910stty saneexec qemu-system-x86_64 \    -cpu kvm
+          内核堆溢出
         </div>
       </a>
 
@@ -594,7 +594,7 @@
       
       <a class="index-excerpt " href="/2022/11/16/newstarctf2022/" target="_self">
         <div>
-          前言： 今年9~10月的比赛，题目从易到难,知识面广，还是很不错的，主要最近不太想学kernel pwn，有空就来复现一下这比赛的pwn WEEK1 ret2text： 12345678910from pwn import*r= process(&#x27;./pwn&#x27;)#r=remote(&#x27;node4.buuoj.cn&#x27;,25509)elf = ELF(&#x27;
+          新手比赛
         </div>
       </a>
 

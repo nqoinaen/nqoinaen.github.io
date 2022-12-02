@@ -16,16 +16,16 @@
   <meta name="author" content="nqoinaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi">
+    <meta name="description" content="kernel如何去ROP呢">
 <meta property="og:type" content="article">
 <meta property="og:title" content="0x02 kernel ROP-base">
 <meta property="og:url" content="https://nqoinaen.github.io/2022/11/05/0x02kernelROP/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
-<meta property="og:description" content="前言： 本篇是关于kernel ROP的的第一篇 内核ROP与用户态ROP的区别就是变为了要rop出commit_creds(prepare_kernel_cred(0)) 且写脚本从用户态的用python脚本与程序交互，变为了c程序脚本与内核进行交互 2018 强网杯 - core 参考wiki 0x01文件分析 下载附件，有四个文件 bzImage是压缩gzip压缩的内核文件 core.cpi">
+<meta property="og:description" content="kernel如何去ROP呢">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img2.jpg">
 <meta property="article:published_time" content="2022-11-05T10:24:15.000Z">
-<meta property="article:modified_time" content="2022-12-02T09:02:42.175Z">
+<meta property="article:modified_time" content="2022-12-02T09:42:10.365Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernelROP">
 <meta name="twitter:card" content="summary_large_image">
