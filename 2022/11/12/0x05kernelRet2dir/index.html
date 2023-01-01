@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img3.jpg">
 <meta property="article:published_time" content="2022-11-12T05:50:55.000Z">
-<meta property="article:modified_time" content="2022-12-27T09:59:54.963Z">
+<meta property="article:modified_time" content="2022-12-30T14:20:10.117Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="ret2dir">
 <meta name="twitter:card" content="summary_large_image">
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.9k 字
+          7k 字
         
       </span>
     
@@ -312,7 +312,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2022年12月27日 下午
+                    本文最后更新于：2022年12月30日 晚上
                   
                 
               </p>
@@ -365,6 +365,7 @@
 <p>（如果jmp的地址指向ret的话就有了，不过太多懒得找，这里采取另一种rop方法）</p>
 <p><img src="/2022/11/12/0x05kernelRet2dir/6.png" srcset="/img/loading.gif" lazyload alt="6"></p>
 <p>rop出<code>commit_creds(init_cred)</code>,返回用户态另选择<code>swapgs_restore_regs_and_return_to_usermode</code>这个gadget，这是一个保存pt_regs结构并且返回到用户态的函数的地址</p>
+<p>(用swapgs_restore_regs_and_return_to_usermode是为了通过切换页表通过KPTI保护)</p>
 <p>（地址我们可以通过设置init为root 来cat出来）</p>
 <p><img src="/2022/11/12/0x05kernelRet2dir/7.png" srcset="/img/loading.gif" lazyload alt="7"></p>
 <p>我们+27偏移跳过前面的pop<img src="/2022/11/12/0x05kernelRet2dir/8.png" srcset="/img/loading.gif" lazyload alt="8"></p>
@@ -443,7 +444,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2022年12月27日</div>
+          <div>2022年12月30日</div>
         </div>
       
       
