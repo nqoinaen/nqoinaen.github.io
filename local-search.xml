@@ -122,9 +122,9 @@
     
     <tags>
       
-      <tag>kernel</tag>
-      
       <tag>ret2usr</tag>
+      
+      <tag>kernel</tag>
       
       <tag>IDApatch</tag>
       
