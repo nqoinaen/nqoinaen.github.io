@@ -93,11 +93,11 @@
     
     <tags>
       
-      <tag>modprobe_path</tag>
-      
       <tag>msg</tag>
       
       <tag>shm_file_data</tag>
+      
+      <tag>modprobe_path</tag>
       
     </tags>
     
@@ -205,9 +205,9 @@
     
     <tags>
       
-      <tag>kernel</tag>
-      
       <tag>ret2usr</tag>
+      
+      <tag>kernel</tag>
       
       <tag>IDApatch</tag>
       
