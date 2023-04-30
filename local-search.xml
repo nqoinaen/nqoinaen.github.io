@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>随便记记</title>
+    <link href="/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/"/>
+    <url>/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="前言：">前言：</h2><p>记录一下每日所学，收获些许成就感</p><h2 id="2023-4">2023.4</h2><h3 id="4-30">4.30</h3><p><strong>英语：</strong> 新学97个单词</p><p><strong>专业课：</strong> 学习了数据结构第四章《串》，学会手算<code>next[j]</code>,<code>nextval[j]</code>，第五章《树》关于一些树的基本概念和性质</p><p><strong>数学：</strong> 二刷了概率第三讲的例题</p><p><img src="/2023/04/30/%E8%80%83%E7%A0%94%E8%AE%B0%E5%BD%95/430.png" alt="430"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>日记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>？？？</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>bop</title>
     <link href="/2023/02/05/bop/"/>
     <url>/2023/02/05/bop/</url>
@@ -122,9 +147,9 @@
     
     <tags>
       
-      <tag>arm</tag>
-      
       <tag>数组越界</tag>
+      
+      <tag>arm</tag>
       
       <tag>shellcode</tag>
       
@@ -394,13 +419,13 @@
     
     <tags>
       
-      <tag>IO_leak</tag>
-      
-      <tag>orw</tag>
-      
       <tag>整数溢出</tag>
       
       <tag>数组越界</tag>
+      
+      <tag>IO_leak</tag>
+      
+      <tag>orw</tag>
       
       <tag>shellocde</tag>
       
