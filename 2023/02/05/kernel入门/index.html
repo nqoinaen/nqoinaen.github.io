@@ -19,85 +19,85 @@
     <meta name="description" content="入门一下">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kernel pwn入门">
-<meta property="og:url" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:url" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/index.html">
 <meta property="og:site_name" content="nq0inaen&#39;s blog">
 <meta property="og:description" content="入门一下">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core1-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core2-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core3-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core4-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core5-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core6-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core7-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core11-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018coreROOT-1684501921223.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/11-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/12-1684501192455.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684500595851.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684500595851.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684500595851.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684500595851.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684500595851.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684500595852.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684500595852.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684500595852.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/cr4.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/bypassgetroot.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2017babydriver1.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684501618948.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684501618947.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684499471325.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/06kernelheapoverflow.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684499630049.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684499630049.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684499662255.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684500912095.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684500912095.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10-1684500912096.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/11.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/12.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/13.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1672215105471.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684595090620.png">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3.jpg">
-<meta property="og:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684595083712.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core1-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core2-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core3-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core4-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core5-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core6-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core7-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core11-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018coreROOT-1684501921223.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/11-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/12-1684501192455.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684500595851.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684500595851.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684500595851.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684500595851.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684500595851.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684500595852.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684500595852.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684500595852.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/cr4.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/bypassgetroot.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2017babydriver1.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684501618948.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684501618947.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684499471325.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/06kernelheapoverflow.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684499630049.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684499630049.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684499662255.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684500912095.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/4-1684500912095.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/5-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/6-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/7-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/8-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/9-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/10-1684500912096.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/11.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/12.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/13.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1672215105471.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/1-1684595090620.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/3.jpg">
+<meta property="og:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2-1684595083712.png">
 <meta property="article:published_time" content="2023-02-05T05:01:03.000Z">
 <meta property="article:modified_time" content="2023-05-22T13:31:20.808Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="kernel pwn">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nq0inaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core1-1684501921223.png">
+<meta name="twitter:image" content="https://nqoinaen.github.io/2023/02/05/kernel%E5%85%A5%E9%97%A8/2018core1-1684501921223.png">
   
   
   
@@ -139,7 +139,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"nq0inaen.github.io","root":"/","version":"1.9.3","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"nqoinaen.github.io","root":"/","version":"1.9.3","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -1076,7 +1076,7 @@ sem_wait(&amp;sem_edit);</p>
   <div class="license-box my-3">
     <div class="license-title">
       <div>kernel pwn入门</div>
-      <div>https://nq0inaen.github.io/2023/02/05/kernel入门/</div>
+      <div>https://nqoinaen.github.io/2023/02/05/kernel入门/</div>
     </div>
     <div class="license-meta">
       
