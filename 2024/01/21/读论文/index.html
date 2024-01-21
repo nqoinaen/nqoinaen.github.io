@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/logo.png">
+  <link rel="icon" href="/img/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="nq0inaen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles">
+<meta property="og:url" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/index.html">
+<meta property="og:site_name" content="nq0inaen&#39;s blog">
+<meta property="og:description" content="笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240120184917955.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121201242818.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202500267.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202552366.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202947846.png">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121203046015.png">
+<meta property="article:published_time" content="2024-01-21T11:34:32.000Z">
+<meta property="article:modified_time" content="2024-01-21T12:48:10.313Z">
+<meta property="article:author" content="nq0inaen">
+<meta property="article:tag" content="Deep Learning">
+<meta property="article:tag" content="IoV">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nqoinaen.github.io/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240120184917955.png">
+  
+  
+  
+  <title>A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles - nq0inaen&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"nqoinaen.github.io","root":"/","version":"1.9.3","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>nq0inaen&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/8.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        nq0inaen
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-21 19:34" pubdate>
+          2024年1月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2024年1月21日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言：">前言：</h2>
+<p>要做毕设惹</p>
+<h2 id="一种基于深度学习的车联网节能计算卸载方法">一种基于深度学习的车联网节能计算卸载方法</h2>
+<p>A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles</p>
+<h3 id="摘要"><strong>摘要</strong></h3>
+<p>随着先进的车载应用程序的出现，满足车辆的计算和通信需求的挑战变得越来越突出。雾计算是一种潜在的解决方案，通过实现在网络边缘的计算卸载来改善先进的车辆服务。在本文中，我们提出了一种在车辆互联网（IoV）中的雾云计算卸载算法，以最小化车辆的功耗和计算设施的功耗。</p>
+<p><strong>1.首先，建立了系统模型</strong></p>
+<p><strong>2.然后将卸载问题表述为一个np难问题。</strong></p>
+<p><strong>3.接着提出了一种启发式算法来逐步解决卸载问题。</strong></p>
+<p><strong>具体来说，设计了一种车辆的预测组合传输模式，并建立了一种计算设施的深度学习模型，以获得最优的工作负荷分配。</strong></p>
+<p>仿真结果表明了该算法在能源效率和网络延迟方面的优越性</p>
+<h3 id="关键词"><strong>关键词</strong></h3>
+<p>计算卸载、雾计算、深度学习；车辆网络</p>
+<h3 id="1-介绍">1.介绍</h3>
+<p>​	随着物联网（IoT）和无线通信技术的发展，车辆变得更加智能，能够提供比以前更好的服务。随后，自动驾驶、图像识别等各种计算密集型应用不断涌现。然而，车辆有限的计算资源导致高级应用难以在现实中应用。如果没有强大的计算支持，各种应用仍处于概念阶段，无法应用于我们的日常生活中。</p>
+<p>​	云计算可以通过将任务卸载到具有丰富计算资源的云端来提高计算性能。然而，数据到云端的传输距离较长，不仅给无线通信链路带来了沉重的负担，而且导致了难以忍受的延迟，从而显着降低了应用程序的性能。</p>
+<p>​	雾计算是克服上述问题的一个有前途的范式，因为它将计算设施扩展到网络前端。它还有望减轻车辆沉重的计算负担。</p>
+<p>1.雾节点通过减轻云的工作负载来降低功耗。</p>
+<p>2.地理分布式雾设备可以减少消息传输延迟。</p>
+<p>然而，不可能将所有任务卸载到雾层，因为仅雾模型的计算能力无法应对高工作负载下的延迟增长，并且一些复杂的计算任务应该卸载到远程云服务器。因此，做出有效的卸载决策以同时最小化具有延迟约束的计算设施和车辆的功耗至关重要。</p>
+<p>论文提出了一种车联网（IoV）中的雾云计算卸载算法，以最大限度地减少车辆和计算设施的功耗。具体来说，<strong>贡献</strong>总结如下：</p>
+<p><strong>1）建立了雾云卸载系统，然后制定了基于延迟约束的数学框架来优化功耗。</strong></p>
+<p><strong>2）将整个系统分解为前端和后端两部分。之后，开发了车载网络中的组合传输算法和深度学习模型来分别解决前端和后端的优化问题。</strong></p>
+<p><strong>3）进行模拟来验证我们的雾云计算卸载算法的有效性。</strong></p>
+<p>仿真结果表明，它可以在满足延迟要求的同时显着优化功耗。</p>
+<h3 id="2-相关工作">2.相关工作</h3>
+<p>凭借丰富的计算资源，云计算在车联网系统中引起了极大的关注[9]。 [10] 中的作者提出了一种有前途的网络范式，在云上进行预测卸载，以最大限度地减少车联网系统中的延迟和功耗。</p>
+<p>然而，<strong>云计算存在以下缺陷</strong>：</p>
+<p><strong>首先，云服务器距离车辆较远，难以满足延迟敏感应用的需求。</strong></p>
+<p><strong>其次，数据中心的电力消耗成本相当昂贵。</strong></p>
+<p><strong>最后，云计算对车载应用的支持性能较差</strong>。</p>
+<p>与移动云、小云和边缘计算类似，雾计算通过将云计算扩展到网络边缘而成为一种有前途的范例。</p>
+<p>为满足多用户计算卸载需求，提出了移动云卸载模型，从而弥补了移动云的不足。</p>
+<p>边缘计算通过充分利用车辆的闲置资源（例如移动中或停车位中的车辆）来实现实时交通管理。</p>
+<p>然而，与云或小云计算相比，车辆边缘计算的计算和存储能力仍然有限。</p>
+<p>此外，雾节点普遍缺乏通过自学习变得智能化的资源。</p>
+<p>此外，对车辆移动性的准确预测很大程度上影响了其计算资源和能源的利用</p>
+<p>一种方法是根据车辆的位置、方向和速度来挖掘交通流。</p>
+<p>随着电动汽车的普及，人们开始研究车辆到电网技术来为电动汽车充电并在智能电网中监控其电力状态。 [19]中设计了车辆到电网网络的混合计算模型，包括永久云或小云和临时车辆雾节点。为了通过VFC提供安全的通信和服务，智能对于车联网中的网络控制和管理是必不可少的[20]。在[21]中，作者设计了一种由雾计算支持的分层架构，为邻里、社区和全市交通管理提供及时响应。</p>
+<p>与现有研究不同，我们的目标是最小化车辆和计算设施的功耗。在前端（车辆侧），我们设计了组合传输算法来节省能源。此外，我们开发了一种深度学习方法来优化工作负载，以最大限度地减少后端（雾和云设施）的功耗。<strong>据我们所知，这是第一个针对如何通过深度学习方法在车联网系统卸载模型中最小化功耗提供详细设计的工作。</strong></p>
+<h3 id="3-系统模型和问题表述">3.系统模型和问题表述</h3>
+<p>如图所示，系统架构包括：一组路侧单元a set of Roadside Units（RSU）、雾设备和云服务器。 RSU 接收来自车辆的请求并将其发送到雾设备。在模型中，我们假设 RSU 可以覆盖实验区域内的所有车辆。车辆还可以基于蜂窝基站等其他设施接入网络，本文不予讨论。雾节点可以处理请求并通过广域网（WAN）将冗余请求转发到云服务器。每个云服务器托管许多虚拟机。由于广域网覆盖了从雾节点到云服务器的较大地理区域，因此相应的传输延迟不可忽视（与局域网相比）。此外，还应该考虑雾节点或云服务器的计算延迟。此外，从车辆到RSU的前端的功耗和延迟是系统性能的重要因素。因此，我们<strong>主要考虑云层、雾层、广域网调度以及车辆到路侧单元的传输过程四个部分的功耗和延迟。</strong></p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240120184917955.png" srcset="/img/loading.gif" lazyload alt="图1.雾-云计算系统架构"></p>
+<h4 id="3-1-系统模型">3.1 系统模型</h4>
+<p>我们的目标是在保证车辆和车联网系统计算基础设施延迟的情况下最大限度地降低功耗。</p>
+<h5 id="1）雾设备的功耗：">1）雾设备的功耗：</h5>
+<p>论文里的意思就是一个线性关系式</p>
+<p>雾设备的功耗=A*雾设备的频率+B</p>
+<p>A，B是两个正常数，且预先确定的</p>
+<h5 id="2）雾设备的通信延迟：">2）雾设备的通信延迟：</h5>
+<p>假设它是雾设备处理请求的排队系统。对于设备，其计算延迟包括等待时间和服务时间，</p>
+<p>计算延迟=1/（服务率-任务到达率）</p>
+<h5 id="3）云服务器的功耗：">3）云服务器的功耗：</h5>
+<p>如前所述，每台云服务器承载着大量的计算机。我们简单地假设云服务器中这些机器的 CPU 频率是相等的。通过CPU频率f的函数来近似服务器j中每台机器的功耗值</p>
+<p>云服务器的功耗j=n*（A *云服务器中的某一个机器+B）</p>
+<p>A，B是两个正常数</p>
+<h5 id="4）云服务器通信延迟：">4）云服务器通信延迟：</h5>
+<p>云服务器的延迟又可以分为等待延迟和处理延迟。</p>
+<p>我们将系统建模为排队网络，所以可以建模为 M/M/n队列。</p>
+<p>因此，云服务器的总计算延迟由下式给出：</p>
+<p>公式有点小复杂，先略过</p>
+<h5 id="5）通信传输延迟：">5）通信传输延迟：</h5>
+<p>它可以分为两部分：调度的通信延迟和车辆与路侧单元之间的通信延迟。</p>
+<p>对于调度的通信延迟，我们使用wij记录雾设备i到云服务器j的带宽。调度的通信延迟计算如下：</p>
+<p>调度的通信延迟=数据大小/(Wij*(log2(1+n0)))</p>
+<p>使用wij记录雾设备i到云服务器j的带宽，其中 n0=S/N 就是信噪比。</p>
+<p>这个就是香农那个定理</p>
+<p>对于车辆和RSU的通信延迟，我们考虑多跳V2I和V2V模式。对于V2I模式，相应的延迟包含两部分，即上传时间和从源到目标RSU的3个传输时间。对于V2V模式，传输延迟比V2I模型中的延迟要大，并且是上传时间和多跳车辆之间的V2V中继延迟的总和。 [10]中提出了一种实用的预测方案来预测多跳传输中的延迟。因此，车辆和 RSU 之间的延迟 可以通过 V2I 和 V2V 模式下的延迟组合来获得。</p>
+<h5 id="6）传输功耗：">6）传输功耗：</h5>
+<p>物理基础设施主要包括前端的RSU和车辆。一般来说，上传请求包的大小远大于请求结果返回包的大小。因此，我们主要关心上传链路的功耗和延迟，而忽略返回链路。令 R 和 U 分别为 RSU 和车辆的集合，其中 R = {1,…, R} 和 U = {1,…, U}。从车辆到 RSU 有两种传输模式。第一种是直接V2I模式，另一种是V2V预测传输模式。</p>
+<p>我们可以通过添加从源到目的地的 RSU 之间的流量上传和中继来计算 V2I 模式下从车辆 u 到 RSU r 的任务的功耗。</p>
+<p>对于V2V模式，消耗的能量比V2I模式低，并且是多跳车辆之间的流量上传和中继的总和。因此，考虑到相应的传输延迟和成本，车辆和RSU之间的功耗是V2I和V2V模式下延迟的组合。</p>
+<h4 id="3-2-问题表述">3.2 问题表述</h4>
+<p>我们的雾云集成框架的目标是在满足网络延迟约束的同时最大限度地减少功耗。如上分析，</p>
+<p>网络总时延=雾设备i的时延+云设备j的时延+从i到j的传输时延+车辆和RSU之间的延迟</p>
+<p>系统能耗由三部分组成，雾节点、云服务器以及车辆和RSU之间的总功耗</p>
+<p>优化问题是最小化雾节点、云服务器以及车辆和RSU之间的总功耗。应满足以下约束：</p>
+<p><strong>1) 总的网络延迟小于延迟阈值；</strong></p>
+<p><strong>2）雾节点的处理能力是有限的，即其到达率和所需的CPU周期不能超过其处理能力的上限；</strong></p>
+<p><strong>3）同样，对于云服务器，一台云服务器的到达率和云服务器分配的请求所需的CPU周期应该在云服务器的最大到达率和所需的CPU周期的范围内。</strong></p>
+<p><strong>4）一台云服务器内的机器数量为整数，云服务器的运行状态为二进制。</strong></p>
+<p><strong>5）云节点和云服务器处理的网络流量不少于要处理的总网络流量。</strong></p>
+<p>上述问题是一个混合整数非线性规划（MINLP）问题，已被证明是NP困难的。因此，我们提出了一种启发式算法，用于基于雾的车联网系统中的卸载，以可接受的计算复杂度有效地解决所提出的问题。</p>
+<h3 id="4-基于深度学习的能源高效卸载方案">4.基于深度学习的能源高效卸载方案</h3>
+<p>我们将整个系统分为两部分：前端和后端。</p>
+<p>前端由车辆和 RSU 组成。其成本主要是车辆和RSU之间通信的消耗和延迟，我们的目标是最小化Dur trans和Pur trans。我们采用预测组合传输方式来解决上述问题。</p>
+<p>后端包含雾节点和云服务器，我们提出了一种深度学习模型以最小化其成本</p>
+<h4 id="4-1-贪心算法">4.1 贪心算法</h4>
+<p>在贪心算法中，请求被排队并依次处理。在每个步骤中，选择在约束下具有最小功耗的服务器来处理排队请求。对于每个请求，我们将其放置到当前的最佳位置。最终，我们得到这些请求的总功率消耗和延迟。</p>
+<h4 id="4-2-深度学习模型">4.2 深度学习模型</h4>
+<h5 id="1）输入和输出设计：">1）输入和输出设计：</h5>
+<p>我们考虑的系统模型如图1所示。我们总共有n个可选的雾节点和云服务器来处理来自前端的请求。因此，每个节点都保存了最近H个周期内的请求数量和平均功耗的记录。 H的值由CPU频率和每个任务平均所需的CPU周期决定，我们选择CNN模型中损失最小的H值。我们采用这些记录作为深度学习模型的输入。</p>
+<p>与[27]类似，我们也考虑卷积神经网络（CNN）结构。为了训练我们的 CNN 模型，需要标记数据（即 (x，y） 组）来执行监督训练</p>
+<p>我们的目标是通过构建基于 CNN 的系统来识别网络流量的特征。如图2(a)所示，输入数据的低级特征在特征提取部分被过滤。池化层的目的是减少特征和参数的大小，并加快网络计算速度。通过从卷积层和池化层提取的特征，输出分类的效果可以通过全连接层来计算。在图2(b)中，服务器以多个间隔记录的信息是输入数据。</p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121201242818.png" srcset="/img/loading.gif" lazyload alt="图2基于CNN的深度学习模型"></p>
+<p>它能被表示由三维矩阵，即通道、网络特征和服务节点。利用深度学习结构来计算候选服务器。因此，我们选择服务器编号作为深度学习模型的输出。因此，输出值的范围为[0, N-1]，表示服务器编号。</p>
+<h5 id="2）初始化阶段：">2）初始化阶段：</h5>
+<p>如输入和输出设计中所述，我们需要标记数据来训练我们的CNN模型。在初始化阶段，我们需要获取标记数据。初始化阶段的目的是获取标记数据，由输入向量和相应的输出结果组成。用全局解决方案来训练我们的 CNN 模型是最好的。然而，获得最优解的时间复杂度为O ( nm) ，这是不能容忍的。我们选择一种折衷的方法来获取标记数据，其中利用启发式算法来获得接近最优的解决方案。如算法1所示，模拟退火（SA）算法主要包括两个关键步骤：用一些函数生成新解以及以一定概率接受新解。我们将贪心算法的解作为SA算法中的初始解</p>
+<p>SA算法在一定温度下迭代L次以搜索全局最优解。在搜索过程中，SA算法以exp( − Δt/ T ) 的概率接受较差解，其中Δt是新解与原解之间的评价差。通过1SA算法，我们可以在CNN模型中获得标记数据。我们的CNN模型的输入是最后H个间隔中服务器的记录信息。这样我们就得到了服务器的记录信息以及对应的卸载结果。</p>
+<h5 id="3）训练阶段：">3）训练阶段：</h5>
+<p>我们使用初始化阶段获得的数据来训练CNN模型。训练阶段包括两个步骤：初始化我们设计的 CNN 中的参数并使用反向传播算法微调参数。</p>
+<p>初始化参数有必要，有利于加快收敛速度。 CNN 参数由平均值为零的正态高斯分布初始化。</p>
+<p>对于前馈神经网络，参数优化取决于误差反向传播。优化阶段可以通过随机梯度下降算法或Adam算法来完成。由于Adam算法是自适应的，我们选择它作为训练阶段的优化算法，如算法2所示。在训练阶段，我们采用交叉熵成本函数作为损失函数。因此，输出是一个标量，它是输出层中最大值的神经元索引。</p>
+<h5 id="4）运行阶段：">4）运行阶段：</h5>
+<p>在运行阶段，所有服务器都需要记录一段时间内接收到的请求数量和平均功耗，然后将这些记录发送到边缘计算节点。这样，每个边缘节点就可以将这些记录作为输入来计算卸载结果。与训练阶段相比，运行阶段的计算复杂度相对较低。训练过程定期离线进行，以更新 CNN 模型中的权重。然而，有可能获得不符合要求的不适当的结果。</p>
+<p>CNN运行阶段的约束。在这种情况下，我们采用贪心算法作为补偿。</p>
+<h3 id="5-效果评估">5.效果评估</h3>
+<p>为了验证模型的性能，我们对前端和后端进行了模拟。我们设置N = 20，M = 5，n j 在20和25之间，fi 在4.5和5.5之间，f j 在2.5和3.5之间，5 和 15MB之间的数据包大小，请求的周期在 0.7 到 0.9 之间。我们在前端使用预测组合传输模型。在发送请求之前，会发送广播数据包来询问附近的车辆或RSU后端处理延迟。根据延误结果和车辆速度，车辆可以计算请求返回时到达的RSU。</p>
+<p>在结合模型中，估计V2I、V2V模型的功耗和延迟，选择最优的。在模拟中，我们假设车辆沿直线行驶。由于输入数据的大小是可控的，因此我们不考虑池化层。基于深度学习的模型的特征如图3所示。最后四个时间间隔的记录被用作网络输入，并且时间间隔设置为2秒。每个时间间隔内的平均请求数为 50。</p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202500267.png" srcset="/img/loading.gif" lazyload alt="图3 CNN模型结构"></p>
+<p>图 4 说明了不同车速和密度下的成本表现。在车速较高的情况下，组合传动模式的成本远低于V2I模式。对于V2I模式，随着速度从100到120（Km/h），成本显着增长。这是因为当请求返回时，大多数车辆都处于 RSU 覆盖范围的边缘。因此，当速度超过阈值时，车辆将驶入另一个 RSU。 V2I模式的成本将显着增加。另外，在流量密度大的情况下，组合传输方式效果显着，可以大幅降低V2V模式下每跳的时延和功耗。</p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202552366.png" srcset="/img/loading.gif" lazyload alt="图4 直接V2I与组合传输模式的成本比较"></p>
+<p>如图5(a)所示，仅雾的功耗极低，同时处理的请求不超过80个。雾+云模型比纯云模型要好得多。据观察，雾云模型的功耗与仅雾模型的功耗几乎相同，工作负载在 20 到 80 个请求之间。在这种情况下，雾计算的工作负载并未饱和，大多数请求都可以由雾节点处理。当工作负载超过80个请求时，雾层变得饱和，雾+云模型中的功耗增长趋势与纯云模型中的功耗增长趋势相似。值得注意的是，我们的雾+云模型的最大工作负载比其他两个模型大得多，这表明它可以很好地应对不同的流量分流需求。图 5(b) 说明了不同请求数量下总网络延迟的性能。总体而言，我们的雾+云模型的平均延迟小于1.5秒，可以满足延迟约束。对于仅云和仅雾卸载策略，随着请求数量的增加，它们的总延迟趋势急剧上升，而我们的雾+云模型的趋势则缓慢增强。此外，由于网络延迟的限制，这两种方法只能在一定程度上减轻网络流量的负担。</p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121202947846.png" srcset="/img/loading.gif" lazyload alt="图5 雾+云计算、云计算与雾计算的性能"></p>
+<p>如前所述，我们将服务器的最后 H 间隔记录作为 CNN 模型的输入。我们将最后四个 Δt 间隔的记录作为输入，其中 Δt 等于 2 秒。在每个间隔Δt内，平均请求数为50。训练数据是通过SA算法在20个连续间隔内获得的。经过训练，我们得到CNN模型的请求卸载结果。不同算法的功耗如图6所示。从仿真结果来看，模拟退火算法的综合性能最好。然而，模拟退火算法在执行过程中非常耗时。我们的深度学习模型可以有效降低运行阶段的计算复杂度，并且性能比贪心算法要好得多。对于延迟，贪婪算法由于其对每个请求的延迟严格约束，因此比其他算法表现得更好。如图6(b)所示，三种算法的延迟均小于1秒。</p>
+<p><img src="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/image-20240121203046015.png" srcset="/img/loading.gif" lazyload alt="图6 深度学习、SA和贪心法的功耗和延迟性能"></p>
+<h3 id="6-结论">6.结论</h3>
+<p>在本文中，我们提出了一种基于深度学习的雾云模型，这是一种降低后端功耗和延迟的可行解决方案。卸载优化问题被公式化。对于雾节点，根据排队论可以将其建模为M/M/1模型。对于云服务器，它们可以被建模为M/M/n队列。此外，我们提出了一种预测组合传输模型，以最小化前端成本。在仿真中，我们可以得出这样的结论：与纯云模式和纯雾模式相比，雾云模型表现出良好的性能。我们的深度学习模型是解决所制定问题的近似方法。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%BA%E6%96%87/" class="category-chain-item">论文</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Deep-Learning/">#Deep Learning</a>
+      
+        <a href="/tags/IoV/">#IoV</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles</div>
+      <div>https://nqoinaen.github.io/2024/01/21/读论文/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>nq0inaen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月21日</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2024年1月21日</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/22/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/" title="力扣刷题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">力扣刷题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/26/2023%E6%84%9F%E6%83%B3/" title="一些感想">
+                        <span class="hidden-mobile">一些感想</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"HQkzhCx71cjxSdXQfz0GrQxn-9Nh9j0Va","appKey":"vsNZcbA7YhzyMPIzfOM68B3I","path":"window.location.pathname","placeholder":"欢迎评论","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":true},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div style="font-size: 0.85rem">时间慢点走啊</div> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
