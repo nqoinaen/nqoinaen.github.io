@@ -24,7 +24,7 @@
 <meta property="og:description" content="刷题">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-21T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-01-21T12:43:24.631Z">
+<meta property="article:modified_time" content="2024-01-22T07:49:03.346Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary_large_image">
@@ -236,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          745 字
+          1.5k 字
         
       </span>
     
@@ -247,7 +247,7 @@
         
         
         
-          2 分钟
+          4 分钟
         
       </span>
     
@@ -290,7 +290,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月21日 晚上
+                    本文最后更新于：2024年1月22日 下午
                   
                 
               </p>
@@ -306,6 +306,12 @@
 <h3 id="27-移除元素">27.移除元素</h3>
 <p>双指针，一前一后</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeElement</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize, <span class="hljs-type">int</span> val)</span> &#123;<br>    <span class="hljs-type">int</span> slow=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> fast=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span>(fast&lt;numsSize)&#123;<br>        <span class="hljs-keyword">if</span>(nums[fast]!=val)&#123;<br>            nums[slow]=nums[fast];<br>            slow++;<br>        &#125;<br>        fast++;<br>    &#125;<br>    <span class="hljs-keyword">return</span> slow;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="2024-1-22">2024.1.22</h2>
+<h3 id="26-删除有序数组中的重复项">26. 删除有序数组中的重复项</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            len--;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="80-删除有序数组中的重复项-II">80.删除有序数组中的重复项 II</h3>
+<p>挺搞得，我搞不明白我上一题是怎么写出来的了，在上面一题的逻辑上再加点判断语句就好了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<span class="hljs-type">int</span> count=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>            count=<span class="hljs-number">0</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            <span class="hljs-keyword">if</span>(count&lt;<span class="hljs-number">1</span>)&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                p1++;<br>                count++;<br>            &#125;<br>            <span class="hljs-keyword">else</span>&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                len--;<br>            &#125;<br>            <br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -370,7 +376,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年1月21日</div>
+          <div>2024年1月22日</div>
         </div>
       
       
