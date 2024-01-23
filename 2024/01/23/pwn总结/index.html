@@ -24,7 +24,7 @@
 <meta property="og:description" content="完善中">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-23T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-23T12:32:45.330Z">
+<meta property="article:modified_time" content="2024-01-23T12:59:41.473Z">
 <meta property="article:author" content="nq0inaen">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -235,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          1.6k 字
         
       </span>
     
@@ -322,6 +322,17 @@
 <h4 id="NX">NX</h4>
 <h4 id="RELRO">RELRO</h4>
 <h4 id="ALSR">ALSR</h4>
+<h3 id="Types-of-vulnerabilities">Types of vulnerabilities</h3>
+<h4 id="Stack-Overflow">Stack Overflow</h4>
+<h4 id="Heap-Overflow">Heap Overflow</h4>
+<h5 id="off-by-one">off-by-one</h5>
+<h5 id="off-by-null">off-by-null</h5>
+<h4 id="Use-After-Free">Use After Free</h4>
+<h5 id="double-free">double free</h5>
+<h4 id="Format-String">Format String</h4>
+<h4 id="Integer-Overflow">Integer Overflow</h4>
+<h4 id="Type-Confusion">Type Confusion</h4>
+<h4 id="Race-Condition">Race Condition</h4>
 <h3 id="Stack-Exploitation">Stack Exploitation</h3>
 <h4 id="Stack-migration">Stack migration</h4>
 <h4 id="ret2shellcode">ret2shellcode</h4>
@@ -332,13 +343,9 @@
 <p>下面的堆利用手法都是基于ptmalloc2</p>
 <h4 id="堆相关数据结构">堆相关数据结构</h4>
 <h4 id="堆基本操作">堆基本操作</h4>
-<h4 id="堆溢出">堆溢出</h4>
-<h5 id="off-by-one">off-by-one</h5>
-<h5 id="off-by-null">off-by-null</h5>
 <h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
 <p>熟知堆结构的前提下，运用堆风水技巧伪造堆块</p>
 <h4 id="Unlink">Unlink</h4>
-<h4 id="Use-After-Free">Use After Free</h4>
 <h4 id="Fastbin-Attack">Fastbin Attack</h4>
 <h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4>
 <h4 id="Large-Bin-Attack">Large Bin Attack</h4>
@@ -353,15 +360,17 @@
 <h5 id="House-of-Corrosion">House of Corrosion</h5>
 <h5 id="House-of-emma">House of emma</h5>
 <h5 id="House-of-apple">House of apple</h5>
+<h3 id="IO-FILE-Exploitation">IO_FILE Exploitation</h3>
 <h2 id="Kernel-Mode">Kernel Mode</h2>
 <h3 id="kernel-rop">kernel rop</h3>
 <h3 id="ret2usr">ret2usr</h3>
-<h3 id="kernel-uaf">kernel uaf</h3>
-<h3 id="ret2dir">ret2dir</h3>
-<h3 id="heap-overflow">heap overflow</h3>
-<h3 id="double-fetch">double fetch</h3>
-<h3 id="userfaultfd">userfaultfd</h3>
+<h3 id="Race-Condition-2">Race Condition</h3>
+<h4 id="double-fetch">double fetch</h4>
+<h4 id="userfaultfd">userfaultfd</h4>
 <h3 id="modprobe-path">modprobe_path</h3>
+<h3 id="heap-overflow">heap overflow</h3>
+<h3 id="ret2dir">ret2dir</h3>
+<h3 id="uaf">uaf</h3>
 <h2 id="参考">参考</h2>
 <p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/177832#h2-0">Canary保护详解和常用Bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/177520">PIE保护详解和常用bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p>
