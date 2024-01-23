@@ -24,7 +24,7 @@
 <meta property="og:description" content="刷题">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-21T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-01-22T07:49:03.346Z">
+<meta property="article:modified_time" content="2024-01-23T11:28:31.051Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="algorithm">
 <meta name="twitter:card" content="summary_large_image">
@@ -236,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          2.1k 字
         
       </span>
     
@@ -247,7 +247,7 @@
         
         
         
-          4 分钟
+          5 分钟
         
       </span>
     
@@ -290,7 +290,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月22日 下午
+                    本文最后更新于：2024年1月23日 晚上
                   
                 
               </p>
@@ -310,8 +310,12 @@
 <h3 id="26-删除有序数组中的重复项">26. 删除有序数组中的重复项</h3>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            len--;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
 <h3 id="80-删除有序数组中的重复项-II">80.删除有序数组中的重复项 II</h3>
-<p>挺搞得，我搞不明白我上一题是怎么写出来的了，在上面一题的逻辑上再加点判断语句就好了</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<span class="hljs-type">int</span> count=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>            count=<span class="hljs-number">0</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            <span class="hljs-keyword">if</span>(count&lt;<span class="hljs-number">1</span>)&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                p1++;<br>                count++;<br>            &#125;<br>            <span class="hljs-keyword">else</span>&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                len--;<br>            &#125;<br>            <br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="2024-1-23">2024.1.23</h2>
+<h3 id="169-多数元素">169.多数元素</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">majorityElement</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> count=<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;numsSize;i++)&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;numsSize;j++)&#123;<br>            tag=nums[i];<br>            <span class="hljs-keyword">if</span>(nums[j]==tag)count++;<br>            <span class="hljs-keyword">if</span>(count&gt;(numsSize/<span class="hljs-number">2</span>))<span class="hljs-keyword">return</span> tag;<br>        &#125;<br>        count=<span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="189-轮转数组">189.轮转数组</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">rotate</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize, <span class="hljs-type">int</span> k)</span> &#123;<br>    <span class="hljs-type">int</span> tmp[k];<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=numsSize-k;i&lt;numsSize;i++)&#123;<br>        tmp[j]=nums[i];j++;<br>    &#125;<br>    j=numsSize<span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=numsSize-k<span class="hljs-number">-1</span>;i&gt;=<span class="hljs-number">0</span>;i--)&#123;<br>        nums[j]=nums[i];j--;<br>    &#125;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;k;i++)&#123;<br>        nums[i]=tmp[i];<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -376,7 +380,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年1月22日</div>
+          <div>2024年1月23日</div>
         </div>
       
       
@@ -406,6 +410,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/01/23/%E6%88%91%E5%AD%A6%E8%BF%87%E5%95%A5/" title="大学课程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">大学课程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
