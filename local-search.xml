@@ -4,69 +4,6 @@
   
   
   <entry>
-    <title>pwn总结</title>
-    <link href="/2024/01/23/pwn%E6%80%BB%E7%BB%93/"/>
-    <url>/2024/01/23/pwn%E6%80%BB%E7%BB%93/</url>
-    
-    <content type="html"><![CDATA[<h2 id="User-Mode">User Mode</h2><h3 id="Defense">Defense</h3><h4 id="Canary">Canary</h4><p>canary是一种用来防护栈溢出的保护机制。原理是在一个函数的入口处，先从fs/gs寄存器中取出一个4字节(eax)或者8字节(rax)的值存到栈上，当函数结束时会检查这个栈上的值是否和存进去的值一致</p><p>若一致则正常退出，如果是栈溢出或者其他原因导致canary的值发生变化，那么程序将执行___stack_chk_fail函数，继而终止程序</p><h5 id="trick：">trick：</h5><ul><li>因为canary末尾是/x00，本身可以被截断，可以栈溢出修改掉末尾的/x00，配合输出函数，泄露canary</li><li>某些用fork函数的题，父子进程的canary是一样的，逐位爆破canary</li><li>Stack Smashing Protect Leak，就是用__stack_chk_fail()函数里的某个功能，能任意地址读，我记得早已经修了这个</li></ul><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">__libc_message (<span class="hljs-number">2</span>, <span class="hljs-string">&quot;*** %s ***: %s terminatedn&quot;</span>,<br>                   msg, __libc_argv[<span class="hljs-number">0</span>] ?: <span class="hljs-string">&quot;&lt;unknown&gt;&quot;</span>);<br></code></pre></td></tr></table></figure><ul><li>got表劫持__stack_chk_fail</li></ul><h4 id="PIE">PIE</h4><p>PIE全称是position-independent executable，中文解释为地址无关可执行文件，该技术是一个针对代码段（.text）、数据段（.data）、未初始化全局变量段（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都变换加载地址</p><h5 id="trick：-2">trick：</h5><ul><li>partial write：partial write(部分写入)就是一种利用了PIE技术缺陷的bypass技术。由于内存的页载入机制，PIE的随机化只能影响到单个内存页。通常来说，一个内存页大小为0x1000，这就意味着不管地址怎么变，某条指令的后12位，3个十六进制数的地址是始终不变的。因此通过覆盖EIP的后8或16位 (按字节写入，每字节8位)就可以快速爆破或者直接劫持EIP。</li><li></li></ul><h4 id="NX">NX</h4><h4 id="RELRO">RELRO</h4><h4 id="ALSR">ALSR</h4><h3 id="Types-of-vulnerabilities">Types of vulnerabilities</h3><h4 id="Stack-Overflow">Stack Overflow</h4><h4 id="Heap-Overflow">Heap Overflow</h4><h5 id="off-by-one">off-by-one</h5><h5 id="off-by-null">off-by-null</h5><h4 id="Use-After-Free">Use After Free</h4><h5 id="double-free">double free</h5><h4 id="Format-String">Format String</h4><h4 id="Integer-Overflow">Integer Overflow</h4><h4 id="Type-Confusion">Type Confusion</h4><h4 id="Race-Condition">Race Condition</h4><h3 id="Stack-Exploitation">Stack Exploitation</h3><h4 id="Stack-migration">Stack migration</h4><h4 id="ret2shellcode">ret2shellcode</h4><h4 id="ret2libc">ret2libc</h4><h4 id="ret2csu">ret2csu</h4><h4 id="ret2dl-resolve">ret2dl_resolve</h4><h3 id="Heap-Exploitation">Heap Exploitation</h3><p>下面的堆利用手法都是基于ptmalloc2</p><h4 id="堆相关数据结构">堆相关数据结构</h4><h4 id="堆基本操作">堆基本操作</h4><h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4><p>熟知堆结构的前提下，运用堆风水技巧伪造堆块</p><h4 id="Unlink">Unlink</h4><h4 id="Fastbin-Attack">Fastbin Attack</h4><h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4><h4 id="Large-Bin-Attack">Large Bin Attack</h4><h4 id="Tcache-attack">Tcache attack</h4><h4 id="House">House</h4><h5 id="House-Of-Force">House Of Force</h5><h5 id="House-of-Orange">House of Orange</h5><h5 id="House-of-Roman">House of Roman</h5><p>fastbin attack 和 Unsortbin attack 结合的一个小 trick。</p><h5 id="House-of-Pig">House of Pig</h5><h5 id="House-of-banana">House of banana</h5><h5 id="House-of-Corrosion">House of Corrosion</h5><h5 id="House-of-emma">House of emma</h5><h5 id="House-of-apple">House of apple</h5><h3 id="IO-FILE-Exploitation">IO_FILE Exploitation</h3><h2 id="Kernel-Mode">Kernel Mode</h2><h3 id="kernel-rop">kernel rop</h3><h3 id="ret2usr">ret2usr</h3><h3 id="Race-Condition-2">Race Condition</h3><h4 id="double-fetch">double fetch</h4><h4 id="userfaultfd">userfaultfd</h4><h3 id="modprobe-path">modprobe_path</h3><h3 id="heap-overflow">heap overflow</h3><h3 id="ret2dir">ret2dir</h3><h3 id="uaf">uaf</h3><h2 id="参考">参考</h2><p><a href="https://www.anquanke.com/post/id/177832#h2-0">Canary保护详解和常用Bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p><p><a href="https://www.anquanke.com/post/id/177520">PIE保护详解和常用bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p><p><a href="https://ctf-wiki.org/pwn/linux/user-mode/environment/">Environment - CTF Wiki (ctf-wiki.org)</a></p>]]></content>
-    
-    
-    <categories>
-      
-      <category>CTF</category>
-      
-    </categories>
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>大学课程</title>
-    <link href="/2024/01/23/%E6%88%91%E5%AD%A6%E8%BF%87%E5%95%A5/"/>
-    <url>/2024/01/23/%E6%88%91%E5%AD%A6%E8%BF%87%E5%95%A5/</url>
-    
-    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>闲来无事，理一下我大学4年究竟学了些啥，zafu智科专业</p><h2 id="数学">数学</h2><h3 id="高数">高数</h3><h3 id="线代">线代</h3><h3 id="概率论与数理统计">概率论与数理统计</h3><h3 id="离散数学">离散数学</h3><h2 id="计算机专业基础">计算机专业基础</h2><h3 id="数据结构">数据结构</h3><h3 id="计算机组成原理">计算机组成原理</h3><h3 id="操作系统">操作系统</h3><h3 id="计算机网络">计算机网络</h3><h2 id="英语">英语</h2><p>4级水平，大一第一次考490，后面一直考6级就没过</p><p>去年考研背了200天单词</p><h2 id="智科专业课">智科专业课</h2><h3 id="统计分析">统计分析</h3><h3 id="数据仓库和数据挖掘">数据仓库和数据挖掘</h3><h3 id="脑认知科学基础">脑认知科学基础</h3><h3 id="机器视觉">机器视觉</h3><h3 id="人工智能">人工智能</h3><h3 id="机器学习">机器学习</h3><h3 id="空间信息学">空间信息学</h3><h3 id="智能机器人系统">智能机器人系统</h3><h3 id="最优化理论与方法">最优化理论与方法</h3><h3 id="自然语言处理">自然语言处理</h3><h2 id="计算机专业通用">计算机专业通用</h2><h3 id="C语言程序设计">C语言程序设计</h3><h3 id="Python程序设计">Python程序设计</h3><h3 id="Web程序设计">Web程序设计</h3><h3 id="数据库原理与技术">数据库原理与技术</h3><h3 id="大数据原理与应用">大数据原理与应用</h3><h3 id="大数据可视化分析">大数据可视化分析</h3><h3 id="算法设计与分析">算法设计与分析</h3><h3 id="软件测试">软件测试</h3><h3 id="软件开发">软件开发</h3><h3 id="软件工程">软件工程</h3><h2 id="农专特色">农专特色</h2><h3 id="农村电子商务">农村电子商务</h3><h3 id="林业物联网数据智能采集与分析">林业物联网数据智能采集与分析</h3><h3 id="智慧农业导论">智慧农业导论</h3>]]></content>
-    
-    
-    <categories>
-      
-      <category>杂项</category>
-      
-    </categories>
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>力扣刷题</title>
-    <link href="/2024/01/22/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/"/>
-    <url>/2024/01/22/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</url>
-    
-    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>尽量一天两道</p><h2 id="2024-1-21">2024.1.21</h2><h3 id="88-合并两个有序数组">88.合并两个有序数组</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">merge</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums1, <span class="hljs-type">int</span> nums1Size, <span class="hljs-type">int</span> m, <span class="hljs-type">int</span>* nums2, <span class="hljs-type">int</span> nums2Size, <span class="hljs-type">int</span> n)</span> &#123;<br>    <span class="hljs-type">int</span> tmp[m+n];<br>    <span class="hljs-type">int</span> i=<span class="hljs-number">0</span>,j=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;i&lt;m&amp;&amp;j&lt;n;)&#123;<br>        <span class="hljs-keyword">if</span>(nums1[i]&gt;nums2[j])&#123;<br>            tmp[i+j]=nums2[j];j++;<br>        &#125;<br>        <span class="hljs-keyword">else</span>&#123;<br>            tmp[i+j]=nums1[i];i++;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span>(i==m&amp;&amp;j&lt;n)&#123;<br>        <span class="hljs-keyword">for</span>(;j&lt;n;j++)&#123;<br>            tmp[i+j]=nums2[j];<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span>(j==n&amp;&amp;i&lt;m)&#123;<br>        <span class="hljs-keyword">for</span>(;i&lt;m;i++)&#123;<br>            tmp[i+j]=nums1[i];<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k=<span class="hljs-number">0</span>;k&lt;(m+n);k++)&#123;<br>        nums1[k]=tmp[k];<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><h3 id="27-移除元素">27.移除元素</h3><p>双指针，一前一后</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeElement</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize, <span class="hljs-type">int</span> val)</span> &#123;<br>    <span class="hljs-type">int</span> slow=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> fast=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">while</span>(fast&lt;numsSize)&#123;<br>        <span class="hljs-keyword">if</span>(nums[fast]!=val)&#123;<br>            nums[slow]=nums[fast];<br>            slow++;<br>        &#125;<br>        fast++;<br>    &#125;<br>    <span class="hljs-keyword">return</span> slow;<br>&#125;<br></code></pre></td></tr></table></figure><h2 id="2024-1-22">2024.1.22</h2><h3 id="26-删除有序数组中的重复项">26. 删除有序数组中的重复项</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            len--;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure><h3 id="80-删除有序数组中的重复项-II">80.删除有序数组中的重复项 II</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">removeDuplicates</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">-9999</span>;<span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> p2=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> len=numsSize;<span class="hljs-type">int</span> count=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(;p2&lt;numsSize;p2++)&#123;<br>        <span class="hljs-keyword">if</span>(nums[p2]!=tag)&#123;<br>            tag=nums[p2];<br>            nums[p1]=tag;<br>            p1++;<br>            count=<span class="hljs-number">0</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nums[p2]==tag)&#123;<br>            <span class="hljs-keyword">if</span>(count&lt;<span class="hljs-number">1</span>)&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                p1++;<br>                count++;<br>            &#125;<br>            <span class="hljs-keyword">else</span>&#123;<br>                tag=nums[p2];<br>                nums[p1]=tag;<br>                len--;<br>            &#125;<br>            <br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> len;<br>&#125;<br></code></pre></td></tr></table></figure><h2 id="2024-1-23">2024.1.23</h2><h3 id="169-多数元素">169.多数元素</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">majorityElement</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize)</span> &#123;<br>    <span class="hljs-type">int</span> tag=<span class="hljs-number">0</span>;<span class="hljs-type">int</span> count=<span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;numsSize;i++)&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;numsSize;j++)&#123;<br>            tag=nums[i];<br>            <span class="hljs-keyword">if</span>(nums[j]==tag)count++;<br>            <span class="hljs-keyword">if</span>(count&gt;(numsSize/<span class="hljs-number">2</span>))<span class="hljs-keyword">return</span> tag;<br>        &#125;<br>        count=<span class="hljs-number">1</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><h3 id="189-轮转数组">189.轮转数组</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">rotate</span><span class="hljs-params">(<span class="hljs-type">int</span>* nums, <span class="hljs-type">int</span> numsSize, <span class="hljs-type">int</span> k)</span> &#123;<br>    <span class="hljs-type">int</span> tmp[k];<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=numsSize-k;i&lt;numsSize;i++)&#123;<br>        tmp[j]=nums[i];j++;<br>    &#125;<br>    j=numsSize<span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=numsSize-k<span class="hljs-number">-1</span>;i&gt;=<span class="hljs-number">0</span>;i--)&#123;<br>        nums[j]=nums[i];j--;<br>    &#125;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;k;i++)&#123;<br>        nums[i]=tmp[i];<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
-    
-    
-    <categories>
-      
-      <category>刷题</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>algorithm</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>A Deep Learning Based Energy-Efficient  Computational Offloading Method in Internet of  Vehicles</title>
     <link href="/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/"/>
     <url>/2024/01/21/%E8%AF%BB%E8%AE%BA%E6%96%87/</url>
@@ -160,11 +97,11 @@
     
     <tags>
       
-      <tag>Stack migration</tag>
+      <tag>rop</tag>
       
       <tag>orw</tag>
       
-      <tag>rop</tag>
+      <tag>Stack migration</tag>
       
     </tags>
     
@@ -191,9 +128,9 @@
       
       <tag>数组越界</tag>
       
-      <tag>arm</tag>
-      
       <tag>shellcode</tag>
+      
+      <tag>arm</tag>
       
     </tags>
     
@@ -303,9 +240,9 @@
       
       <tag>数组越界</tag>
       
-      <tag>orw</tag>
-      
       <tag>IO_leak</tag>
+      
+      <tag>orw</tag>
       
       <tag>shellocde</tag>
       
@@ -342,15 +279,15 @@
     
     <tags>
       
-      <tag>orw</tag>
-      
-      <tag>rop</tag>
-      
       <tag>off by null</tag>
       
       <tag>IO_leak</tag>
       
       <tag>fastbin reverse into tcache</tag>
+      
+      <tag>rop</tag>
+      
+      <tag>orw</tag>
       
       <tag>ret2setconext</tag>
       
@@ -377,9 +314,9 @@
     
     <tags>
       
-      <tag>rop</tag>
-      
       <tag>IO_leak</tag>
+      
+      <tag>rop</tag>
       
       <tag>shellocde</tag>
       
