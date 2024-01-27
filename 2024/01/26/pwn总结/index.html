@@ -16,20 +16,18 @@
   <meta name="author" content="nq0inaen">
   <meta name="keywords" content="">
   
-    <meta name="description" content="能捡一点是一点，会的就摘进去">
+    <meta name="description" content="完善中">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn总结">
 <meta property="og:url" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="nq0inaen&#39;s blog">
-<meta property="og:description" content="能捡一点是一点，会的就摘进去">
+<meta property="og:description" content="完善中">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/ASLR.png">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-27T08:49:20.444Z">
+<meta property="article:modified_time" content="2024-01-27T13:16:02.224Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/ASLR.png">
   
   
   
@@ -238,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          16k 字
+          18k 字
         
       </span>
     
@@ -249,7 +247,7 @@
         
         
         
-          33 分钟
+          38 分钟
         
       </span>
     
@@ -292,7 +290,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月27日 下午
+                    本文最后更新于：2024年1月27日 晚上
                   
                 
               </p>
@@ -301,19 +299,257 @@
               <div class="markdown-body">
                 
                 <h2 id="前言">前言</h2>
-<p>我觉得ctf的pwn题就像是设计精巧的玲珑机关盒，探险者克服重重困难，找到预设的成功之路，拿下胜利之旗，或是另辟蹊径😂</p>
-<p>本文仅作一个大致描述，像一个框架</p>
+<p>更像是大纲了，不太全想到什么写什么</p>
 <h2 id="User-Mode">User Mode</h2>
 <p>一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
 <p>一般做题步骤：</p>
-<p>1.一般拿到程序先checksec看下保护，然后运行下程序，看看功能，简单做些交互，看看会不会segmentation fault这种报错</p>
+<p>1.一般拿到程序先checksec看下保护，然后运行下程序，看看功能，简单做些交互</p>
 <p>2.然后用ida分析那个二进制程序的伪代码，读懂程序，找漏洞</p>
 <p>3.思考利用方法，配合dbg调试，编写出exp</p>
+<h3 id="Defense">Defense</h3>
+<h4 id="Canary">Canary</h4>
+<p>canary是一种用来防护栈溢出的保护机制。原理是在一个函数的入口处，先从fs/gs寄存器中取出一个4字节(eax)或者8字节(rax)的值存到栈上，当函数结束时会检查这个栈上的值是否和存进去的值一致</p>
+<p>若一致则正常退出，如果是栈溢出或者其他原因导致canary的值发生变化，那么程序将执行___stack_chk_fail函数，继而终止程序</p>
+<h5 id="trick：">trick：</h5>
+<ul>
+<li>因为canary末尾是/x00，本身可以被截断，可以栈溢出修改掉末尾的/x00，配合输出函数，泄露canary</li>
+<li>某些用fork函数的题，父子进程的canary是一样的，逐位爆破canary</li>
+<li>Stack Smashing Protect Leak，就是用__stack_chk_fail()函数里的某个功能，能任意地址读，我记得早已经修了这个</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">__libc_message (<span class="hljs-number">2</span>, <span class="hljs-string">&quot;*** %s ***: %s terminatedn&quot;</span>,<br>                   msg, __libc_argv[<span class="hljs-number">0</span>] ?: <span class="hljs-string">&quot;&lt;unknown&gt;&quot;</span>);<br></code></pre></td></tr></table></figure>
+<ul>
+<li>got表劫持__stack_chk_fail</li>
+</ul>
+<h4 id="PIE">PIE</h4>
+<p>PIE全称是position-independent executable，中文解释为地址无关可执行文件，该技术是一个针对代码段（.text）、数据段（.data）、未初始化全局变量段（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都变换加载地址</p>
+<h5 id="trick：-2">trick：</h5>
+<ul>
+<li>partial write：partial write(部分写入)就是一种利用了PIE技术缺陷的bypass技术。由于内存的页载入机制，PIE的随机化只能影响到单个内存页。通常来说，一个内存页大小为0x1000，这就意味着不管地址怎么变，某条指令的后12位，3个十六进制数的地址是始终不变的。因此通过覆盖EIP的后8或16位 (按字节写入，每字节8位)就可以快速爆破或者直接劫持EIP。</li>
+</ul>
+<h4 id="NX">NX</h4>
+<p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
+<p>即使某些内存区域不可执行，并使可执行区域不可写</p>
+<p>例：使数据，堆栈和堆段不可执行，而代码段不可写</p>
+<h5 id="trick：-3">trick：</h5>
+<ul>
+<li>一般就是在栈这块地址没法直接执行shellcode，用ROP执行特定的代码段的代码，以达到控制执行流，getshell等目的</li>
+</ul>
+<h4 id="RELRO">RELRO</h4>
+<p>RELRO(RELocation Read-Only, 重定位只读), 此技术主要针对 GOT 改写的攻击方式。分为部分 <strong>RELRO(Partial RELRO)</strong> 与完全 <strong>RELRO(Full RELRO)</strong> 两种</p>
+<ul>
+<li><strong>部分 RELRO</strong>: 在程序装入后，将其中一段 (如<code>.dynamic</code>) 标记为只读，防止程序的一些重定位信息被修改</li>
+<li><strong>完全 RELRO</strong>: 在部分 RELRO 的基础上，在 程序装入时，直接解析完所有符号并填入对应的值，此时所有的 GOT 表项都已初始化，且不装入 <code>link_map</code> 与<code>_dl_runtime_resolve</code> 的地址 (二者都是程 序动态装载的重要结构和函数)。</li>
+</ul>
+<p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对 GOT（Global Offset Table）攻击。RELRO 为” Partial RELRO”, 说明我们对 GOT 表具有写权限。</p>
+<ul>
+<li>当RELRO保护为NO RELRO的时候，init.array、fini.array、got.plt均可读可写；</li>
+<li>为PARTIAL RELRO的时候，ini.array、fini.array可读不可写，got.plt可读可写；</li>
+<li>为FULL RELRO时，init.array、fini.array、got.plt均可读不可写。</li>
+<li>程序在加载的时候，会依次调用init.array数组中的每一个函数指针，在结束的时候，依次调用fini.array中的每一个函数指针当程序出现格式化字符串漏洞，但是需要写两次才能完成攻击，这个时候可以考虑改写fini.array中的函数指针为main函数地址，可以再执行一次main函数。一般来说，这个数组的长度为1，也就是说只能写一个地址。</li>
+</ul>
+<h5 id="trick：-4">trick：</h5>
+<p><strong>GOT Hijacking：</strong></p>
+<p>NO RELRO与PARTIAL RELRO时采用Lazy Binding（延迟绑定）机制时：</p>
+<p>因为不一定每个库函数都会被执行到，所以采用lazy binding的机制，当第一次执行到库函数的某个功能时才会去寻找真正的地址并进行绑定</p>
+<p>Global Offset Table：（GOT）------got大概放在.data段-----plt大概放在.code段的地方</p>
+<p>方法：利用程序中某个漏洞，做到例如任意地址写，我们就可以把那个got中的那个地址写成我们要去的地址</p>
+<p>在call 原本那个函数时，就会调我们想去的地址。</p>
+<h4 id="ALSR">ALSR</h4>
+<p>ASLR (Address Space Layout Randomization), 地址空间配置随机加载，简称地址随机化</p>
+<p>heap段，libc段，stack段等开启ALSR之后地址都是不固定的</p>
+<p>值得<strong>注意的是ALSR是系统级的，而PIE是程序级的，一般是系统默认开启ASLR的</strong></p>
+<h5 id="trick：-5">trick：</h5>
+<ul>
+<li><strong>泄露程序地址来绕过ALSR</strong>: 目前广泛应用在操作系统的地址随机化多为粗粒度的实现方式，同一模块中的所有代码与数据的相对偏移固定。只需要通过信息泄露漏洞将某个模块中的任一代码指针或者数据指针泄露，即可通过计算得到此模块中任意代码或数据的地址</li>
+</ul>
+<h4 id="FORTIFY">FORTIFY</h4>
+<p>这是一个由GCC实现的源码级别的保护机制，其功能是在编译的时候检查源码以避免潜在的缓冲区溢出等错误。简单地说，加了这个保护之后（编译时加上参数-D_FORTIFY_SOURCE=2）一些敏感函数如read, fgets,memcpy, printf等等可能导致漏洞出现的函数都会被替换成__read_chk,__fgets_chk, __memcpy_chk, __printf_chk等。这些带了chk的函数会检查读取/复制的字节长度是否超过缓冲区长度，通过检查诸如%n之类的字符串位置是否位于可能被用户修改的可写地址，避免了格式化字符串跳过某些参数（如直接%7$x）等方式来避免漏洞出现。开启了FORTIFY保护的程序会被checksec检出，此外，在反汇编时直接查看got表也会发现chk函数的存在</p>
+<h3 id="Types-of-vulnerabilities">Types of vulnerabilities</h3>
+<h4 id="Stack-Overflow">Stack Overflow</h4>
+<p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。</p>
+<h4 id="Heap-Overflow">Heap Overflow</h4>
+<p>堆溢出是指程序向某个堆块中写入的字节数超过了堆块本身可使用的字节数，因而导致了数据溢出，并覆盖到物理相邻的高地址的下一个堆块。</p>
+<p>我们在熟悉堆机制的情况下，运用你高超的堆风水技巧，伪造堆结构体，伪造I/O File结构体等，达成任意地址读写，或者更严格点，在特定位置写入特定值，就可以控制程序getshell等</p>
+<h4 id="Use-After-Free">Use After Free</h4>
+<p>字面意思，即当一个内存块被释放之后再次被使用</p>
+<h5 id="发生UAF的情况：">发生UAF的情况：</h5>
+<ul>
+<li>内存块被释放后，其对应的指针没有设置为 NULL</li>
+</ul>
+<h5 id="double-free">double free</h5>
+<ul>
+<li>在glibc2.27之前，主要是fastbin double free：<br>
+fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，因此可以通过free(C1), free(C2), free(C1)的手法绕过<br>
+并在在fastbin取出时，会检查size字段是不是属于这个fastbin，因此往往需要伪造一个size</li>
+<li>glibc2.27~glibc2.28，主要是tcache double free<br>
+相较于fastbin double free，tcache完全没有任何检查，只需要free(C1), free(C1)就可以构造一个环出来</li>
+<li>glibc2.29～glibc2.3X，tcache加入了检查机制,编辑free后的堆绕过的doublefree检测</li>
+</ul>
+<h6 id="检测：">检测：</h6>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">size_t</span> tc_idx = csize2tidx(size);<br><span class="hljs-comment">//只要tcache不为空，并且这个chunk属于tcache管辖范围，那么这个chunk就有可能已经在tcache中了，所以需要double free检查</span><br><span class="hljs-keyword">if</span> (tcache != <span class="hljs-literal">NULL</span> &amp;&amp; tc_idx &lt; mp_.tcache_bins)<br>&#123;<br>  <span class="hljs-comment">/* Check to see if it&#x27;s already in the tcache.  */</span><br>  tcache_entry *e = (tcache_entry *)chunk2mem(p);<br> <br>  <span class="hljs-comment">/*</span><br><span class="hljs-comment">    如果是double free，那么put时key字段被设置了tcache，就会进入循环被检查出来</span><br><span class="hljs-comment">    如果不是，那么key字段就是用户数据区域，可以视为随机的，只有1/(2^size_t)的可能行进入循环，然后循环发现并不是double free</span><br><span class="hljs-comment">  */</span><br>  <span class="hljs-keyword">if</span> (__glibc_unlikely(e-&gt;key == tcache))<span class="hljs-comment">//剪枝</span><br>  &#123;<br>    tcache_entry *tmp;<br>    LIBC_PROBE(memory_tcache_double_free, <span class="hljs-number">2</span>, e, tc_idx);<br>    <span class="hljs-keyword">for</span> (tmp = tcache-&gt;entries[tc_idx]; tmp; tmp = tmp-&gt;next)<br>      <span class="hljs-keyword">if</span> (tmp == e)<br>        malloc_printerr(<span class="hljs-string">&quot;free(): double free detected in tcache 2&quot;</span>);<br>  &#125;<br> <br>  <span class="hljs-keyword">if</span> (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  <span class="hljs-comment">//通过检查，放入tcahce中</span><br>  &#123;<br>    tcache_put(p, tc_idx);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>两种方法绕过</p>
+<ol>
+<li>想办法修改key字段，能编辑free后的堆就可以（好像🥺）</li>
+<li>使用fastbin double free</li>
+</ol>
+<h4 id="Format-String">Format String</h4>
+<p>格式化字符串漏洞的成因在于像printf/sprintf/snprintf等格式化打印函数都是接受可变参数的，而一旦程序编写不规范，比如正确的写法是：<code>printf(&quot;%s&quot;, pad)</code>，偷懒写成了：<code>printf(pad)</code>，此时就存在格式化字符串漏洞。</p>
+<p><strong>格式化字符串漏洞最终可以做到任意地址读/写</strong></p>
+<p>我们一般会分两大步实现漏洞利用：</p>
+<ul>
+<li>第一步构造一个payload来寻找输入字符串到栈顶指针的偏移；</li>
+<li>第二步就是攻击了，利用找到的偏移，在偏移处填入目的地址可以实现目的地址的内容泄露以及内容改写。</li>
+</ul>
+<p><strong>常用基本的格式化字符串参数介绍：</strong></p>
+<ul>
+<li>
+<p>%c：输出字符，配上%n 可用于向指定地址写数据。</p>
+</li>
+<li>
+<p>%d：输出十进制整数，配上%n 可用于向指定地址写数据。</p>
+</li>
+<li>
+<p>%x：输出 16 进制数据，如%i$x 表示要泄漏偏移 i 处 4 字节长的 16 进制数 据，</p>
+</li>
+<li>
+<p>%i$lx 表示要泄漏偏移 i 处 8 字节长的 16 进制数据，32bit 和 64bit 环境下一 样。</p>
+</li>
+<li>
+<p>%p：输出 16 进制数据，与%x 基本一样，只是附加了前缀 0x，在 32bit 下输 出 4 字节，在 64bit 下输出 8 字节，可通过输出字节的长度来判断目标环境是 32bit 还是 64bit。</p>
+</li>
+<li>
+<p>%s：输出的内容是字符串，即将偏移处指针指向的字符串输出，如%i$s 表示 输出偏移 i 处地址所指向的字符串，在 32bit 和 64bit 环境下一样，可用于读取 GOT 表等信息。</p>
+</li>
+<li>
+<p>%n：将%n 之前 printf 已经打印的字符个数赋值给偏移处指针所指向的地址 位置，如%100×10$n 表示将 0x64 写入偏移 10 处保存的指针所指向的地址（4 字节），而%$hn 表示写入的地址空间为 2 字节，%$hhn 表示写入的地址空间为 1 字节，%$lln 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时， 直接写 4 字节会导致程序崩溃或等候时间过长，可以通过%$hn 或%$hhn 来适时 调整。</p>
+</li>
+<li>
+<p>%n 是通过格式化字符串漏洞改变程序流程的关键方式，而其他格式化字符 串参数可用于读取信息或配合%n 写数据。</p>
+</li>
+</ul>
+<p>32位/64位下略有差异</p>
+<p>pwntools里fmtstr模块能很方便的使用</p>
+<blockquote>
+<p>fmtstr_payload是pwntools里面的一个工具，用来简化对格式化字符串漏洞的构造工作。</p>
+<p>fmtstr_payload(offset, writes, numbwritten=0, write_size=‘byte’)</p>
+<p>第一个参数表示格式化字符串的偏移；</p>
+<p>第二个参数表示需要利用%n写入的数据，采用字典形式，我们要将printf的GOT数据改为system函数地址，就写成{printfGOT: systemAddress}；本题是将0804a048处改为0x2223322</p>
+<p>第三个参数表示已经输出的字符个数，这里没有，为0，采用默认值即可；</p>
+<p>第四个参数表示写入方式，是按字节（byte）、按双字节（short）还是按四字节（int），对应着hhn、hn和n，默认值是byte，即按hhn写。 fmtstr_payload函数返回的就是payload</p>
+<p>实际上我们常用的形式是fmtstr_payload(offset,{address1:value1})</p>
+</blockquote>
+<p>自己手写起来还是挺麻烦的，可能需要把要写的值拆成两部分，分两次写，还要防止截断（那些输入函数一般都有/x00截断）</p>
+<h4 id="Integer-Overflow">Integer Overflow</h4>
+<h4 id="Type-Confusion">Type Confusion</h4>
+<p>类型混淆，好像是C++才有的漏洞类型，我不懂</p>
+<h4 id="Race-Condition">Race Condition</h4>
+<h4 id="OOB">OOB</h4>
+<p>(Out-of-Bounds)数组越界</p>
+<h3 id="Stack-Exploitation">Stack Exploitation</h3>
+<h4 id="ROP">ROP</h4>
+<p>即返回导向编程（Return Qriented Proramming）</p>
+<p>通过不断去执行包含ret的程序片段来达到想要的操作</p>
+<p>这些包含ret的程式片段又被称作gadget</p>
+<p>例:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs assembly">4004fa:48 83 c4 08       add    rsp,0x8<br>4004fe:5d                ret<br></code></pre></td></tr></table></figure>
+<h4 id="SROP">SROP</h4>
+<p>SROP的全称是Sigreturn Oriented Programming。在这里<code>sigreturn</code>是一个系统调用，它在unix系统发生signal的时候会被间接地调用。</p>
+<p>pwntools有SigreturnFrame()可以快速编写payload</p>
+<p>例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">frame = SigreturnFrame()<br>frame.rax=constants.SYS_execve<br>frame.rdi=binsh_addr<br>frame.rsi=<span class="hljs-number">0</span><br>frame.rdx=<span class="hljs-number">0</span><br>frame.rip=system_call<br></code></pre></td></tr></table></figure>
+<p>当内核向某个进程发送一个signal，该进程会被暂时挂起，进入内核态，</p>
+<p>然后内核为该进程保存相应的上下文，跳转到之前注册好的signal handler中处理相应signal。内核会帮用户进程将其上下文保存在该进程的栈上，然后在栈顶填上一个地址<code>rt_sigreturn</code>，这个地址指向一段代码，在这段代码中会调用<code>sigreturn</code>系统调用。因此，当signal handler执行完之后，栈指针（stack pointer）就指向<code>rt_sigreturn</code>，所以，signal handler函数的最后一条<code>ret</code>指令会使得执行流跳转到这段sigreturn代码，被动地进行<code>sigreturn</code>系统调用。</p>
+<p>当signal handler返回之后内核为该进程恢复之前保存的上下文，最后恢复进程的执行</p>
+<p>第一、这个<code>Signal Frame</code>是被保存在用户进程的地址空间中的，是用户进程可读写的；</p>
+<p>第二、内核并没有将保存的过程和恢复的过程进行一个比较，也就是说，在<code>sigreturn</code>这个系统调用的处理函数中，内核并没有判断当前的这个<code>Signal Frame</code>就是之前内核为用户进程保存的那个<code>Signal Frame</code>。</p>
+<p><strong>例</strong>：假设一个攻击者可以控制用户进程的栈，那么它就可以伪造一个<code>Signal Frame</code></p>
+<p>在这个伪造的<code>Signal Frame</code>中，将<code>rax</code>设置成59（即<code>execve</code>系统调用号），将<code>rdi</code>设置成字符串<code>/bin/sh</code>的地址（该字符串可以是攻击者写在栈上的），将<code>rip</code>设置成系统调用指令<code>syscall</code>的内存地址，最后，将<code>rt_sigreturn</code>手动设置成<code>sigreturn</code>系统调用的内存地址。那么，当这个伪造的<code>sigreturn</code>系统调用返回之后，相应的寄存器就被设置成了攻击者可以控制的值，在这个例子中，一旦<code>sigreturn</code>返回，就会去执行<code>execve</code>系统调用，打开一个shell。</p>
+<p><strong>总体来说：</strong></p>
+<p>就是在栈上伪造fake_SigreturnFrame，我们利用sigreturn的机制，在返回时带参数的执行某个系统调用</p>
+<h4 id="Stack-migration">Stack migration</h4>
+<p>溢出长度不够时，就要用到栈迁移了，将ebp迁移到bss段或data段，构造gadget然后在这里执行</p>
+<blockquote>
+<p>leave相当于汇编 mov rsp,rbp;pop rbp;<br>
+ret相当于汇编pop eip;</p>
+</blockquote>
+<h4 id="ret2shellcode">ret2shellcode</h4>
+<h4 id="ret2libc">ret2libc</h4>
+<h4 id="ret2csu">ret2csu</h4>
+<h4 id="ret2dl-resolve">ret2dl_resolve</h4>
+<ul>
+<li>用于应对只能溢出0x10字节的情况</li>
+<li>保护不能开启FULL RELRO</li>
+<li>理解较难，利用相对模板化</li>
+<li>pwntools有Ret2dlresolvePayload模块</li>
+</ul>
+<h3 id="Heap-Exploitation">Heap Exploitation</h3>
+<p>下面的堆利用手法都是基于ptmalloc2</p>
+<p>一般给漏洞像，堆溢出，off-by-one，off-by-null，或者uaf，看你怎么利用了</p>
+<h4 id="realloc-malloc-calloc区别">realloc/malloc/calloc区别</h4>
+<ul>
+<li>
+<p>malloc</p>
+<blockquote>
+<p>void* malloc (size_t size);</p>
+</blockquote>
+<p>根据size来申请内存</p>
+</li>
+<li>
+<p>realloc</p>
+<blockquote>
+<p>void* realloc (void* realloc_ptr, size_t size);</p>
+</blockquote>
+<p>可以对内存的大小做灵活的调整，具体参数设置会有如下效果：</p>
+<blockquote>
+<p>size == 0 ，这个时候等同于free()<br>
+realloc_ptr == 0 &amp;&amp; size &gt; 0 ， 这个时候等同于malloc()<br>
+malloc_usable_size(realloc_ptr) &gt;= size， 这个时候等同于edit<br>
+malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更大的内存，将原来的内容复制过去，再将原来的chunk给free掉</p>
+</blockquote>
+</li>
+<li>
+<p>calloc</p>
+<blockquote>
+<p>void* calloc (size_t num, size_t size);</p>
+</blockquote>
+<p>calloc函数有将申请到的空间初始化为0的功能，而malloc函数没有这个功能。</p>
+<p>使用calloc申请内存时不会分配 tcache chunk 中的 chunk 。</p>
+</li>
+</ul>
+<h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
+<p>熟知堆结构的前提下，运用堆风水技巧伪造堆块</p>
+<h4 id="Unlink">Unlink</h4>
+<h4 id="Fastbin-Attack">Fastbin Attack</h4>
+<h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4>
+<h4 id="Large-Bin-Attack">Large Bin Attack</h4>
+<p>高版本可以说这个是大放异彩</p>
+<h4 id="Tcache-attack">Tcache attack</h4>
+<h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
+<h4 id="House">House</h4>
+<h5 id="House-Of-Force">House Of Force</h5>
+<h5 id="House-of-Orange">House of Orange</h5>
+<h5 id="House-of-Roman">House of Roman</h5>
+<p>fastbin attack 和 Unsortbin attack 结合的一个小 trick。</p>
+<h5 id="House-of-Pig">House of Pig</h5>
+<h5 id="House-of-banana">House of banana</h5>
+<h5 id="House-of-Corrosion">House of Corrosion</h5>
+<h5 id="House-of-emma">House of emma</h5>
+<h5 id="House-of-wiki">House of wiki</h5>
+<h5 id="House-of-cat">House of cat</h5>
+<h5 id="House-of-apple">House of apple</h5>
+<h3 id="shellcode">shellcode</h3>
+<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs moonscript"># <span class="hljs-number">32</span>位 短字节shellcode <span class="hljs-comment">--&gt; 21字节</span><br><br>\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80<br><br># <span class="hljs-number">32</span>位 纯ascii字符shellcode<br><br>PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJISZTK1HMIQBSVCX6MU3K9M7CXVOSC3XS0BHVOBBE9RNLIJC62ZH5X5PS0C0FOE22I2NFOSCRHEP0WQCK9KQ8MK0AA<br><br># <span class="hljs-number">32</span>位 scanf可读取的shellcode<br><br>\xeb\x1b\x5e\x89\xf3\x89\xf7\x83\xc7\x07\x29\xc0\xaa\x89\xf9\x89\xf0\xab\x89\xfa\x29\xc0\xab\xb0\x08\x04\x03\xcd\x80\xe8\xe0\xff\xff\xff/bin/sh<br><br># <span class="hljs-number">64</span>位 scanf可读取的shellcode <span class="hljs-number">22</span>字节<br><br>\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\xb0\x3b\x99\x0f\x05<br><br># <span class="hljs-number">64</span>位 较短的shellcode  <span class="hljs-number">23</span>字节<br><br>\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05<br><br># <span class="hljs-number">64</span>位 纯ascii字符shellcode<br><br>Ph0666TY1131Xh333311k13XjiV11Hc1ZXYf1TqIHf9kDqW02DqX0D1Hu3M2G0Z2o4H0u0P160Z0g7O0Z0C100y5O3G020B2n060N4q0n2t0B0001010H3S2y0Y0O0n0z01340d2F4y8P115l1n0J0h0a070t<br><br>#<span class="hljs-number">32</span>位arm架构shellcode <span class="hljs-number">22</span>字节<br>shellcode=<span class="hljs-string">&quot;\x01\x30\x8f\xe2\x13\xff\x2f\xe1\x78\x46\x0e\x30\x01\x90\x49\x1a\x92\x1a\x08\x27\xc2\x51\x03\x37\x01\xdf\x2f\x62\x69\x6e\x2f\x2f\x73\x68&quot;</span><br></code></pre></td></tr></table></figure>
+<h3 id="ORW">ORW</h3>
 <h3 id="Tools">Tools</h3>
 <h4 id="IDA-Pro">IDA Pro</h4>
 <p>ida在pwn中用的不深，会一些基本的，然后会IDA_Patch即可</p>
 <p>F5反汇编</p>
-<p>去了符号表的题，加签名文件，可以显示部分函数名</p>
+<p>alt+T</p>
+<p>shift+f12查看程序里的字符串</p>
+<p>n：更改变量的名称</p>
+<p>g：直接跳转到某个地址</p>
+<p>/ ：在反编译后伪代码的界面中写下注释</p>
+<p>strip去符号的题，加签名文件，可以显示部分函数名</p>
 <h4 id="pwndbg-peda-gef">pwndbg/peda/gef</h4>
 <p>三者我认为pwndbg最好用，有一些好用的指令，也不太卡</p>
 <ul>
@@ -402,7 +638,7 @@
 </li>
 </ul>
 <h4 id="pwntools">pwntools</h4>
-<p>必备的库，可以大大加快用python编写exp的速度</p>
+<p>必备的库，会用它的很多有用的模块可以大大加快编写exp的速度</p>
 <h4 id="seccomp-tools">seccomp-tools</h4>
 <p>Secommp (SECure COMPuting) 是 Linux 内核 2.6.12 版本引入的安全模块，主要是用来限制某一进程可用的系统调用 (system call)。</p>
 <p>我们可以用这个工具来可以分析程序的seccomp状态，看禁用了哪些系统调用</p>
@@ -411,212 +647,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">patchelf --replace-needed libc.so.6 你要换的libc的硬路径 ./pwn<br>patchelf --set-interpreter ld的硬路径 ./pwn<br></code></pre></td></tr></table></figure>
 <h4 id="one-gadget">one_gadget</h4>
 <p>可以设置参数查找等级，找到更多可用的gadget</p>
-<p>有时找出来的gadget用不了，要用realloc</p>
-<h3 id="Defense">Defense</h3>
-<h4 id="Canary">Canary</h4>
-<p>canary是一种用来防护栈溢出的保护机制。原理是在一个函数的入口处，先从fs/gs寄存器中取出一个4字节(eax)或者8字节(rax)的值存到栈上，当函数结束时会检查这个栈上的值是否和存进去的值一致</p>
-<p>若一致则正常退出，如果是栈溢出或者其他原因导致canary的值发生变化，那么程序将执行___stack_chk_fail函数，继而终止程序</p>
-<h5 id="trick：">trick：</h5>
-<ul>
-<li>因为canary末尾是/x00，本身可以被截断，可以栈溢出修改掉末尾的/x00，配合输出函数，泄露canary</li>
-<li>某些用fork函数的题，父子进程的canary是一样的，逐位爆破canary</li>
-<li>Stack Smashing Protect Leak，就是用__stack_chk_fail()函数里的某个功能，能任意地址读，我记得早已经修了这个</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">__libc_message (<span class="hljs-number">2</span>, <span class="hljs-string">&quot;*** %s ***: %s terminatedn&quot;</span>,<br>                   msg, __libc_argv[<span class="hljs-number">0</span>] ?: <span class="hljs-string">&quot;&lt;unknown&gt;&quot;</span>);<br></code></pre></td></tr></table></figure>
-<ul>
-<li>got表劫持__stack_chk_fail</li>
-</ul>
-<h4 id="PIE">PIE</h4>
-<p>PIE全称是position-independent executable，中文解释为地址无关可执行文件，该技术是一个针对代码段（.text）、数据段（.data）、未初始化全局变量段（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都变换加载地址</p>
-<h5 id="trick：-2">trick：</h5>
-<ul>
-<li>partial write：partial write(部分写入)就是一种利用了PIE技术缺陷的bypass技术。由于内存的页载入机制，PIE的随机化只能影响到单个内存页。通常来说，一个内存页大小为0x1000，这就意味着不管地址怎么变，某条指令的后12位，3个十六进制数的地址是始终不变的。因此通过覆盖EIP的后8或16位 (按字节写入，每字节8位)就可以快速爆破或者直接劫持EIP。</li>
-</ul>
-<h4 id="NX">NX</h4>
-<p>NX即No-eXecute（不可执行）的意思，NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入shellcode时，程序会尝试在数据页面上执行指令，此时CPU就会抛出异常，而不是去执行恶意指令。</p>
-<p>即使某些内存区域不可执行，并使可执行区域不可写</p>
-<p>例：使数据，堆栈和堆段不可执行，而代码段不可写</p>
-<h5 id="trick：-3">trick：</h5>
-<ul>
-<li>一般就是在栈这块地址没法直接执行shellcode，用ROP执行特定的代码段的代码，以达到控制执行流，getshell等目的</li>
-</ul>
-<h4 id="RELRO">RELRO</h4>
-<p>RELRO(RELocation Read-Only, 重定位只读), 此技术主要针对 GOT 改写的攻击方式。分为部分 <strong>RELRO(Partial RELRO)</strong> 与完全 <strong>RELRO(Full RELRO)</strong> 两种</p>
-<ul>
-<li><strong>部分 RELRO</strong>: 在程序装入后，将其中一段 (如<code>.dynamic</code>) 标记为只读，防止程序的一些重定位信息被修改</li>
-<li><strong>完全 RELRO</strong>: 在部分 RELRO 的基础上，在 程序装入时，直接解析完所有符号并填入对应的值，此时所有的 GOT 表项都已初始化，且不装入 <code>link_map</code> 与<code>_dl_runtime_resolve</code> 的地址 (二者都是程 序动态装载的重要结构和函数)。</li>
-</ul>
-<p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对 GOT（Global Offset Table）攻击。RELRO 为” Partial RELRO”, 说明我们对 GOT 表具有写权限。</p>
-<ul>
-<li>当RELRO保护为NO RELRO的时候，init.array、fini.array、got.plt均可读可写；</li>
-<li>为PARTIAL RELRO的时候，ini.array、fini.array可读不可写，got.plt可读可写；</li>
-<li>为FULL RELRO时，init.array、fini.array、got.plt均可读不可写。</li>
-<li>程序在加载的时候，会依次调用init.array数组中的每一个函数指针，在结束的时候，依次调用fini.array中的每一个函数指针当程序出现格式化字符串漏洞，但是需要写两次才能完成攻击，这个时候可以考虑改写fini.array中的函数指针为main函数地址，可以再执行一次main函数。一般来说，这个数组的长度为1，也就是说只能写一个地址。</li>
-</ul>
-<h5 id="trick：-4">trick：</h5>
-<p><strong>GOT Hijacking：</strong></p>
-<p>NO RELRO与PARTIAL RELRO时采用Lazy Binding（延迟绑定）机制时：</p>
-<p>因为不一定每个库函数都会被执行到，所以采用lazy binding的机制，当第一次执行到库函数的某个功能时才会去寻找真正的地址并进行绑定</p>
-<p>Global Offset Table：（GOT）------got大概放在.data段-----plt大概放在.code段的地方</p>
-<p>方法：利用程序中某个漏洞，做到例如任意地址写，我们就可以把那个got中的那个地址写成我们要去的地址</p>
-<p>在call 原本那个函数时，就会调我们想去的地址。</p>
-<h4 id="ALSR">ALSR</h4>
-<p>ASLR (Address Space Layout Randomization), 地址空间配置随机加载，简称地址随机化</p>
-<p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/ASLR.png" srcset="/img/loading.gif" lazyload alt="ASLR"></p>
-<p>像图中heap段，libc段，stack段开启ALSR之后地址都是不固定的</p>
-<p>值得<strong>注意的是ALSR是系统级的，而PIE是程序级的，一般是系统默认开启ASLR的</strong></p>
-<h5 id="trick：-5">trick：</h5>
-<ul>
-<li><strong>泄露程序地址来绕过ALSR</strong>: 目前广泛应用在操作系统的地址随机化多为粗粒度的实现方式，同一模块中的所有代码与数据的相对偏移固定。只需要通过信息泄露漏洞将某个模块中的任一代码指针或者数据指针泄露，即可通过计算得到此模块中任意代码或数据的地址</li>
-</ul>
-<h4 id="FORTIFY">FORTIFY</h4>
-<p>fority 用于检查是否存在缓冲区溢出的错误，是非常轻微的检查。适用情形是程序采用大量的字符串或者内存操作函数，如 memcpy, memset, stpcpy, strcpy, strncpy, strcat, strncat, sprintf, snprintf, vsprintf, vsnprintf, gets 以及宽字符的变体。</p>
-<h3 id="Types-of-vulnerabilities">Types of vulnerabilities</h3>
-<h4 id="Stack-Overflow">Stack Overflow</h4>
-<p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。</p>
-<h4 id="Heap-Overflow">Heap Overflow</h4>
-<p>堆溢出是指程序向某个堆块中写入的字节数超过了堆块本身可使用的字节数，因而导致了数据溢出，并覆盖到物理相邻的高地址的下一个堆块。</p>
-<p>我们在熟悉堆机制的情况下，运用你高超的堆风水技巧，伪造堆结构体，伪造I/O File结构体等，达成任意地址读写，或者更严格点，在特定位置写入特定值，就可以控制程序getshell等</p>
-<h4 id="Use-After-Free">Use After Free</h4>
-<p>字面意思，即当一个内存块被释放之后再次被使用</p>
-<h5 id="发生UAF的情况：">发生UAF的情况：</h5>
-<ul>
-<li>内存块被释放后，其对应的指针没有设置为 NULL</li>
-</ul>
-<h5 id="double-free">double free</h5>
-<ul>
-<li>在glibc2.27之前，主要是fastbin double free：<br>
-fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，因此可以通过free(C1), free(C2), free(C1)的手法绕过<br>
-并在在fastbin取出时，会检查size字段是不是属于这个fastbin，因此往往需要伪造一个size</li>
-<li>glibc2.27~glibc2.28，主要是tcache double free<br>
-相较于fastbin double free，tcache完全没有任何检查，只需要free(C1), free(C1)就可以构造一个环出来</li>
-<li>glibc2.29～glibc2.3X，tcache加入了检查机制,编辑free后的堆绕过的doublefree检测</li>
-</ul>
-<h6 id="检测：">检测：</h6>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">size_t</span> tc_idx = csize2tidx(size);<br><span class="hljs-comment">//只要tcache不为空，并且这个chunk属于tcache管辖范围，那么这个chunk就有可能已经在tcache中了，所以需要double free检查</span><br><span class="hljs-keyword">if</span> (tcache != <span class="hljs-literal">NULL</span> &amp;&amp; tc_idx &lt; mp_.tcache_bins)<br>&#123;<br>  <span class="hljs-comment">/* Check to see if it&#x27;s already in the tcache.  */</span><br>  tcache_entry *e = (tcache_entry *)chunk2mem(p);<br> <br>  <span class="hljs-comment">/*</span><br><span class="hljs-comment">    如果是double free，那么put时key字段被设置了tcache，就会进入循环被检查出来</span><br><span class="hljs-comment">    如果不是，那么key字段就是用户数据区域，可以视为随机的，只有1/(2^size_t)的可能行进入循环，然后循环发现并不是double free</span><br><span class="hljs-comment">  */</span><br>  <span class="hljs-keyword">if</span> (__glibc_unlikely(e-&gt;key == tcache))<span class="hljs-comment">//剪枝</span><br>  &#123;<br>    tcache_entry *tmp;<br>    LIBC_PROBE(memory_tcache_double_free, <span class="hljs-number">2</span>, e, tc_idx);<br>    <span class="hljs-keyword">for</span> (tmp = tcache-&gt;entries[tc_idx]; tmp; tmp = tmp-&gt;next)<br>      <span class="hljs-keyword">if</span> (tmp == e)<br>        malloc_printerr(<span class="hljs-string">&quot;free(): double free detected in tcache 2&quot;</span>);<br>  &#125;<br> <br>  <span class="hljs-keyword">if</span> (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  <span class="hljs-comment">//通过检查，放入tcahce中</span><br>  &#123;<br>    tcache_put(p, tc_idx);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>两种方法绕过</p>
-<ol>
-<li>想办法修改key字段，能编辑free后的堆就可以（好像🥺）</li>
-<li>使用fastbin double free</li>
-</ol>
-<h4 id="Format-String">Format String</h4>
-<p>格式化字符串漏洞的成因在于像printf/sprintf/snprintf等格式化打印函数都是接受可变参数的，而一旦程序编写不规范，比如正确的写法是：<code>printf(&quot;%s&quot;, pad)</code>，偷懒写成了：<code>printf(pad)</code>，此时就存在格式化字符串漏洞。</p>
-<p><strong>格式化字符串漏洞最终可以做到任意地址读/写</strong></p>
-<p>我们一般会分两大步实现漏洞利用：</p>
-<ul>
-<li>第一步构造一个payload来寻找输入字符串到栈顶指针的偏移；</li>
-<li>第二步就是攻击了，利用找到的偏移，在偏移处填入目的地址可以实现目的地址的内容泄露以及内容改写。</li>
-</ul>
-<p><strong>常用基本的格式化字符串参数介绍：</strong></p>
-<ul>
-<li>
-<p>%c：输出字符，配上%n 可用于向指定地址写数据。</p>
-</li>
-<li>
-<p>%d：输出十进制整数，配上%n 可用于向指定地址写数据。</p>
-</li>
-<li>
-<p>%x：输出 16 进制数据，如%i$x 表示要泄漏偏移 i 处 4 字节长的 16 进制数 据，</p>
-</li>
-<li>
-<p>%i$lx 表示要泄漏偏移 i 处 8 字节长的 16 进制数据，32bit 和 64bit 环境下一 样。</p>
-</li>
-<li>
-<p>%p：输出 16 进制数据，与%x 基本一样，只是附加了前缀 0x，在 32bit 下输 出 4 字节，在 64bit 下输出 8 字节，可通过输出字节的长度来判断目标环境是 32bit 还是 64bit。</p>
-</li>
-<li>
-<p>%s：输出的内容是字符串，即将偏移处指针指向的字符串输出，如%i$s 表示 输出偏移 i 处地址所指向的字符串，在 32bit 和 64bit 环境下一样，可用于读取 GOT 表等信息。</p>
-</li>
-<li>
-<p>%n：将%n 之前 printf 已经打印的字符个数赋值给偏移处指针所指向的地址 位置，如%100×10$n 表示将 0x64 写入偏移 10 处保存的指针所指向的地址（4 字节），而%$hn 表示写入的地址空间为 2 字节，%$hhn 表示写入的地址空间为 1 字节，%$lln 表示写入的地址空间为 8 字节，在 32bit 和 64bit 环境下一样。有时， 直接写 4 字节会导致程序崩溃或等候时间过长，可以通过%$hn 或%$hhn 来适时 调整。</p>
-</li>
-<li>
-<p>%n 是通过格式化字符串漏洞改变程序流程的关键方式，而其他格式化字符 串参数可用于读取信息或配合%n 写数据。</p>
-</li>
-</ul>
-<p>32位/64位下略有差异</p>
-<p>32位我记得pwntools能很方便的使用</p>
-<blockquote>
-<p>fmtstr_payload是pwntools里面的一个工具，用来简化对格式化字符串漏洞的构造工作。</p>
-<p>fmtstr_payload(offset, writes, numbwritten=0, write_size=‘byte’)</p>
-<p>第一个参数表示格式化字符串的偏移；</p>
-<p>第二个参数表示需要利用%n写入的数据，采用字典形式，我们要将printf的GOT数据改为system函数地址，就写成{printfGOT: systemAddress}；本题是将0804a048处改为0x2223322</p>
-<p>第三个参数表示已经输出的字符个数，这里没有，为0，采用默认值即可；</p>
-<p>第四个参数表示写入方式，是按字节（byte）、按双字节（short）还是按四字节（int），对应着hhn、hn和n，默认值是byte，即按hhn写。 fmtstr_payload函数返回的就是payload</p>
-<p>实际上我们常用的形式是fmtstr_payload(offset,{address1:value1})</p>
-</blockquote>
-<p>64位下要达成这样写起来还是挺麻烦的，要地址拆成两部分，还要防止截断（那些输入函数一般都有/x00截断）</p>
-<h4 id="Integer-Overflow">Integer Overflow</h4>
-<h4 id="Type-Confusion">Type Confusion</h4>
-<p>类型混淆，好像是C++才有的漏洞类型，我不懂</p>
-<h4 id="Race-Condition">Race Condition</h4>
-<h3 id="Stack-Exploitation">Stack Exploitation</h3>
-<h4 id="ROP">ROP</h4>
-<p>即返回导向编程（Return Qriented Proramming）</p>
-<p>通过不断去执行包含ret的程序片段来达到想要的操作</p>
-<p>这些包含ret的程式片段又被称作gadget</p>
-<p>例:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs assembly">4004fa:48 83 c4 08       add    rsp,0x8<br>4004fe:5d                ret<br></code></pre></td></tr></table></figure>
-<h4 id="SROP">SROP</h4>
-<p>SROP的全称是Sigreturn Oriented Programming。在这里<code>sigreturn</code>是一个系统调用，它在unix系统发生signal的时候会被间接地调用。</p>
-<p>pwntools有SigreturnFrame()可以快速编写payload</p>
-<p>例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">frame = SigreturnFrame()<br>frame.rax=constants.SYS_execve<br>frame.rdi=binsh_addr<br>frame.rsi=<span class="hljs-number">0</span><br>frame.rdx=<span class="hljs-number">0</span><br>frame.rip=system_call<br></code></pre></td></tr></table></figure>
-<p>当内核向某个进程发送一个signal，该进程会被暂时挂起，进入内核态，</p>
-<p>然后内核为该进程保存相应的上下文，跳转到之前注册好的signal handler中处理相应signal。内核会帮用户进程将其上下文保存在该进程的栈上，然后在栈顶填上一个地址<code>rt_sigreturn</code>，这个地址指向一段代码，在这段代码中会调用<code>sigreturn</code>系统调用。因此，当signal handler执行完之后，栈指针（stack pointer）就指向<code>rt_sigreturn</code>，所以，signal handler函数的最后一条<code>ret</code>指令会使得执行流跳转到这段sigreturn代码，被动地进行<code>sigreturn</code>系统调用。</p>
-<p>当signal handler返回之后内核为该进程恢复之前保存的上下文，最后恢复进程的执行</p>
-<p>第一、这个<code>Signal Frame</code>是被保存在用户进程的地址空间中的，是用户进程可读写的；</p>
-<p>第二、内核并没有将保存的过程和恢复的过程进行一个比较，也就是说，在<code>sigreturn</code>这个系统调用的处理函数中，内核并没有判断当前的这个<code>Signal Frame</code>就是之前内核为用户进程保存的那个<code>Signal Frame</code>。</p>
-<p><strong>例</strong>：假设一个攻击者可以控制用户进程的栈，那么它就可以伪造一个<code>Signal Frame</code></p>
-<p>在这个伪造的<code>Signal Frame</code>中，将<code>rax</code>设置成59（即<code>execve</code>系统调用号），将<code>rdi</code>设置成字符串<code>/bin/sh</code>的地址（该字符串可以是攻击者写在栈上的），将<code>rip</code>设置成系统调用指令<code>syscall</code>的内存地址，最后，将<code>rt_sigreturn</code>手动设置成<code>sigreturn</code>系统调用的内存地址。那么，当这个伪造的<code>sigreturn</code>系统调用返回之后，相应的寄存器就被设置成了攻击者可以控制的值，在这个例子中，一旦<code>sigreturn</code>返回，就会去执行<code>execve</code>系统调用，打开一个shell。</p>
-<p><strong>总体来说：</strong></p>
-<p>就是在栈上伪造fake_SigreturnFrame，我们利用sigreturn的机制，在返回时带参数的执行某个系统调用</p>
-<h4 id="Stack-migration">Stack migration</h4>
-<p>溢出长度不够时</p>
-<h4 id="ret2shellcode">ret2shellcode</h4>
-<h4 id="ret2libc">ret2libc</h4>
-<h4 id="ret2csu">ret2csu</h4>
-<h4 id="ret2dl-resolve">ret2dl_resolve</h4>
-<h4 id="常用的系统调用">常用的系统调用</h4>
-<h5 id="system">system</h5>
-<p>一般rop出system(“/bin/sh\x00”)</p>
-<p>64位一般用syscall的话，要控制</p>
-<p>rax=59</p>
-<p>rdi=“/bin/sh\x00”字符串的地址</p>
-<h5 id="execve">execve</h5>
-<p>one_gadget找出来的也是这个系统调用</p>
-<h5 id="open-read-write">open/read/write</h5>
-<p>开启沙盒时ban了某些系统调用，无法达成getshell时退而求其次，要你采取orw的方式cat flag</p>
-<p>有时pwn题会给更严格限制仅给你使用这三者中的两个来cat flag</p>
-<h5 id="mprotect">mprotect</h5>
-<p>int mprotect(const void *start, size_t len, int prot)</p>
-<p>可以用于给某段地址提升权限为可读可写可执行（rwx）</p>
-<p>只需要prot参数等于7(111B)</p>
-<p>start必须是一个内存页的起始地址，并且区间长度len必须是页大小的整数倍。</p>
-<p>不然会调用失败</p>
-<h3 id="Heap-Exploitation">Heap Exploitation</h3>
-<p>下面的堆利用手法都是基于ptmalloc2</p>
-<p>一般给漏洞像，堆溢出，off-by-one，off-by-null，或者uaf，看你怎么利用了</p>
-<h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
-<p>熟知堆结构的前提下，运用堆风水技巧伪造堆块</p>
-<h4 id="Unlink">Unlink</h4>
-<h4 id="Fastbin-Attack">Fastbin Attack</h4>
-<h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4>
-<h4 id="Large-Bin-Attack">Large Bin Attack</h4>
-<p>高版本可以说这个是大放异彩</p>
-<h4 id="Tcache-attack">Tcache attack</h4>
-<h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
-<h4 id="House">House</h4>
-<h5 id="House-Of-Force">House Of Force</h5>
-<h5 id="House-of-Orange">House of Orange</h5>
-<h5 id="House-of-Roman">House of Roman</h5>
-<p>fastbin attack 和 Unsortbin attack 结合的一个小 trick。</p>
-<h5 id="House-of-Pig">House of Pig</h5>
-<h5 id="House-of-banana">House of banana</h5>
-<h5 id="House-of-Corrosion">House of Corrosion</h5>
-<h5 id="House-of-emma">House of emma</h5>
-<h5 id="House-of-apple">House of apple</h5>
-<h3 id="IO-FILE-Exploitation">IO_FILE Exploitation</h3>
+<h4 id="glibc-all-in-one">glibc-all-in-one</h4>
 <h2 id="Kernel-Mode">Kernel Mode</h2>
 <h3 id="常用结构体">常用结构体</h3>
 <h4 id="TTY">TTY</h4>
@@ -663,9 +694,34 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 <h3 id="uaf">uaf</h3>
 <h2 id="知识储备">知识储备</h2>
 <h3 id="ELF文件格式">ELF文件格式</h3>
-<p>C</p>
-<p>realloc/malloc/calloc</p>
 <h3 id="函数调用约定">函数调用约定</h3>
+<h3 id="常用的系统调用">常用的系统调用</h3>
+<h4 id="system">system</h4>
+<p>要rop出<code>system(“/bin/sh\x00”)</code></p>
+<p>参数</p>
+<blockquote>
+<p>rdi=“/bin/sh\x00”字符串的地址</p>
+</blockquote>
+<h4 id="execve">execve</h4>
+<blockquote>
+<p>int execve(const char *filename, char *const argv[], char *const envp[]);</p>
+</blockquote>
+<p>要rop出<code>execve('/bin/sh\x00',0,0)</code></p>
+<p>参数:</p>
+<blockquote>
+<p>rdi='/bin/sh\x00’字符串的地址<br>
+rsi=0 or 地址-&gt;0<br>
+rdx=0 or 地址-&gt;0</p>
+</blockquote>
+<h4 id="open-read-write">open/read/write</h4>
+<p>开启沙盒时ban了某些系统调用，无法达成getshell时退而求其次，要你采取orw的方式cat flag</p>
+<p>有时pwn题会给更严格限制仅给你使用这三者中的两个来cat flag</p>
+<h4 id="mprotect">mprotect</h4>
+<p>int mprotect(const void *start, size_t len, int prot)</p>
+<p>可以用于给某段地址提升权限为可读可写可执行（rwx）</p>
+<p>只需要prot参数等于7(111B)</p>
+<p>start必须是一个内存页的起始地址，并且区间长度len必须是页大小的整数倍。</p>
+<p>不然会调用失败</p>
 <h3 id="常见反汇编指令">常见反汇编指令</h3>
 <h3 id="ptmalloc堆数据结构">ptmalloc堆数据结构</h3>
 <h3 id="ptmalloc堆管理机制">ptmalloc堆管理机制</h3>
