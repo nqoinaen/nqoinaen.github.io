@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/0ac2836ca49c58f6a204678f1fdc5abb.png">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-28T11:49:37.698Z">
+<meta property="article:modified_time" content="2024-01-28T12:36:23.027Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
@@ -304,9 +304,9 @@
               <div class="markdown-body">
                 
                 <h2 id="前言">前言</h2>
-<p>更像是大纲，但也很不全，仅举出我所了解过的，做题遇到过的，难免会有错误，欢迎师傅帮我指出</p>
+<p>更像是大纲，但也很不全，仅举出我所了解过的，做题遇到过的，难免会有错误，如果给您造成困扰我很抱歉，欢迎师傅帮我指出</p>
 <h2 id="User-Mode">User Mode</h2>
-<p>一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
+<p>linux平台下glibc pwn 一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
 <p>一般做题步骤：</p>
 <p>1.一般拿到程序先checksec看下保护，然后运行下程序，看看功能，简单做些交互</p>
 <p>2.然后用ida分析那个二进制程序的伪代码，读懂程序，找漏洞</p>
@@ -403,7 +403,7 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">size_t</span> tc_idx = csize2tidx(size);<br><span class="hljs-comment">//只要tcache不为空，并且这个chunk属于tcache管辖范围，那么这个chunk就有可能已经在tcache中了，所以需要double free检查</span><br><span class="hljs-keyword">if</span> (tcache != <span class="hljs-literal">NULL</span> &amp;&amp; tc_idx &lt; mp_.tcache_bins)<br>&#123;<br>  <span class="hljs-comment">/* Check to see if it&#x27;s already in the tcache.  */</span><br>  tcache_entry *e = (tcache_entry *)chunk2mem(p);<br> <br>  <span class="hljs-comment">/*</span><br><span class="hljs-comment">    如果是double free，那么put时key字段被设置了tcache，就会进入循环被检查出来</span><br><span class="hljs-comment">    如果不是，那么key字段就是用户数据区域，可以视为随机的，只有1/(2^size_t)的可能行进入循环，然后循环发现并不是double free</span><br><span class="hljs-comment">  */</span><br>  <span class="hljs-keyword">if</span> (__glibc_unlikely(e-&gt;key == tcache))<span class="hljs-comment">//剪枝</span><br>  &#123;<br>    tcache_entry *tmp;<br>    LIBC_PROBE(memory_tcache_double_free, <span class="hljs-number">2</span>, e, tc_idx);<br>    <span class="hljs-keyword">for</span> (tmp = tcache-&gt;entries[tc_idx]; tmp; tmp = tmp-&gt;next)<br>      <span class="hljs-keyword">if</span> (tmp == e)<br>        malloc_printerr(<span class="hljs-string">&quot;free(): double free detected in tcache 2&quot;</span>);<br>  &#125;<br> <br>  <span class="hljs-keyword">if</span> (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  <span class="hljs-comment">//通过检查，放入tcahce中</span><br>  &#123;<br>    tcache_put(p, tc_idx);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>两种方法绕过</p>
 <ol>
-<li>想办法修改key字段，能编辑free后的堆就，改掉这个key</li>
+<li>想办法修改key字段，能编辑free后的堆改掉key就能绕过</li>
 <li>使用fastbin double free</li>
 </ol>
 <h4 id="Format-String">Format String</h4>
@@ -452,7 +452,7 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 <p>第四个参数表示写入方式，是按字节（byte）、按双字节（short）还是按四字节（int），对应着hhn、hn和n，默认值是byte，即按hhn写。 fmtstr_payload函数返回的就是payload</p>
 <p>实际上我们常用的形式是fmtstr_payload(offset,{address1:value1})</p>
 </blockquote>
-<p>自己手写起来还是挺麻烦的，需要把要写的值拆成两部分，分两次写，还要防止截断（那些输入函数一般都有/x00截断）</p>
+<p>自己手写起来还是挺麻烦的，需要把要写的值拆成两部分，分两次写(先写小的值，后写大的值)，还要防止截断（那些输入函数一般都有/x00截断）</p>
 <h4 id="Integer-Overflow">Integer Overflow</h4>
 <p>一般出现的场景是这样：有个判断条件你通过不了，但是它判断条件有整型溢出，你输个特定的数能通过这个判断</p>
 <h4 id="Type-Confusion">Type Confusion</h4>
@@ -460,7 +460,7 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 <h4 id="Race-Condition">Race Condition</h4>
 <p>很少出</p>
 <h4 id="OOB">OOB</h4>
-<p>(Out-of-Bounds)数组越界，vm pwn出的会多一点（简易虚拟机逃逸）</p>
+<p>(Out-of-Bounds)数组越界，向上越界，向下越界，改got表好像，vm pwn出的会多一点（简易虚拟机逃逸）</p>
 <h3 id="Stack-Exploitation">Stack Exploitation</h3>
 <h4 id="ROP">ROP</h4>
 <p>即返回导向编程（Return Qriented Proramming）</p>
@@ -510,10 +510,10 @@ ret相当于汇编pop eip;</p>
 <p>(不同版本的这个函数有一定的区别，需要对下面的payload略作修改)</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">csu</span>(<span class="hljs-params">rdi,rsi,rdx,function</span>):<br>    csu_front_addr=<span class="hljs-number">0x400740</span><br>    csu_end_addr=<span class="hljs-number">0x40075A</span><br>    payload = <span class="hljs-string">b&#x27;&#x27;</span><br>    payload += p64(csu_end_addr) + p64(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">1</span>) + p64(function) + p64(<br>        rdi) + p64(rsi) + p64(rdx)<br>    payload += p64(csu_front_addr)<br>    payload += <span class="hljs-string">b&#x27;a&#x27;</span> * <span class="hljs-number">0x38</span><br>    <span class="hljs-keyword">return</span> payload<br></code></pre></td></tr></table></figure>
 <h4 id="ret2dl-resolve">ret2dl_resolve</h4>
-<p>粗略的讲一下：一般是栈迁移到bss段伪造fake_linkmap结构体欺骗程序</p>
+<p>简单几句讲不清，大致是栈迁移到bss段伪造fake_linkmap结构体（伪造一整套延迟绑定用到的结构体欺骗程序）</p>
 <ul>
 <li>用于应对只能溢出0x10字节的情况</li>
-<li>保护不能开启FULL RELRO</li>
+<li>保护不能开启FULL RELRO（got表全都确定好地址了自然是不行）</li>
 <li>理解较难，利用相对模板化</li>
 <li>pwntools有Ret2dlresolvePayload模块</li>
 </ul>
@@ -556,7 +556,7 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
 <p>大致来讲就是修改chunk header来造成堆重叠</p>
 <h4 id="Unlink">Unlink</h4>
-<p>解释起来比较复杂，大致来讲unlink的作用就是摘掉second_chunk</p>
+<p>大致来讲unlink的作用就是摘掉second_chunk</p>
 <p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911135522507.png" srcset="/img/loading.gif" lazyload alt="20200911135522507"></p>
 <p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png" srcset="/img/loading.gif" lazyload alt="20200911152738722"></p>
 <p>在执行free()函数时执行了 _int_free()函数，在 _int_free()函数中调用了unlink宏</p>
@@ -576,6 +576,7 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <h4 id="Large-Bin-Attack">Large Bin Attack</h4>
 <h4 id="Tcache-attack">Tcache attack</h4>
 <h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
+<h4 id="数组指针的维护不当直接造成的AAW">数组指针的维护不当直接造成的AAW</h4>
 <h4 id="House">House</h4>
 <p><code>Glibc</code> 的 <code>house of</code> 系列攻击手法基于都是围绕着堆利用和 <code>IO FILE</code> 利用。可以跟着<a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap">how2heap</a>进行学习，这里列举一些我所知道的</p>
 <p><strong>House Of Force</strong></p>
@@ -710,6 +711,16 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <p>可以设置参数查找等级，找到更多可用的gadget</p>
 <p>例：<code>one_gadget ./libc-2.27.so -l 1</code> 设置等级level1</p>
 <h4 id="glibc-all-in-one">glibc-all-in-one</h4>
+<h3 id="其他">其他</h3>
+<ul>
+<li>异构pwn（arm，mips）</li>
+<li>musl pwn</li>
+<li>LLVM PASS pwn</li>
+<li>Browser pwn</li>
+<li>QEMU Escape</li>
+<li>Sandbox Escape</li>
+<li>IOT</li>
+</ul>
 <h2 id="Kernel-Mode">Kernel Mode</h2>
 <h3 id="Defense-2">Defense</h3>
 <h3 id="常用结构体">常用结构体</h3>
@@ -856,7 +867,7 @@ rdx=0 or 地址-&gt;0</p>
     
       <span class="category-chain">
         
-  <a href="/categories/CTF/" class="category-chain-item">CTF</a>
+  <a href="/categories/PWN/" class="category-chain-item">PWN</a>
   
   
 
