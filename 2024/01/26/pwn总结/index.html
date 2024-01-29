@@ -18,7 +18,7 @@
   
     <meta name="description" content="完善中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="pwn总结">
+<meta property="og:title" content="glibc pwn总结">
 <meta property="og:url" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="nq0inaen&#39;s blog">
 <meta property="og:description" content="完善中">
@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/0ac2836ca49c58f6a204678f1fdc5abb.png">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-28T12:36:23.027Z">
+<meta property="article:modified_time" content="2024-01-29T08:25:26.501Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,7 @@
   
   
   
-  <title>pwn总结 - nq0inaen&#39;s blog</title>
+  <title>glibc pwn总结 - nq0inaen&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -213,7 +213,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle">pwn总结</span>
+            <span id="subtitle">glibc pwn总结</span>
           
         </div>
 
@@ -241,7 +241,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          18k 字
+          21k 字
         
       </span>
     
@@ -252,7 +252,7 @@
         
         
         
-          38 分钟
+          45 分钟
         
       </span>
     
@@ -290,12 +290,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">pwn总结</h1>
+            <h1 style="display: none">glibc pwn总结</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月28日 晚上
+                    本文最后更新于：2024年1月29日 下午
                   
                 
               </p>
@@ -303,14 +303,15 @@
             
               <div class="markdown-body">
                 
-                <h2 id="前言">前言</h2>
-<p>更像是大纲，但也很不全，仅举出我所了解过的，做题遇到过的，难免会有错误，如果给您造成困扰我很抱歉，欢迎师傅帮我指出</p>
-<h2 id="User-Mode">User Mode</h2>
+                <h3 id="前言">前言</h3>
+<p>更像是大纲，但也很不全，仅举出我所了解过的，做题遇到过的，难免会有错误，欢迎师傅帮我指出错误</p>
+<blockquote>
 <p>linux平台下glibc pwn 一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
 <p>一般做题步骤：</p>
 <p>1.一般拿到程序先checksec看下保护，然后运行下程序，看看功能，简单做些交互</p>
 <p>2.然后用ida分析那个二进制程序的伪代码，读懂程序，找漏洞</p>
 <p>3.思考利用方法，配合GDB调试，编写出exp</p>
+</blockquote>
 <h3 id="Defense">Defense</h3>
 <h4 id="Canary">Canary</h4>
 <p>canary是一种用来防护栈溢出的保护机制。原理是在一个函数的入口处，先从fs/gs寄存器中取出一个4字节(eax)或者8字节(rax)的值存到栈上，当函数结束时会检查这个栈上的值是否和存进去的值一致</p>
@@ -379,6 +380,11 @@
 <h4 id="Heap-Overflow">Heap Overflow</h4>
 <p>堆溢出是指程序向某个堆块中写入的字节数超过了堆块本身可使用的字节数，因而导致了数据溢出，并覆盖到物理相邻的高地址的下一个堆块。</p>
 <p>我们在熟悉堆机制的情况下，运用你高超的堆风水技巧，伪造堆结构体，伪造I/O File结构体等，达成任意地址读写，或者更严格点，在特定位置写入特定值，就可以控制程序getshell等</p>
+<h5 id="off-by-one-off-by-null">off by one/off by null</h5>
+<p>off by one 通常指的是对于堆块的读写存在一个字节的溢出，利用这一个字节的溢出我们通常可以溢出到一个chunk物理相邻高地址 chunk 的 size 域，篡改其 size 域以便后续的利用（如构造 overlapping 等）</p>
+<p>off by null则是off by one的一种特殊形式，即仅溢出一个<code>'\0'</code>字节，通常出现于读入字符串时设计逻辑失误的情况（例如使用了 strcpy 或者是手动在末尾加 \0 等）</p>
+<p>其实这两个差不多，只能溢出一个字节我们怎么利用呢？</p>
+<p>一般可以溢出到一个chunk物理相邻高地址 chunk 的 size 域（需要malloc的size参数的末尾以十六进制来看要0x8），篡改其 size 域以便后续的利用（例如可以利用造成堆重叠，unlink之类的）</p>
 <h4 id="Use-After-Free">Use After Free</h4>
 <p>字面意思，即当一个内存块被释放之后再次被使用</p>
 <h5 id="发生UAF的情况：">发生UAF的情况：</h5>
@@ -394,7 +400,8 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 相较于fastbin double free，tcache完全没有任何检查，只需要free(C1), free(C1)就可以构造一个环出来</li>
 </ul>
 <blockquote>
-<p>这里可能存疑，我怎么记得我做省赛的题glibc2.27里面tcache double free要修改key才能绕过</p>
+<p><s>这里可能存疑，我怎么记得我做省赛的题glibc2.27里面tcache double free要修改key才能绕过</s></p>
+<p>实际是2.27有的版本没检测，有的版本有tcache doublefree检测</p>
 </blockquote>
 <ul>
 <li>glibc2.29～glibc2.3X，tcache加入了检查机制</li>
@@ -458,9 +465,8 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 <h4 id="Type-Confusion">Type Confusion</h4>
 <p>类型混淆，好像是C++才有的漏洞类型，我不懂</p>
 <h4 id="Race-Condition">Race Condition</h4>
-<p>很少出</p>
 <h4 id="OOB">OOB</h4>
-<p>(Out-of-Bounds)数组越界，向上越界，向下越界，改got表好像，vm pwn出的会多一点（简易虚拟机逃逸）</p>
+<p>(Out-of-Bounds)数组越界，vm pwn出的会多一点（简易虚拟机逃逸）</p>
 <h3 id="Stack-Exploitation">Stack Exploitation</h3>
 <h4 id="ROP">ROP</h4>
 <p>即返回导向编程（Return Qriented Proramming）</p>
@@ -549,14 +555,24 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <p>使用calloc申请内存时不会分配 tcache chunk 中的 chunk 。</p>
 </li>
 </ul>
+<p>由于 __ realloc_hook 与  __ malloc_hook 相邻，因此在 heap exploit 中有着这样一种手法便是同时修改这两个 hook，通过 __libc_realloc 中的一些 gadget 调整堆栈以满足one_gadget一些特定的要求</p>
+<p>这是因为one_gadget并非任何时候都是通用的，都有一定的先决条件</p>
 <h4 id="malloc-hook-free-hook-exit-hook运用">malloc_hook/free_hook/exit_hook运用</h4>
 <p>在低版本中，有很多好用的hook，假如我们能任意地址写，就能很方便的改写这些hook帮助我们getshell</p>
 <p>例：修改free_hook为system，释放带有/bin/sh字符串的堆，即可getshell</p>
 <p>我们所常说的exit hook，就是 _ rtld_global结构体中的两个函数指针_ dl_rtld_lock_recursive与_dl_rtld_unlock_recursive，我们只需要改写这两个中的一个指针为one_gadget，执行exit后就可以拿到shell,不同版本地址有所不同</p>
+<h4 id="泄露地址的方法">泄露地址的方法</h4>
+<h5 id="libc地址">libc地址</h5>
+<p>（除 fastbin 与 tcache 以外）bins 与空闲 chunk 间构成双向链表结构，利用这个特性我们便可以泄漏出main_arena 的地址，进而泄漏出 libc 的基址，一般用 unsorted bin 中的 chunk 泄露 libc 地址</p>
+<h5 id="heap地址">heap地址</h5>
+<p>libc2.29及以上，tcache key 所用的值便是 tcache 结构体本身的地址，故若我们能够打印 tcache key ，就能直接获得堆基址</p>
+<p>glibc2.32 起新增了 safe-linking 机制用以保护存放在 tcache 与 fastbin 中的 chunk 指针，保证 chunk 链表的完整性</p>
+<p>但是 safe-linking 机制同样存在着其缺点：对于 tcache 而言，第一个被放入 tcache 的 chunk 的 fd 指针在经过 safe-linking 后会被写入一个<strong>未加密的堆上相关地址</strong>（与 0 异或），因而我们可以通过该 chunk 的 fd 指针泄露堆基址，有了堆基址我们便能很轻松地绕过 safe-linking 机制的保护</p>
+<p>同样地，若是我们能够打印 tcache 中 free chunk 的 bd 字段，则同样可以获得 tcache key，以此泄露堆基址，绕过 safe-linking</p>
 <h4 id="Chunk-Extend-and-Overlapping">Chunk Extend and Overlapping</h4>
-<p>大致来讲就是修改chunk header来造成堆重叠</p>
+<p>堆块重叠即我们<strong>同时拥有两个或以上的下标指向同一个 chunk</strong>（同一个地址），在这样的情况下便可以手动实现 double free 、地址泄露（例如释放一个下标后通过另一个下标打印 chunk 内容从而获得<strong>堆/libc</strong>相关地址）等各种利用，十分方便</p>
 <h4 id="Unlink">Unlink</h4>
-<p>大致来讲unlink的作用就是摘掉second_chunk</p>
+<p>unlink的作用就是摘掉chunk</p>
 <p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911135522507.png" srcset="/img/loading.gif" lazyload alt="20200911135522507"></p>
 <p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png" srcset="/img/loading.gif" lazyload alt="20200911152738722"></p>
 <p>在执行free()函数时执行了 _int_free()函数，在 _int_free()函数中调用了unlink宏</p>
@@ -570,36 +586,108 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <p><strong>检查3</strong>：检查前后被释放chunk的fd和bk</p>
 </blockquote>
 <p>利用思路大致来讲就是伪造一个chunk，能通过检查,让系统以为它是空闲的chunk，然后free触发unlink，效果就是bss段里的指针数组指向它自己（我自己认为是另一种doublefree）,可以任意地址写</p>
-<p>（常见任意写我们可以改free_hook为system，释放带有/bin/sh字符串的堆）</p>
+<blockquote>
+<p>要理解它还得是实打实做几道题，这些个题目都可以用unlink解</p>
+<p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#hitcon2014-stkof">hitcon2014_stkof</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/121176333?ops_request_misc=%7B%22request%5Fid%22%3A%22170650880116777224418705%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fblog.%22%7D&amp;request_id=170650880116777224418705&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-2-121176333-null-null.nonecase&amp;utm_term=unlink">zctf_2016_note3</a></p>
+<p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#hitcontraining-unlink">hitcontraining_unlink</a></p>
+<p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#hitcontraining-bamboobox">hitcontraining_bamboobox</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/121411787?spm=1001.2014.3001.5502">sctf_2019_easy_heap</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/121429481?spm=1001.2014.3001.5502">x_nuca_2018_offbyone2</a></p>
+</blockquote>
 <h4 id="Fastbin-Attack">Fastbin Attack</h4>
-<h4 id="Unsorted-Bin-Attack">Unsorted Bin Attack</h4>
+<h5 id="size检查">size检查</h5>
+<p>在malloc取出fastbin中的chunk时会检查其size字段，<strong>若与其对应下标不相符则会引发程序abort，限制了我们所能构造fake chunk的位置</strong>，但该size检查<strong>不会检查标志位</strong></p>
+<blockquote>
+<p>一般fastbin attack中分配到__ malloc_hook附近的fake chunk通常都是malloc(0x60)，也就是size == 0x71，这是因为在__malloc_hook - 0x23这个地址上fake chunk的SIZE的位置刚好是<code>0x7f</code>，满足了绕过fastbin的size检查的要求</p>
+</blockquote>
 <h4 id="Large-Bin-Attack">Large Bin Attack</h4>
-<h4 id="Tcache-attack">Tcache attack</h4>
+<p>Large Bin Attack可以达成的效果是任意地址写一个堆地址</p>
+<blockquote>
+<p>libc2.31后的largebin attack：<br>
+我们能控制在large_bin中的chunkA的bk_nextsize为target-0x20（target就是我们要改写的地址）<br>
+然后如果有个在unsortbin中的chunkB，A的size要大于B的size，接着我们申请一个大于B的size的堆，<br>
+B就会放到largebin里，然后我们可以发现target就被改写为了B这个堆的地址</p>
+</blockquote>
+<p>众所周知，<code>glibc</code>高版本逐渐移除了<code>__malloc_hook/__free_hook/__realloc_hook</code>等等一众<code>hook</code>全局变量，<code>ctf</code>中<code>pwn</code>题对<code>hook</code>钩子的利用将逐渐成为过去式。而想要在高版本利用成功，基本上就离不开对<code>IO_FILE</code>结构体的伪造与<code>IO</code>流的攻击。<code>largebin attack</code>是高版本(2.34及以后)中为数不多的可以任意地址写一个堆地址的方法</p>
+<h4 id="Tcache-Poisoning">Tcache Poisoning</h4>
+<p>通过诸如 tcache double free 等方式，我们可以达到修改 tcache_entry 的 next 指针的目的，从而在任意地址分配到一个 chunk，这种手法也叫做<strong>tcache poisoning</strong></p>
 <h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
+<p><strong>攻击目标</strong></p>
+<ol>
+<li>向任意指定位置写入一个地址（可以认为是很大的值）。（更深的利用方式可任意地址读写）</li>
+<li>向任意地址分配一个Chunk。</li>
+</ol>
+<p><strong>攻击前提</strong></p>
+<ol>
+<li>能控制 Small Bin Chunk 的 bk 指针。</li>
+<li>程序可以越过Tache取Chunk。(使用calloc即可做到)</li>
+<li>程序至少可以分配两种不同大小且大小为unsorted bin的Chunk。</li>
+</ol>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/127121786?spm=1001.2014.3001.5502">hitcon_ctf_2019_one_punch</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/127078196?spm=1001.2014.3001.5502">2020 新春红包题</a></p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/198173">Tcache Stashing Unlink Attack利用思路-安全客 - 安全资讯平台 (anquanke.com)</a></p>
+<h4 id="ROP-in-heap">ROP in heap</h4>
+<h5 id="ret2setcontext">ret2setcontext</h5>
 <h4 id="数组指针的维护不当直接造成的AAW">数组指针的维护不当直接造成的AAW</h4>
 <h4 id="House">House</h4>
-<p><code>Glibc</code> 的 <code>house of</code> 系列攻击手法基于都是围绕着堆利用和 <code>IO FILE</code> 利用。可以跟着<a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap">how2heap</a>进行学习，这里列举一些我所知道的</p>
+<p><code>Glibc</code> 的 <code>house of</code> 系列攻击手法基于都是围绕着堆利用和 <code>IO FILE</code> 利用，更多是在打组合拳。可以跟着<a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap">how2heap</a>进行学习，这里列举一些我所知道的</p>
 <p><strong>House Of Force</strong></p>
+<p>House Of Force着眼点在于对top chunk 的攻击</p>
+<blockquote>
+<p>练习：</p>
+<p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#gyctf-2020-force">gyctf_2020_force</a></p>
+<p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#hitcontraining-bamboobox">hitcontraining_bamboobox</a></p>
+</blockquote>
 <p><strong>House of Orange</strong></p>
+<p>用于应对没有free这种情况</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/121344075?ops_request_misc=%7B%22request%5Fid%22%3A%22170651507116800180673323%22%2C%22scm%22%3A%2220140713.130102334.pc%5Fblog.%22%7D&amp;request_id=170651507116800180673323&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-1-121344075-null-null.nonecase&amp;utm_term=orange&amp;spm=1018.2226.3001.4450">houseoforange_hitcon_2016（unsortbin attack，fsop）-CSDN博客</a></p>
+</blockquote>
 <p><strong>House of Roman</strong></p>
+<p><strong>House of botcake</strong></p>
+<p>可以在仅使用一次uaf的情况下，绕过tcache的key值检测，造成tcache poioning的效果，并且能重复使用</p>
+<blockquote>
+<p>练习：</p>
+<p>[DASCTF X GFCTF 2022十月挑战赛magic_book](<a target="_blank" rel="noopener" href="https://nqoinaen.cn/2022/10/28/DASCTF">https://nqoinaen.cn/2022/10/28/DASCTF</a> X GFCTF 2022十月挑战赛/#magic-book)</p>
+</blockquote>
 <p><strong>House of Pig</strong></p>
 <p><strong>House of banana</strong></p>
 <p><strong>House of Corrosion</strong></p>
 <p><strong>House of emma</strong></p>
 <p><strong>House of wiki</strong></p>
+<p><strong>House of cat</strong></p>
+<p>House of Cat利用了House of emma的虚表偏移修改思想，通过修改虚表指针的偏移，避免了对需要绕过TLS上 <strong>_pointer_chk_guard</strong>的检测相关的IO函数的调用，转而调用**_IO_wfile_jumps<strong>中的</strong>_IO_wfile_seekoff<strong>函数，然后进入到</strong>_IO_switch_to_wget_mode<strong>函数中来攻击，从而使得攻击条件和利用变得更为简单。并且house of cat在</strong>FSOP<strong>的情况下也是可行的，只需修改虚表指针的偏移来调用</strong>_IO_wfile_seekoff<strong>即可（通常是结合</strong>__malloc_assert**，改vtable为**_IO_wfile_jumps+0x10**）。</p>
+<p><strong>利用条件</strong></p>
+<p>1.能够任意写一个可控地址。<br>
+2.能够泄露堆地址和libc基址。<br>
+3.能够触发IO流（FSOP或触发__malloc_assert，或者程序中存在puts等能进入IO链的函数），执行IO相关函数。</p>
+<blockquote>
+<p>练习：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/127290280?spm=1001.2014.3001.5502">house of cat 学习-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/127374315?spm=1001.2014.3001.5502">house of emma-CSDN博客</a>house of emma同名题用house of cat 来解</p>
+</blockquote>
 <p><strong>House of apple</strong></p>
-<p><a target="_blank" rel="noopener" href="https://roderickchan.github.io/zh-cn/2023-02-27-house-of-all-about-glibc-heap-exploitation/#2-house-of%E7%B3%BB%E5%88%97">Glibc堆利用之house of系列总结 - roderick - record and learn! (roderickchan.github.io)</a></p>
+<p><strong>House of apple2</strong></p>
+<blockquote>
+<p>练习：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_51251108/article/details/127416752?spm=1001.2014.3001.5501">2021祥云杯PassWordBox_ProVersion-CSDN博客</a>使用了其中两种调用链来解</p>
+</blockquote>
+<p><strong>House of apple3</strong></p>
+<p><strong>house利用方法汇总：</strong><a target="_blank" rel="noopener" href="https://roderickchan.github.io/zh-cn/2023-02-27-house-of-all-about-glibc-heap-exploitation/#2-house-of%E7%B3%BB%E5%88%97">Glibc堆利用之house of系列总结 - roderick - record and learn! (roderickchan.github.io)</a></p>
 <h3 id="I-O-File-Exploitation">I/O File Exploitation</h3>
 <h4 id="I-O-leak">I/O leak</h4>
+<p>在pwn题中，当遇到没有可以用来泄露的功能时，我们一般将堆块分配到stdout指针处存储的_IO_2_1_stdout_该IO_FILE结构体处，修改其 _ flags为0xfbad1800，将后面三个read指针置空，将_ IO_write_base处的第一个字节改为0x58，后面的_ IO_write_ptr和_ IO_write_end保持不变。之后当程序遇到puts函数时就会打印 _ IO_write_base到_ IO_write_ptr之间的内容，按照上面步骤改动的话，我们泄露出的第一个libc地址是_IO_file_jumps。<br>
+  至于为啥需要flags=0xfbad1800（flags也可以是0xfbad3887），这里分析起来十分复杂，可以参见puts源码，只能说为了达到输出效果需要这样设置，另外该flags这样设置只是针对puts函数，其余打印函数略有不同</p>
 <h4 id="FSOP">FSOP</h4>
+<p>FSOP即 File Stream Oriented Programme——文件流导向编程，即基于 glibc 中文件流相关的一种劫持手法，其核心思想便是通过劫持文件流的相关流程以达到控制程序执行流的目的</p>
 <h3 id="shellcode">shellcode</h3>
 <p><code>shellcode</code> 是一段可被 <code>CPU</code> 直接执行的程序码,使用 <code>shellcode</code> 进行攻击是一项经典而强大的技术，借助 <code>shellcode</code> 几乎可以完成任何事情，包括但不限于泄露敏感信息、反弹 <code>shell</code>、布置后门等。</p>
 <p>编写 <code>shellcode</code> 的方式有很多，而方式的选择取决于实际场景。如当需要编写复杂的 <code>shellcode</code> 的时候，需要手搓；当需要注入特定模板的 <code>shellcode</code> 时，可以采用工具生成；当需要观察 <code>shellcode</code> 的字符、长度时，可以采用在线网站生成。</p>
 <p><a target="_blank" rel="noopener" href="https://roderickchan.github.io/zh-cn/2023-02-20-the-art-of-shellcode/">Linux下的shellcode技巧总结 - roderick - record and learn! (roderickchan.github.io)</a></p>
 <p><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-274652.htm#msg_header_h2_7">可见shellcode字符的艺术</a></p>
-<h3 id="ORW">ORW</h3>
-<p>开启沙盒时ban了某些系统调用，无法达成getshell时退而求其次，要你采取orw的方式cat flag</p>
-<p>有时pwn题会给更严格限制仅给你使用这三者中的两个来cat flag，或者是用别系统调用的代替来达成同样读取falg的目的</p>
 <h3 id="Tools">Tools</h3>
 <h4 id="IDA-Pro">IDA Pro</h4>
 <p>ida在pwn中用的不深，会一些基本的，然后会IDA_Patch即可</p>
@@ -716,23 +804,11 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <li>异构pwn（arm，mips）</li>
 <li>musl pwn</li>
 <li>LLVM PASS pwn</li>
-<li>Browser pwn</li>
+<li>Browser pwn/Kernel pwn</li>
 <li>QEMU Escape</li>
 <li>Sandbox Escape</li>
 <li>IOT</li>
 </ul>
-<h2 id="Kernel-Mode">Kernel Mode</h2>
-<h3 id="Defense-2">Defense</h3>
-<h3 id="常用结构体">常用结构体</h3>
-<h3 id="kernel-rop">kernel rop</h3>
-<h3 id="ret2usr">ret2usr</h3>
-<h3 id="Race-Condition-2">Race Condition</h3>
-<h4 id="userfaultfd">userfaultfd</h4>
-<h4 id="double-fetch">double fetch</h4>
-<h3 id="modprobe-path">modprobe_path</h3>
-<h3 id="heap-overflow">heap overflow</h3>
-<h3 id="ret2dir">ret2dir</h3>
-<h3 id="uaf">uaf</h3>
 <h2 id="知识储备">知识储备</h2>
 <h3 id="ELF文件格式">ELF文件格式</h3>
 <p>ELF是 Executable and Linking Format 的缩写，它是 Linux 平台上通用的二进制文件格式。</p>
@@ -849,6 +925,7 @@ rdx=0 or 地址-&gt;0</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_54218833/article/details/130426404">CTF-pwn pwntools用法探索</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wyzworld/article/details/114805643">ELF文件详解_elf文件中的.debug_line节的数据段的操作码-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41202237/article/details/108481889">好好说话之unlink_unlink 操作什么时候发生-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://arttnba3.cn/2021/05/10/PWN-0X01-GLIBC_HEAP-EXPLOIT/#0x00-%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B%E4%B9%8B%E5%89%8D">【PWN.0x01】简易 Glibc heap exploit 笔记 - arttnba3’s blog</a></p>
 
                 
               </div>
@@ -894,7 +971,7 @@ rdx=0 or 地址-&gt;0</p>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>pwn总结</div>
+      <div>glibc pwn总结</div>
       <div>https://nqoinaen.github.io/2024/01/26/pwn总结/</div>
     </div>
     <div class="license-meta">
@@ -913,7 +990,7 @@ rdx=0 or 地址-&gt;0</p>
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年1月28日</div>
+          <div>2024年1月29日</div>
         </div>
       
       
