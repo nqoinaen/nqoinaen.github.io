@@ -26,9 +26,8 @@
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20230725214502-74acf9e2-2af1-1.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911135522507.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png">
-<meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/0ac2836ca49c58f6a204678f1fdc5abb.png">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-29T08:25:26.501Z">
+<meta property="article:modified_time" content="2024-01-29T11:43:39.492Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
@@ -241,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          21k 字
+          17k 字
         
       </span>
     
@@ -252,7 +251,7 @@
         
         
         
-          45 分钟
+          37 分钟
         
       </span>
     
@@ -295,7 +294,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月29日 下午
+                    本文最后更新于：2024年1月29日 晚上
                   
                 
               </p>
@@ -304,7 +303,6 @@
               <div class="markdown-body">
                 
                 <h3 id="前言">前言</h3>
-<p>更像是大纲，但也很不全，仅举出我所了解过的，做题遇到过的，难免会有错误，欢迎师傅帮我指出错误</p>
 <blockquote>
 <p>linux平台下glibc pwn 一般都是给个linux二进制文件，题目预先设计好了某个漏洞，然后你能利用漏洞，达成任意地址读/写，控制程序流，达成getshell或orw读flag什么的</p>
 <p>一般做题步骤：</p>
@@ -320,7 +318,7 @@
 <ul>
 <li>因为canary末尾是/x00，本身可以被截断，可以栈溢出修改掉末尾的/x00，配合输出函数，泄露canary</li>
 <li>某些用fork函数的题，父子进程的canary是一样的，逐位爆破canary</li>
-<li>Stack Smashing Protect Leak，就是用__stack_chk_fail()函数里的某个功能，能任意地址读，我记得早已经修了这个</li>
+<li>Stack Smashing Protect Leak</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">__libc_message (<span class="hljs-number">2</span>, <span class="hljs-string">&quot;*** %s ***: %s terminatedn&quot;</span>,<br>                   msg, __libc_argv[<span class="hljs-number">0</span>] ?: <span class="hljs-string">&quot;&lt;unknown&gt;&quot;</span>);<br></code></pre></td></tr></table></figure>
 <ul>
@@ -384,7 +382,7 @@
 <p>off by one 通常指的是对于堆块的读写存在一个字节的溢出，利用这一个字节的溢出我们通常可以溢出到一个chunk物理相邻高地址 chunk 的 size 域，篡改其 size 域以便后续的利用（如构造 overlapping 等）</p>
 <p>off by null则是off by one的一种特殊形式，即仅溢出一个<code>'\0'</code>字节，通常出现于读入字符串时设计逻辑失误的情况（例如使用了 strcpy 或者是手动在末尾加 \0 等）</p>
 <p>其实这两个差不多，只能溢出一个字节我们怎么利用呢？</p>
-<p>一般可以溢出到一个chunk物理相邻高地址 chunk 的 size 域（需要malloc的size参数的末尾以十六进制来看要0x8），篡改其 size 域以便后续的利用（例如可以利用造成堆重叠，unlink之类的）</p>
+<p>一般可以溢出到一个chunk物理相邻高地址 chunk 的 size 域，篡改其 size 域以便后续的利用（例如可以利用造成堆重叠，unlink之类的）</p>
 <h4 id="Use-After-Free">Use After Free</h4>
 <p>字面意思，即当一个内存块被释放之后再次被使用</p>
 <h5 id="发生UAF的情况：">发生UAF的情况：</h5>
@@ -461,12 +459,10 @@ fastbin在free时只会检查现在释放的chunk，是不是开头的chunk，�
 </blockquote>
 <p>自己手写起来还是挺麻烦的，需要把要写的值拆成两部分，分两次写(先写小的值，后写大的值)，还要防止截断（那些输入函数一般都有/x00截断）</p>
 <h4 id="Integer-Overflow">Integer Overflow</h4>
-<p>一般出现的场景是这样：有个判断条件你通过不了，但是它判断条件有整型溢出，你输个特定的数能通过这个判断</p>
 <h4 id="Type-Confusion">Type Confusion</h4>
-<p>类型混淆，好像是C++才有的漏洞类型，我不懂</p>
 <h4 id="Race-Condition">Race Condition</h4>
 <h4 id="OOB">OOB</h4>
-<p>(Out-of-Bounds)数组越界，vm pwn出的会多一点（简易虚拟机逃逸）</p>
+<p>(Out-of-Bounds)数组越界</p>
 <h3 id="Stack-Exploitation">Stack Exploitation</h3>
 <h4 id="ROP">ROP</h4>
 <p>即返回导向编程（Return Qriented Proramming）</p>
@@ -516,9 +512,9 @@ ret相当于汇编pop eip;</p>
 <p>(不同版本的这个函数有一定的区别，需要对下面的payload略作修改)</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">csu</span>(<span class="hljs-params">rdi,rsi,rdx,function</span>):<br>    csu_front_addr=<span class="hljs-number">0x400740</span><br>    csu_end_addr=<span class="hljs-number">0x40075A</span><br>    payload = <span class="hljs-string">b&#x27;&#x27;</span><br>    payload += p64(csu_end_addr) + p64(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">1</span>) + p64(function) + p64(<br>        rdi) + p64(rsi) + p64(rdx)<br>    payload += p64(csu_front_addr)<br>    payload += <span class="hljs-string">b&#x27;a&#x27;</span> * <span class="hljs-number">0x38</span><br>    <span class="hljs-keyword">return</span> payload<br></code></pre></td></tr></table></figure>
 <h4 id="ret2dl-resolve">ret2dl_resolve</h4>
-<p>简单几句讲不清，大致是栈迁移到bss段伪造fake_linkmap结构体（伪造一整套延迟绑定用到的结构体欺骗程序）</p>
+<p>大致是栈迁移到bss段伪造fake_linkmap结构体（伪造一整套延迟绑定用到的结构体欺骗系统）</p>
 <ul>
-<li>用于应对只能溢出0x10字节的情况</li>
+<li>用于应对只能溢出0x10字节的情况，没有更多泄露手段</li>
 <li>保护不能开启FULL RELRO（got表全都确定好地址了自然是不行）</li>
 <li>理解较难，利用相对模板化</li>
 <li>pwntools有Ret2dlresolvePayload模块</li>
@@ -560,7 +556,7 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <h4 id="malloc-hook-free-hook-exit-hook运用">malloc_hook/free_hook/exit_hook运用</h4>
 <p>在低版本中，有很多好用的hook，假如我们能任意地址写，就能很方便的改写这些hook帮助我们getshell</p>
 <p>例：修改free_hook为system，释放带有/bin/sh字符串的堆，即可getshell</p>
-<p>我们所常说的exit hook，就是 _ rtld_global结构体中的两个函数指针_ dl_rtld_lock_recursive与_dl_rtld_unlock_recursive，我们只需要改写这两个中的一个指针为one_gadget，执行exit后就可以拿到shell,不同版本地址有所不同</p>
+<p>所常说的exit hook，就是 _ rtld_global结构体中的两个函数指针_ dl_rtld_lock_recursive与_dl_rtld_unlock_recursive，我们只需要改写这两个中的一个指针为one_gadget，执行exit后就可以拿到shell,不同版本地址有所不同</p>
 <h4 id="泄露地址的方法">泄露地址的方法</h4>
 <h5 id="libc地址">libc地址</h5>
 <p>（除 fastbin 与 tcache 以外）bins 与空闲 chunk 间构成双向链表结构，利用这个特性我们便可以泄漏出main_arena 的地址，进而泄漏出 libc 的基址，一般用 unsorted bin 中的 chunk 泄露 libc 地址</p>
@@ -585,7 +581,7 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <p><strong>检查2</strong>：检查与被释放chunk相邻高地址的chunk的size的P标志位是否为0</p>
 <p><strong>检查3</strong>：检查前后被释放chunk的fd和bk</p>
 </blockquote>
-<p>利用思路大致来讲就是伪造一个chunk，能通过检查,让系统以为它是空闲的chunk，然后free触发unlink，效果就是bss段里的指针数组指向它自己（我自己认为是另一种doublefree）,可以任意地址写</p>
+<p>利用思路大致来讲就是伪造一个chunk，让系统以为它是空闲的chunk，然后free触发unlink向上合并，造成堆重叠，效果就是bss段里的指针数组指向它自己（我自己认为是另一种doublefree）,可以任意地址写</p>
 <blockquote>
 <p>要理解它还得是实打实做几道题，这些个题目都可以用unlink解</p>
 <p><a target="_blank" rel="noopener" href="https://nqoinaen.cn/2020/11/24/buu%E5%88%B7%E9%A2%98/#hitcon2014-stkof">hitcon2014_stkof</a></p>
@@ -602,16 +598,19 @@ malloc_usable_size(realloc_ptr) &lt; size， 这个时候才是malloc一块更�
 <p>一般fastbin attack中分配到__ malloc_hook附近的fake chunk通常都是malloc(0x60)，也就是size == 0x71，这是因为在__malloc_hook - 0x23这个地址上fake chunk的SIZE的位置刚好是<code>0x7f</code>，满足了绕过fastbin的size检查的要求</p>
 </blockquote>
 <h4 id="Large-Bin-Attack">Large Bin Attack</h4>
-<p>Large Bin Attack可以达成的效果是任意地址写一个堆地址</p>
+<p><code>glibc</code>高版本移除了<code>__malloc_hook/__free_hook/__realloc_hook</code>等等一众<code>hook</code>全局变量，<code>ctf</code>中<code>pwn</code>题对<code>hook</code>钩子的利用将逐渐成为过去式。而想要在高版本利用成功，基本上就离不开对<code>IO_FILE</code>结构体的伪造与<code>IO</code>流的攻击。<code>largebin attack</code>是高版本(2.34及以后)中为数不多的可以任意地址写一个堆地址的方法</p>
 <blockquote>
 <p>libc2.31后的largebin attack：<br>
 我们能控制在large_bin中的chunkA的bk_nextsize为target-0x20（target就是我们要改写的地址）<br>
 然后如果有个在unsortbin中的chunkB，A的size要大于B的size，接着我们申请一个大于B的size的堆，<br>
 B就会放到largebin里，然后我们可以发现target就被改写为了B这个堆的地址</p>
 </blockquote>
-<p>众所周知，<code>glibc</code>高版本逐渐移除了<code>__malloc_hook/__free_hook/__realloc_hook</code>等等一众<code>hook</code>全局变量，<code>ctf</code>中<code>pwn</code>题对<code>hook</code>钩子的利用将逐渐成为过去式。而想要在高版本利用成功，基本上就离不开对<code>IO_FILE</code>结构体的伪造与<code>IO</code>流的攻击。<code>largebin attack</code>是高版本(2.34及以后)中为数不多的可以任意地址写一个堆地址的方法</p>
 <h4 id="Tcache-Poisoning">Tcache Poisoning</h4>
 <p>通过诸如 tcache double free 等方式，我们可以达到修改 tcache_entry 的 next 指针的目的，从而在任意地址分配到一个 chunk，这种手法也叫做<strong>tcache poisoning</strong></p>
+<h4 id="Fastbin-Reverse-to-Tcache">Fastbin Reverse to Tcache</h4>
+<blockquote>
+<p>fastbin reverse to tcache的攻击效果是往target-0x18处的地址写入对应tcache的bk指针，也就是一个堆地址</p>
+</blockquote>
 <h4 id="Tcache-Stashing-Unlink-Attack">Tcache-Stashing-Unlink-Attack</h4>
 <p><strong>攻击目标</strong></p>
 <ol>
@@ -630,8 +629,11 @@ B就会放到largebin里，然后我们可以发现target就被改写为了B这�
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/198173">Tcache Stashing Unlink Attack利用思路-安全客 - 安全资讯平台 (anquanke.com)</a></p>
 <h4 id="ROP-in-heap">ROP in heap</h4>
-<h5 id="ret2setcontext">ret2setcontext</h5>
-<h4 id="数组指针的维护不当直接造成的AAW">数组指针的维护不当直接造成的AAW</h4>
+<h5 id="environ">environ</h5>
+<h5 id="setcontext">setcontext</h5>
+<h6 id="2-29以前">2.29以前</h6>
+<p><strong>setcontext + 53</strong></p>
+<h6 id="2-29以后">2.29以后</h6>
 <h4 id="House">House</h4>
 <p><code>Glibc</code> 的 <code>house of</code> 系列攻击手法基于都是围绕着堆利用和 <code>IO FILE</code> 利用，更多是在打组合拳。可以跟着<a target="_blank" rel="noopener" href="https://github.com/shellphish/how2heap">how2heap</a>进行学习，这里列举一些我所知道的</p>
 <p><strong>House Of Force</strong></p>
@@ -795,97 +797,11 @@ B就会放到largebin里，然后我们可以发现target就被改写为了B这�
 <h4 id="patchelf">patchelf</h4>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">patchelf --replace-needed libc.so.6 你要换的libc的硬路径 ./pwn<br>patchelf --set-interpreter ld的硬路径 ./pwn<br></code></pre></td></tr></table></figure>
 <h4 id="one-gadget">one_gadget</h4>
-<p>可以用来寻找万能的gadget去getshell</p>
+<p>可以用来寻找万能gadget去getshell</p>
 <p>可以设置参数查找等级，找到更多可用的gadget</p>
 <p>例：<code>one_gadget ./libc-2.27.so -l 1</code> 设置等级level1</p>
 <h4 id="glibc-all-in-one">glibc-all-in-one</h4>
-<h3 id="其他">其他</h3>
-<ul>
-<li>异构pwn（arm，mips）</li>
-<li>musl pwn</li>
-<li>LLVM PASS pwn</li>
-<li>Browser pwn/Kernel pwn</li>
-<li>QEMU Escape</li>
-<li>Sandbox Escape</li>
-<li>IOT</li>
-</ul>
 <h2 id="知识储备">知识储备</h2>
-<h3 id="ELF文件格式">ELF文件格式</h3>
-<p>ELF是 Executable and Linking Format 的缩写，它是 Linux 平台上通用的二进制文件格式。</p>
-<p><strong>ELF文件主要有以下三类：</strong></p>
-<ul>
-<li>可重定位文件（relocatable file） 它保存了一些可以和其他目标文件链接并生成可执行文件或者共享库的二进制代码和数据。一般为.o文件，静态链接库属于可重定位文件。</li>
-<li>可执行文件（excutable file）它保存了适合直接加载到内存中执行的二进制程序。</li>
-<li>共享库文件（shared object file）一种特殊的可重定位目标文件，可以在加载或者运行时被动态的加载进内存并链接。一般为.so文件。</li>
-</ul>
-<p><strong>有两种情况可以使用：</strong></p>
-<ul>
-<li>链接器将其与其他可重定位文件、共享目标文件链接成新的目标文件</li>
-<li>动态连接器将其与其他共享目标文件，结合一个可执行文件，创建进程映像。</li>
-</ul>
-<p><strong>ELF文件主要由4部分组成：</strong></p>
-<p><img src="/2024/01/26/pwn%E6%80%BB%E7%BB%93/0ac2836ca49c58f6a204678f1fdc5abb.png" srcset="/img/loading.gif" lazyload alt="0ac2836ca49c58f6a204678f1fdc5abb"></p>
-<h4 id="ELF-Header">ELF Header</h4>
-<p>每个ELF文件都存在一个ELF Header用来描述其结构和组成。ELF Header对应的是一个结构体，结构体定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> EI_NIDENT 16</span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span>                             <br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> e_ident[EI_NIDENT];    <span class="hljs-comment">//包含一个magic number、ABI信息，该文件使用的平台、大小端规则        </span><br>    <span class="hljs-type">uint16_t</span>      e_type;                <span class="hljs-comment">//文件类型，表示该文件属于可执行文件、可重定位文件、core dump文件或共享库    </span><br>    <span class="hljs-type">uint16_t</span>      e_machine;             <span class="hljs-comment">//机器类型，ELF文件的CPI平台属性    </span><br>    <span class="hljs-type">uint32_t</span>      e_version;             <span class="hljs-comment">//通常都是1    </span><br>    ElfN_Addr     e_entry;               <span class="hljs-comment">//表示程序执行的入口地址    </span><br>    ElfN_Off      e_phoff;               <span class="hljs-comment">//表示Program Header的入口偏移量（以字节为单位）    </span><br>    ElfN_Off      e_shoff;               <span class="hljs-comment">//表示Section Header的入口偏移量（以字节为单位）    </span><br>    <span class="hljs-type">uint32_t</span>      e_flags;               <span class="hljs-comment">//保存了这个ELF文件相关的特定处理器的flag    </span><br>    <span class="hljs-type">uint16_t</span>      e_ehsize;              <span class="hljs-comment">//表示ELF Header大小（以字节为单位）    </span><br>    <span class="hljs-type">uint16_t</span>      e_phentsize;           <span class="hljs-comment">//表示Program Header大小（以字节为单位）   </span><br>    <span class="hljs-type">uint16_t</span>      e_phnum;               <span class="hljs-comment">//表示Program Header数量（十进制）   </span><br>    <span class="hljs-type">uint16_t</span>      e_shentsize;           <span class="hljs-comment">//表示Section Header大小（以字节为单位）    </span><br>    <span class="hljs-type">uint16_t</span>      e_shnum;               <span class="hljs-comment">//表示Section Header数量（十进制）    </span><br>    <span class="hljs-type">uint16_t</span>      e_shstrndx;            <span class="hljs-comment">//表示字符串表的索引，字符串表用来保存ELF文件中的字符串，如段名，变量名。然后通过字符串在表中的偏移访问字符串</span><br>&#125;ElfN_Ehdr;<br><br>ElfN_Addr    Unsigned program address,uintN_t<br>ElfN_OFF     Unsigned file offset,uintN_t<br></code></pre></td></tr></table></figure>
-<p>**可以使用 ** <strong>readelf</strong> <strong>工具来查看ELF Header</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">readelf -h hello.o</span><br></code></pre></td></tr></table></figure>
-<h4 id="ELF-Program-Header-Table">ELF Program Header Table</h4>
-<p>在可执行文件中，Program Header Table描述了各个segment在ELF文件中的位置以及在程序执行过程中系统需要准备的其他信息。他的结构体如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-type">uint64_t</span> Elf64_Addr;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">uint64_t</span>  Elf64_Off;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">uint32_t</span>  Elf64_Word;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">uint64_t</span>  Elf64_Xword;<br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    Elf64_Word      p_type;         <span class="hljs-comment">// 4    //描述了当前segment是何种类型的或者如何解释当前segment，比如是动态链接相关的或者可加载类型等</span><br>    Elf64_Word      p_flags;        <span class="hljs-comment">// 4    //保存了该segment的flag</span><br>    Elf64_Off       p_offset;       <span class="hljs-comment">// 8    //表示从ELF文件到该segment第一个字节的偏移量</span><br>    Elf64_Addr      p_vaddr;        <span class="hljs-comment">// 8    //表示该segment的第一个字节在内存中的虚拟地址</span><br>    Elf64_Addr      p_paddr;        <span class="hljs-comment">// 8    //对于使用物理地址的系统来讲，这个成员表示该segment的物理地址</span><br>    Elf64_Xword     p_filesz;       <span class="hljs-comment">// 8    //表示该segment的大小，以字节表示</span><br>    Elf64_Xword     p_memsz;        <span class="hljs-comment">// 8    //表示该segment在内存中的大小，以字节表示</span><br>    Elf64_Xword     p_align;        <span class="hljs-comment">// 8    //表示该segment在文件中或者内存中需要以多少字节对齐</span><br>&#125; Elf64_Phdr;<br></code></pre></td></tr></table></figure>
-<h4 id="ELF-Sections">ELF Sections</h4>
-<p>section基本是按照目标文件内容的功能来划分一些区域，根据其内容中是否存在读写等属性，可以将不同的section划分成不同的segment。在ELF文件中，数据和代码分开存放，这样可以按照其功能属性分成一些区域，比如程序，数据，符号表等。这些分离存放的区域在ELF文件中反映成section。ELF文件中典型的节如下：</p>
-<ul>
-<li>
-<p><strong>.text</strong><br>
-.text节是保存了程序代码指令的代码节（已编译程序的二进制代码）。一段可执行程序，如果存在Phdr，则.text节就会存在于.text段中。由于.text节保存了程序代码，所以节类型SHT_PROGBITS。</p>
-</li>
-<li>
-<p><strong>.rodata</strong><br>
-rodata节保存了只读的数据，如一行C语言代码中的字符串，常量。由于.rodata节是只读的，所以只能存在于一个可执行文件的只读段中。因此，只能在text段（不是data段）中找到.rodata节。由于.rodata节是只读的，所以节类型为SHT_PROGBITS。</p>
-</li>
-<li>
-<p><strong>.data</strong><br>
-.data节存在于data段中，其保存了初始化的全局变量，静态变量等数据。由于.data节保存了程序的变量数据，所以节类型为SHT_PROGBITS。</p>
-</li>
-<li>
-<p><strong>.bss</strong><br>
-.bss节存在于data段中，占用空间不超过4字节，仅表示这个节本省的空间。.bss节保存了未进行初始化的全局数据（未初始化的全局变量和静态变量）。程序加载时数据被初始化为0，在程序执行期间可以进行赋值。由于.bss节未保存实际的数据，所以节类型为SHT_NOBITS。</p>
-</li>
-<li>
-<p><strong>.sysmtab</strong><br>
-.symtab节是一个ElfN_Sym的数组，即符号表，存放了程序中定义和引用的函数和全局变量的信息，节类型为SHT_SYMTAB。</p>
-</li>
-<li>
-<p><strong>.debug</strong><br>
-调试符号表，它需要以’-g’选项编译才能得到，里面保存了程序中定义的局部变量和类型定义，程序中定义和引用的全局变量，以及原始的C文件</p>
-</li>
-<li>
-<p><strong>.line</strong><br>
-原始的C文件行号和.text节中机器指令之间的映射</p>
-</li>
-<li>
-<p><strong>.strtab</strong><br>
-.strtab节保存的是符号字符串表，内容包括.symtab和.debug节中的符号表。节类型为SHT_STRTAB。</p>
-</li>
-<li>
-<p><strong>ESP：</strong></p>
-<ul>
-<li>
-<p><strong>对于可重定位的文件</strong>，由于在编译时，并不能确定它引用的外部函数和变量的地址信息，因此，编译器在生成目标文件时，增加了两个section：</p>
-<p>.rel.text 保存了程序中引用的外部函数的重定位信息，这些信息用于在链接时重定位其对应的符号。<br>
-.rel.data 保存了被模块引用或定义的所有全局变量的重定位信息，这些信息用于在链接时重定位其对应的全局变量。</p>
-</li>
-<li>
-<p><strong>对于可执行文件</strong>，由于它已经全部完成了重定位工作，可以直接加载到内存中执行，所以它不存在.rel.text和.rel.data这两个section。但是，它增加了一个section：<br>
-.init：这个section里面保存了程序运行前的初始化代码</p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="ELF-Section-Header-Table">ELF Section Header Table</h4>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span>     <br>    <span class="hljs-type">uint32_t</span>   sh_name;         <span class="hljs-comment">//section的名字是一个字符串，保存在 .shstetab 字符串表中，该section的名字相对于.shstrtab section的地址偏移量     </span><br>    <span class="hljs-type">uint32_t</span>   sh_type;         <span class="hljs-comment">//该section中存放的内容类型，比如符号表，可重定位段等     </span><br>    <span class="hljs-type">uint64_t</span>   sh_flags;        <span class="hljs-comment">//该section的一些属性，如是否可写，可执行等      </span><br>    Elf64_Addr sh_addr;         <span class="hljs-comment">//该section在程序运行时的内存地址（虚拟地址）。如果该节可被加载，则是被加载后在进程地址空间中的虚拟地址，否则为0 </span><br>    Elf64_Off  sh_offset;       <span class="hljs-comment">//该section相对于ELF文件起始地址的偏移量   </span><br>    <span class="hljs-type">uint64_t</span>   sh_size;         <span class="hljs-comment">//该section的大小 </span><br>    <span class="hljs-type">uint32_t</span>   sh_link;         <span class="hljs-comment">//配合 sh_info 保存section的额外信息 </span><br>    <span class="hljs-type">uint32_t</span>   sh_info;         <span class="hljs-comment">//保存该section相关的一些额外信息 </span><br>    <span class="hljs-type">uint64_t</span>   sh_addralign;    <span class="hljs-comment">//表示该section需要的地址对齐信息     </span><br>    <span class="hljs-type">uint64_t</span>   sh_entsize;      <span class="hljs-comment">//有些section里保存的是一些固定长度的条目，比如符号表。对于这些section来讲，sh_entsize保存的就是这些条目的长度  </span><br>&#125; Elf64_Shdr;<br></code></pre></td></tr></table></figure>
-<h3 id="x86-64函数调用约定">x86_64函数调用约定</h3>
 <h3 id="常用的系统调用">常用的系统调用</h3>
 <h4 id="system">system</h4>
 <p>要rop出<code>system(“/bin/sh\x00”)</code></p>
@@ -909,13 +825,10 @@ rdx=0 or 地址-&gt;0</p>
 <p>int mprotect(const void *start, size_t len, int prot)</p>
 <p>可以用于给某段地址提升权限为可读可写可执行（rwx）,只需要prot参数等于7(111B)</p>
 <p>start必须是一个内存页的起始地址，并且区间长度len必须是页大小的整数倍,不然会调用失败</p>
-<h3 id="常见反汇编指令">常见反汇编指令</h3>
 <h3 id="ptmalloc堆数据结构">ptmalloc堆数据结构</h3>
 <h3 id="ptmalloc堆管理机制">ptmalloc堆管理机制</h3>
-<blockquote>
-<p>最好学这个机制就是去看它的源码</p>
-</blockquote>
 <h3 id="More">More</h3>
+<h2 id="小结">小结</h2>
 <h2 id="参考">参考</h2>
 <p><a target="_blank" rel="noopener" href="https://ctf-wiki.org/pwn/linux/user-mode/environment/">Environment - CTF Wiki (ctf-wiki.org)</a></p>
 <p><a target="_blank" rel="noopener" href="https://lantern.cool/note-pwn-linux-protect/">Linux 常用保护机制 | Lantern’s 小站</a></p>
@@ -923,9 +836,9 @@ rdx=0 or 地址-&gt;0</p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12738?time__1311=mqmhDvOGOFYKDsD7Gt0%3DbG%3DD8UwZ2xxi%3D4D&amp;alichlgref=https%3A%2F%2Fwww.bing.com%2F">栈迁移原理深入理解以及实操 - 先知社区 (aliyun.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/chennbnbnb/article/details/109284780">glibc2.31下的新double free手法/字节跳动pwn题gun题解_glibc 2.31下存在doublefree吗-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_54218833/article/details/130426404">CTF-pwn pwntools用法探索</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wyzworld/article/details/114805643">ELF文件详解_elf文件中的.debug_line节的数据段的操作码-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41202237/article/details/108481889">好好说话之unlink_unlink 操作什么时候发生-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://arttnba3.cn/2021/05/10/PWN-0X01-GLIBC_HEAP-EXPLOIT/#0x00-%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B%E4%B9%8B%E5%89%8D">【PWN.0x01】简易 Glibc heap exploit 笔记 - arttnba3’s blog</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-272098.htm#msg_header_h2_2">原创] CTF 中 glibc堆利用 及 IO_FILE 总结-Pwn-看雪-安全社区|安全招聘|kanxue.com</a></p>
 
                 
               </div>
