@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://nqoinaen.github.io/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/6.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/7.png">
 <meta property="article:published_time" content="2024-02-08T09:34:32.000Z">
-<meta property="article:modified_time" content="2024-02-08T09:31:33.248Z">
+<meta property="article:modified_time" content="2024-02-08T09:34:06.106Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="NS3">
 <meta name="twitter:card" content="summary_large_image">
@@ -311,76 +311,76 @@
 <h2 id="配置NS3环境">配置NS3环境</h2>
 <h3 id="安装NS3依赖库">安装NS3依赖库</h3>
 <p>更新apt</p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">sudo apt-<span class="hljs-keyword">get</span> <span class="hljs-keyword">update</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get update<br></code></pre></td></tr></table></figure>
 <p>（1）安装Python API 用户的最低要求（3.30 版及更高版本，以及 ns-3-dev）：这是从已发布的压缩包中使用 Python 绑定所需的最小包集。C++用户的最低要求（3.36 版和开发）：对于 ns-3-dev 和 ns-3.36（及更高版本）版本，还需要 CMake。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">sudo apt-<span class="hljs-built_in">get</span> install g++ <span class="hljs-keyword">python3</span> <span class="hljs-keyword">python3</span>-dev pkg-config sqlite3 cmake<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install g++ python3 python3-dev pkg-config sqlite3 cmake<br></code></pre></td></tr></table></figure>
 <p>（2）安装NS3代码维护使用的源码版本控制管理系统</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install mercurial<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install mercurial<br></code></pre></td></tr></table></figure>
 <p>（3）Netanim动画师需要qt5开发工具，对于 Ubuntu 20.10 及更早版本，单个 “qt5-default” 包就足够了。</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs actionscript">sudo apt-<span class="hljs-keyword">get</span> install qt5-<span class="hljs-keyword">default</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install qt5-default<br></code></pre></td></tr></table></figure>
 <p>（4）运行python绑定ns-3-dev需要bazaar这个组件。（支持bake构建工具）</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt-get <span class="hljs-keyword">install </span>autoconf cvs <span class="hljs-keyword">bzr </span>unrar<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install autoconf cvs bzr unrar<br></code></pre></td></tr></table></figure>
 <p>（5）安装调试工具</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install gdb valgrind<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install gdb valgrind<br></code></pre></td></tr></table></figure>
 <p>（6）支持更多精确WIFI模块的GNU Scientific Library (GSL)</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt-get <span class="hljs-keyword">install </span>gsl-<span class="hljs-keyword">bin </span>libgsl-dev libgslcblas0<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install gsl-bin libgsl-dev libgslcblas0<br></code></pre></td></tr></table></figure>
 <p>（7）仿真必需的词法分析器和语法分析生成器，必装</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt-get <span class="hljs-keyword">install </span>flex <span class="hljs-keyword">bison </span>libfl-dev<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install flex bison libfl-dev<br></code></pre></td></tr></table></figure>
 <p>（8）一些Network Simulation Cradle (nsc) stacks需要gcc-3.4</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> apt-get install g++-<span class="hljs-number">3</span>.<span class="hljs-number">4</span> gcc-<span class="hljs-number">3</span>.<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install g++-3.4 gcc-3.4<br></code></pre></td></tr></table></figure>
 <p>（9）读取pcap的packet traces，即包嗅探器</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install tcpdump<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install tcpdump<br></code></pre></td></tr></table></figure>
 <p>（10）支持统计特性的数据库软件</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> apt-get install sqlite sqlite3 libsqlite3-devsudo apt-get install g++-<span class="hljs-number">3</span>.<span class="hljs-number">4</span> gcc-<span class="hljs-number">3</span>.<span class="hljs-number">4</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install sqlite sqlite3 libsqlite3-devsudo apt-get install g++-3.4 gcc-3.4<br></code></pre></td></tr></table></figure>
 <p>（11）xml的配置存储软件(requires libxml2 &gt;= version 2.7)</p>
-<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q">sudo apt-<span class="hljs-built_in">get</span> install libxml2 libxml2-<span class="hljs-built_in">dev</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install libxml2 libxml2-dev<br></code></pre></td></tr></table></figure>
 <p>（12）基于GTK的配置系统</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> apt-get install libgtk2.<span class="hljs-number">0</span>-<span class="hljs-number">0</span> libgtk2.<span class="hljs-number">0</span>-dev<br></code></pre></td></tr></table></figure>
-<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q">sudo apt-<span class="hljs-built_in">get</span> install libgtk<span class="hljs-number">-3</span>-<span class="hljs-built_in">dev</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install libgtk2.0-0 libgtk2.0-dev<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install libgtk-3-dev<br></code></pre></td></tr></table></figure>
 <p>（13）在虚拟机and ns-3上测试</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install vtun lxc uml-utilities<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install vtun lxc uml-utilities<br></code></pre></td></tr></table></figure>
 <p>（14）支持utils/check-style.py 代码风格检查程序</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install uncrustify<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install uncrustify<br></code></pre></td></tr></table></figure>
 <p>（15）文档生成器，从源代码中生成说明文档</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">sudo apt-<span class="hljs-built_in">get</span> install doxygen graphviz imagemagick<br></code></pre></td></tr></table></figure>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt-get <span class="hljs-keyword">install </span>texlive texlive-<span class="hljs-keyword">extra-utils </span>texlive-latex-<span class="hljs-keyword">extra </span>texlive-font-utils dvipng latexmk<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install doxygen graphviz imagemagick<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install texlive texlive-extra-utils texlive-latex-extra texlive-font-utils dvipng latexmk<br></code></pre></td></tr></table></figure>
 <p>（16）ns-3手册和教程是用reStructuredText for Sphinx编写的（doc/tutorial、doc/manual、doc/models），并且图形通常以dia为单位：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt-get <span class="hljs-keyword">install </span>python3-sphinx <span class="hljs-keyword">dia </span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install python3-sphinx dia <br></code></pre></td></tr></table></figure>
 <p>（17）Gustavo’s ns-3-pyviz的可视化软件</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> apt-get install gir1.<span class="hljs-number">2</span>-goocanvas-<span class="hljs-number">2</span>.<span class="hljs-number">0</span> python3-gi python3-gi-cairo python3-pygraphviz gir1.<span class="hljs-number">2</span>-gtk-<span class="hljs-number">3</span>.<span class="hljs-number">0</span> ipython3<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install gir1.2-goocanvas-2.0 python3-gi python3-gi-cairo python3-pygraphviz gir1.2-gtk-3.0 ipython3<br></code></pre></td></tr></table></figure>
 <p>（18）支持openflow 模块(需要一些boost库)</p>
-<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q">sudo apt-<span class="hljs-built_in">get</span> install libxml2 libxml2-<span class="hljs-built_in">dev</span> libboost-<span class="hljs-built_in">all</span>-<span class="hljs-built_in">dev</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install libxml2 libxml2-dev libboost-all-dev<br></code></pre></td></tr></table></figure>
 <p>（19）支持基于 MPI的分布式仿真</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">sudo</span> apt-<span class="hljs-meta">get</span> install openmpi-bin openmpi-<span class="hljs-meta">common</span> openmpi-doc libopenmpi-dev<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo apt-get install openmpi-bin openmpi-common openmpi-doc libopenmpi-dev<br></code></pre></td></tr></table></figure>
 <h3 id="安装ns3的基础模块">安装ns3的基础模块</h3>
 <p>现在最新3.40版本，选择下载3.40版本</p>
 <p><a target="_blank" rel="noopener" href="https://www.nsnam.org/releases/ns-3-40/">ns-3.40 | ns-3 (nsnam.org)</a></p>
 <p>下载下来放到虚拟机里解压</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">tar</span> -jxvf ns-allinone-<span class="hljs-number">3</span>.<span class="hljs-number">40</span>.tar.bz2<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">tar -jxvf ns-allinone-3.40.tar.bz2<br></code></pre></td></tr></table></figure>
 <p>cd 至ns-allinone-3.40/ns-3.40</p>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-string">./ns3</span> configure <span class="hljs-params">--enable-examples</span> <span class="hljs-params">--enable-tests</span>  <span class="hljs-comment"># 配置文件</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">./ns3 configure --enable-examples --enable-tests  <span class="hljs-comment"># 配置文件</span><br></code></pre></td></tr></table></figure>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/2.png" srcset="/img/loading.gif" lazyload alt="2"></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./ns3 build  <span class="hljs-comment"># 编译ns3</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">./ns3 build  <span class="hljs-comment"># 编译ns3</span><br></code></pre></td></tr></table></figure>
 <p>编译有点慢，我编译到90%卡住了</p>
 <p>重启了下，完成剩下的10%</p>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/3.png" srcset="/img/loading.gif" lazyload alt="3"></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./test.py  <span class="hljs-comment"># 测试</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">./test.py  <span class="hljs-comment"># 测试</span><br></code></pre></td></tr></table></figure>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/4.png" srcset="/img/loading.gif" lazyload alt="4"></p>
 <p>ok没问题</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs applescript">./ns3 <span class="hljs-built_in">run</span> <span class="hljs-keyword">first</span>  <span class="hljs-comment"># 运行第一个脚本</span><br>./ns3 <span class="hljs-built_in">run</span> &#x27;<span class="hljs-keyword">first</span> <span class="hljs-comment">--PrintHelp&#x27;</span><br><span class="hljs-comment"># 进入超级用户之后无法运行脚本（Refuse to run as root）</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">./ns3 run first  <span class="hljs-comment"># 运行第一个脚本</span><br>./ns3 run <span class="hljs-string">&#x27;first --PrintHelp&#x27;</span><br><span class="hljs-comment"># 进入超级用户之后无法运行脚本（Refuse to run as root）</span><br></code></pre></td></tr></table></figure>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/5.png" srcset="/img/loading.gif" lazyload alt="5"></p>
 <h3 id="NetAnim安装与启动">NetAnim安装与启动</h3>
 <p>cd进入到ns-allinone-3.40/netanim-3.109</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gauss">sudo qmake NetAnim.pro  <span class="hljs-meta"># NetAnim的编译安装</span><br>sudo <span class="hljs-built_in">make</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo qmake NetAnim.pro  <span class="hljs-comment"># NetAnim的编译安装</span><br>sudo make<br></code></pre></td></tr></table></figure>
 <p>这里显示没有qmake这个命令</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs actionscript">apt更新了也还是没有可用的软件包 qt5-<span class="hljs-keyword">default</span>，但是它被其它的软件包引用了。<br>这可能意味着这个缺失的软件包可能已被废弃，<br>或者只能在其他发布源中找到<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">apt更新了也还是没有可用的软件包 qt5-default，但是它被其它的软件包引用了。<br>这可能意味着这个缺失的软件包可能已被废弃，<br>或者只能在其他发布源中找到<br></code></pre></td></tr></table></figure>
 <p>解决方法：</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">apt-<span class="hljs-built_in">get</span> install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools<br>apt-<span class="hljs-built_in">get</span> install qtcreator<br>apt-<span class="hljs-built_in">get</span> install qt5*<br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools<br>apt-get install qtcreator<br>apt-get install qt5*<br></code></pre></td></tr></table></figure>
 <p>ok继续重新执行前两步</p>
-<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gauss">sudo qmake NetAnim.pro  <span class="hljs-meta"># NetAnim的编译安装</span><br>sudo <span class="hljs-built_in">make</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo qmake NetAnim.pro  <span class="hljs-comment"># NetAnim的编译安装</span><br>sudo make<br></code></pre></td></tr></table></figure>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/6.png" srcset="/img/loading.gif" lazyload alt="6"></p>
 <p>成功</p>
-<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">sudo <span class="hljs-string">./NetAnim</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">sudo ./NetAnim<br></code></pre></td></tr></table></figure>
 <p>启动看看</p>
 <p><img src="/2024/02/08/ns3%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/7.png" srcset="/img/loading.gif" lazyload alt="7"></p>
 <h2 id="参考">参考</h2>
