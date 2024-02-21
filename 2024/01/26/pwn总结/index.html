@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911135522507.png">
 <meta property="og:image" content="https://nqoinaen.github.io/2024/01/26/pwn%E6%80%BB%E7%BB%93/20200911152738722.png">
 <meta property="article:published_time" content="2024-01-26T05:36:56.000Z">
-<meta property="article:modified_time" content="2024-01-29T11:43:39.492Z">
+<meta property="article:modified_time" content="2024-02-20T01:42:17.099Z">
 <meta property="article:author" content="nq0inaen">
 <meta property="article:tag" content="ALL">
 <meta name="twitter:card" content="summary_large_image">
@@ -251,7 +251,7 @@
         
         
         
-          37 分钟
+          36 分钟
         
       </span>
     
@@ -294,7 +294,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2024年1月29日 晚上
+                    本文最后更新于：2024年2月20日 上午
                   
                 
               </p>
@@ -379,7 +379,7 @@
 <p>堆溢出是指程序向某个堆块中写入的字节数超过了堆块本身可使用的字节数，因而导致了数据溢出，并覆盖到物理相邻的高地址的下一个堆块。</p>
 <p>我们在熟悉堆机制的情况下，运用你高超的堆风水技巧，伪造堆结构体，伪造I/O File结构体等，达成任意地址读写，或者更严格点，在特定位置写入特定值，就可以控制程序getshell等</p>
 <h5 id="off-by-one-off-by-null">off by one/off by null</h5>
-<p>off by one 通常指的是对于堆块的读写存在一个字节的溢出，利用这一个字节的溢出我们通常可以溢出到一个chunk物理相邻高地址 chunk 的 size 域，篡改其 size 域以便后续的利用（如构造 overlapping 等）</p>
+<p>off by one 通常指的是对于堆块的读写存在一个字节的溢出</p>
 <p>off by null则是off by one的一种特殊形式，即仅溢出一个<code>'\0'</code>字节，通常出现于读入字符串时设计逻辑失误的情况（例如使用了 strcpy 或者是手动在末尾加 \0 等）</p>
 <p>其实这两个差不多，只能溢出一个字节我们怎么利用呢？</p>
 <p>一般可以溢出到一个chunk物理相邻高地址 chunk 的 size 域，篡改其 size 域以便后续的利用（例如可以利用造成堆重叠，unlink之类的）</p>
@@ -903,7 +903,7 @@ rdx=0 or 地址-&gt;0</p>
       
         <div class="license-meta-item license-meta-date">
           <div>更新于</div>
-          <div>2024年1月29日</div>
+          <div>2024年2月20日</div>
         </div>
       
       
