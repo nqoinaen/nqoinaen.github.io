@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/logo.png">
+  <link rel="icon" href="/img/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="nq0inaen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="很好的课程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="南大PA记录">
+<meta property="og:url" content="https://nqoinaen.github.io/2024/02/29/%E5%8D%97%E5%A4%A7PA%E8%AF%BE%E7%A8%8B/index.html">
+<meta property="og:site_name" content="nq0inaen&#39;s blog">
+<meta property="og:description" content="很好的课程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://nqoinaen.github.io/2024/02/29/%E5%8D%97%E5%A4%A7PA%E8%AF%BE%E7%A8%8B/1-1709210489042.png">
+<meta property="article:published_time" content="2024-02-29T09:34:32.000Z">
+<meta property="article:modified_time" content="2024-03-04T05:33:26.282Z">
+<meta property="article:author" content="nq0inaen">
+<meta property="article:tag" content="OS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nqoinaen.github.io/2024/02/29/%E5%8D%97%E5%A4%A7PA%E8%AF%BE%E7%A8%8B/1-1709210489042.png">
+  
+  
+  
+  <title>南大PA记录 - nq0inaen&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"nqoinaen.github.io","root":"/","version":"1.9.3","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>nq0inaen&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/8.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.1)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">南大PA记录</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        nq0inaen
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-02-29 17:34" pubdate>
+          2024年2月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">南大PA记录</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2024年3月4日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言：">前言：</h2>
+<p>过程记录</p>
+<h2 id="PA1">PA1</h2>
+<h3 id="开天辟地的篇章">开天辟地的篇章</h3>
+<h4 id="从状态机视角理解程序运行">从状态机视角理解程序运行</h4>
+<blockquote>
+<p>以上一小节中<code>1+2+...+100</code>的指令序列为例, 尝试画出这个程序的状态机.</p>
+<p>这个程序比较简单, 需要更新的状态只包括<code>PC</code>和<code>r1</code>, <code>r2</code>这两个寄存器, 因此我们用一个三元组<code>(PC, r1, r2)</code>就可以表示程序的所有状态, 而无需画出内存的具体状态. 初始状态是<code>(0, x, x)</code>, 此处的<code>x</code>表示未初始化. 程序<code>PC=0</code>处的指令是<code>mov r1, 0</code>, 执行完之后<code>PC</code>会指向下一条指令, 因此下一个状态是<code>(1, 0, x)</code>. 如此类推, 我们可以画出执行前3条指令的状态转移过程:</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-function"><span class="hljs-params">(<span class="hljs-number">0</span>, x, x)</span> -&gt;</span> <span class="hljs-function"><span class="hljs-params">(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, x)</span> -&gt;</span> <span class="hljs-function"><span class="hljs-params">(<span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)</span> -&gt;</span> (<span class="hljs-number">3</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
+<p>请你尝试继续画出这个状态机, 其中程序中的循环只需要画出前两次循环和最后两次循环即可.</p>
+</blockquote>
+<h3 id="RTFSC">RTFSC</h3>
+<h4 id="究竟要执行多久-（选做）">究竟要执行多久?（选做）</h4>
+<blockquote>
+<p>在<code>cmd_c()</code>函数中, 调用<code>cpu_exec()</code>的时候传入了参数<code>-1</code>, 你知道这是什么意思吗?</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c">...<br><span class="hljs-comment">/* Simulate how the CPU works. */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">cpu_exec</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> n)</span> &#123;<br>  g_print_step = (n &lt; MAX_INST_TO_PRINT);<br>  <span class="hljs-keyword">switch</span> (nemu_state.state) &#123;<br>    <span class="hljs-keyword">case</span> NEMU_END: <span class="hljs-keyword">case</span> NEMU_ABORT:<br>      <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Program execution has ended. To restart the program, exit NEMU and run again.\n&quot;</span>);<br>      <span class="hljs-keyword">return</span>;<br>    <span class="hljs-keyword">default</span>: nemu_state.state = NEMU_RUNNING;<br>  &#125;<br><br>  <span class="hljs-type">uint64_t</span> timer_start = get_time();<br><br>  execute(n);<br>...<br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">execute</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> n)</span> &#123;<br>  Decode s;<br>  <span class="hljs-keyword">for</span> (;n &gt; <span class="hljs-number">0</span>; n --) &#123;<br>    exec_once(&amp;s, cpu.pc);<br>    g_nr_guest_inst ++;<br>    trace_and_difftest(&amp;s, cpu.pc);<br>    <span class="hljs-keyword">if</span> (nemu_state.state != NEMU_RUNNING) <span class="hljs-keyword">break</span>;<br>    IFDEF(CONFIG_DEVICE, device_update());<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>-1被无符号会解释为一个极大的数，会一直执行for循环</p>
+<h4 id="理解框架代码">理解框架代码</h4>
+<blockquote>
+<p>你需要结合上述文字理解NEMU的框架代码.</p>
+<p>如果你不知道&quot;怎么才算是看懂了框架代码&quot;, 你可以先尝试进行后面的任务. 如果发现不知道如何下手, 再回来仔细阅读这一页面. 理解框架代码是一个螺旋上升的过程, 不同的阶段有不同的重点. 你不必因为看不懂某些细节而感到沮丧, 更不要试图一次把所有代码全部看明白</p>
+</blockquote>
+<h4 id="优美地退出">优美地退出</h4>
+<blockquote>
+<p>为了测试大家是否已经理解框架代码, 我们给大家设置一个练习: 如果在运行NEMU之后直接键入<code>q</code>退出, 你会发现终端输出了一些错误信息. 请分析这个错误信息是什么原因造成的, 然后尝试在NEMU中修复它.</p>
+</blockquote>
+<p><img src="/2024/02/29/%E5%8D%97%E5%A4%A7PA%E8%AF%BE%E7%A8%8B/1-1709210489042.png" srcset="/img/loading.gif" lazyload alt="1"></p>
+<p>我们输入q的话,从main函数逐步分析跟踪代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>  <span class="hljs-type">const</span> <span class="hljs-type">char</span> *name;<br>  <span class="hljs-type">const</span> <span class="hljs-type">char</span> *description;<br>  <span class="hljs-type">int</span> (*handler) (<span class="hljs-type">char</span> *);<br>&#125; cmd_table [] = &#123;<br>  &#123; <span class="hljs-string">&quot;help&quot;</span>, <span class="hljs-string">&quot;Display information about all supported commands&quot;</span>, cmd_help &#125;,<br>  &#123; <span class="hljs-string">&quot;c&quot;</span>, <span class="hljs-string">&quot;Continue the execution of the program&quot;</span>, cmd_c &#125;,<br>  &#123; <span class="hljs-string">&quot;q&quot;</span>, <span class="hljs-string">&quot;Exit NEMU&quot;</span>, cmd_q &#125;,<span class="hljs-comment">//cmd_q = -1</span><br><br>  <span class="hljs-comment">/* <span class="hljs-doctag">TODO:</span> Add more commands */</span><br><br>&#125;;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; NR_CMD; i ++) &#123;<br>      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(cmd, cmd_table[i].name) == <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">if</span> (cmd_table[i].handler(args) &lt; <span class="hljs-number">0</span>) &#123; <span class="hljs-keyword">return</span>; &#125;<span class="hljs-comment">//可以看到这里这里-1&lt;0直接return</span><br>        <span class="hljs-keyword">break</span>;<br>      &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>后面return会到达is_exit_status_bad，但是nemu_state.state状态还没设置，后面估计make检测到了什么，直接报错了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">is_exit_status_bad</span><span class="hljs-params">()</span> &#123;<br>  <span class="hljs-type">int</span> good = (nemu_state.state == NEMU_END &amp;&amp; nemu_state.halt_ret == <span class="hljs-number">0</span>) ||<br>    (nemu_state.state == NEMU_QUIT);<br>  <span class="hljs-keyword">return</span> !good;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们修改cmd_q函数，将nemu_state.state设成NEMU_QUIT即可</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs perl">static <span class="hljs-keyword">int</span> cmd_<span class="hljs-string">q(char *args)</span> &#123;<br>  nemu_state.state = NEMU_QUIT;<span class="hljs-regexp">//</span>添加此行<br>  <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="基础设施">基础设施</h3>
+<blockquote>
+<p>要实现如下的功能</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>格式</th>
+<th>使用举例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>帮助(1)</td>
+<td><code>help</code></td>
+<td><code>help</code></td>
+<td>打印命令的帮助信息</td>
+</tr>
+<tr>
+<td>继续运行(1)</td>
+<td><code>c</code></td>
+<td><code>c</code></td>
+<td>继续运行被暂停的程序</td>
+</tr>
+<tr>
+<td>退出(1)</td>
+<td><code>q</code></td>
+<td><code>q</code></td>
+<td>退出NEMU</td>
+</tr>
+<tr>
+<td>单步执行</td>
+<td><code>si [N]</code></td>
+<td><code>si 10</code></td>
+<td>让程序单步执行<code>N</code>条指令后暂停执行, 当<code>N</code>没有给出时, 缺省为<code>1</code></td>
+</tr>
+<tr>
+<td>打印程序状态</td>
+<td><code>info SUBCMD</code></td>
+<td><code>info r</code> <code>info w</code></td>
+<td>打印寄存器状态 打印监视点信息</td>
+</tr>
+<tr>
+<td>扫描内存(2)</td>
+<td><code>x N EXPR</code></td>
+<td><code>x 10 $esp</code></td>
+<td>求出表达式<code>EXPR</code>的值, 将结果作为起始内存 地址, 以十六进制形式输出连续的<code>N</code>个4字节</td>
+</tr>
+<tr>
+<td>表达式求值</td>
+<td><code>p EXPR</code></td>
+<td><code>p $eax + 1</code></td>
+<td>求出表达式<code>EXPR</code>的值, <code>EXPR</code>支持的 运算请见<a target="_blank" rel="noopener" href="https://nju-projectn.github.io/ics-pa-gitbook/ics2024/1.6.html">调试中的表达式求值</a>小节</td>
+</tr>
+<tr>
+<td>设置监视点</td>
+<td><code>w EXPR</code></td>
+<td><code>w *0x2000</code></td>
+<td>当表达式<code>EXPR</code>的值发生变化时, 暂停程序执行</td>
+</tr>
+<tr>
+<td>删除监视点</td>
+<td><code>d N</code></td>
+<td><code>d 2</code></td>
+<td>删除序号为<code>N</code>的监视点</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<h4 id="单步执行">单步执行</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">cmd_si</span><span class="hljs-params">(<span class="hljs-type">char</span> *args)</span>&#123;<br>    <span class="hljs-type">int</span> step = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>(args == <span class="hljs-literal">NULL</span>)<br>        step = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">else</span><br>        <span class="hljs-built_in">sscanf</span>(args,<span class="hljs-string">&quot;%d&quot;</span>,&amp;step);<span class="hljs-comment">// 读入 Step</span><br>    cpu_exec(step);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="打印寄存器状态">打印寄存器状态</h4>
+<p>reg.c文件中定义了当前指令集的寄存器结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">const</span> <span class="hljs-type">char</span> *regs[] = &#123;<br>  <span class="hljs-string">&quot;$0&quot;</span>, <span class="hljs-string">&quot;ra&quot;</span>, <span class="hljs-string">&quot;sp&quot;</span>, <span class="hljs-string">&quot;gp&quot;</span>, <span class="hljs-string">&quot;tp&quot;</span>, <span class="hljs-string">&quot;t0&quot;</span>, <span class="hljs-string">&quot;t1&quot;</span>, <span class="hljs-string">&quot;t2&quot;</span>,<br>  <span class="hljs-string">&quot;s0&quot;</span>, <span class="hljs-string">&quot;s1&quot;</span>, <span class="hljs-string">&quot;a0&quot;</span>, <span class="hljs-string">&quot;a1&quot;</span>, <span class="hljs-string">&quot;a2&quot;</span>, <span class="hljs-string">&quot;a3&quot;</span>, <span class="hljs-string">&quot;a4&quot;</span>, <span class="hljs-string">&quot;a5&quot;</span>,<br>  <span class="hljs-string">&quot;a6&quot;</span>, <span class="hljs-string">&quot;a7&quot;</span>, <span class="hljs-string">&quot;s2&quot;</span>, <span class="hljs-string">&quot;s3&quot;</span>, <span class="hljs-string">&quot;s4&quot;</span>, <span class="hljs-string">&quot;s5&quot;</span>, <span class="hljs-string">&quot;s6&quot;</span>, <span class="hljs-string">&quot;s7&quot;</span>,<br>  <span class="hljs-string">&quot;s8&quot;</span>, <span class="hljs-string">&quot;s9&quot;</span>, <span class="hljs-string">&quot;s10&quot;</span>, <span class="hljs-string">&quot;s11&quot;</span>, <span class="hljs-string">&quot;t3&quot;</span>, <span class="hljs-string">&quot;t4&quot;</span>, <span class="hljs-string">&quot;t5&quot;</span>, <span class="hljs-string">&quot;t6&quot;</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+<p><code>isa-def</code>中可以找到<code>CPU_state</code>的定义,<code>gpr</code>的值就代表了寄存器对应的值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>  <span class="hljs-type">word_t</span> gpr[MUXDEF(CONFIG_RVE, <span class="hljs-number">16</span>, <span class="hljs-number">32</span>)];<br>  <span class="hljs-type">vaddr_t</span> pc;<br>&#125; MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);<br></code></pre></td></tr></table></figure>
+<p>补全reg.c文件中的isa_reg_display函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">isa_reg_display</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">int</span> length =  <span class="hljs-keyword">sizeof</span>(regs) / <span class="hljs-keyword">sizeof</span>(regs[<span class="hljs-number">0</span>]);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>  ; i &lt; length ; i ++)<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;reg$%s ---&gt; %d\n&quot;</span>,regs[i], cpu.gpr[i]);<span class="hljs-comment">//打印cpu.gpr[i]的内容即为寄存器的值</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>后续要补充这个sdb_watchpoint_display()</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">cmd_info</span><span class="hljs-params">(<span class="hljs-type">char</span> *args)</span>&#123;<br>    <span class="hljs-keyword">if</span>(args == <span class="hljs-literal">NULL</span>)<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;No args.\n&quot;</span>);<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-built_in">strcmp</span>(args, <span class="hljs-string">&quot;r&quot;</span>) == <span class="hljs-number">0</span>)<br>        isa_reg_display();<br>    <span class="hljs-comment">//else if(strcmp(args, &quot;w&quot;) == 0)</span><br>    <span class="hljs-comment">//    sdb_watchpoint_display();</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="扫描内存">扫描内存</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;memory/paddr.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;memory/vaddr.h&quot;</span><span class="hljs-comment">//加在最前面</span></span><br><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">cmd_x</span><span class="hljs-params">(<span class="hljs-type">char</span> *args)</span>&#123;<br>  <span class="hljs-type">char</span> *cnt_str = strtok(<span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot; &quot;</span>);<br>  <span class="hljs-keyword">if</span>(cnt_str != <span class="hljs-literal">NULL</span>)&#123;<br>    <span class="hljs-type">int</span> cnt = atoi(cnt_str);<br><br>    <span class="hljs-type">char</span> *addr_str = strtok(<span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot; &quot;</span>);<br>    <span class="hljs-keyword">if</span>(addr_str != <span class="hljs-literal">NULL</span>)&#123;<br>      <span class="hljs-keyword">if</span>(<span class="hljs-built_in">strlen</span>(addr_str)&gt;=<span class="hljs-number">2</span> &amp;&amp; addr_str[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;0&#x27;</span> &amp;&amp; addr_str[<span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;x&#x27;</span>)&#123;<br>        <span class="hljs-type">int</span> addr = (<span class="hljs-type">int</span>)strtol(addr_str+<span class="hljs-number">2</span>,<span class="hljs-literal">NULL</span>,<span class="hljs-number">16</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%-14s%-28s%-s\n&quot;</span>,<span class="hljs-string">&quot;Address&quot;</span>,<span class="hljs-string">&quot;Hexadecimal&quot;</span>,<span class="hljs-string">&quot;Decimal&quot;</span>);<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; cnt; ++i)&#123;<br>          <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;0x%-12x0x%02x  0x%02x  0x%02x  0x%02x&quot;</span>,(addr),vaddr_read(addr,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">1</span>,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">2</span>,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">3</span>,<span class="hljs-number">1</span>));<br>          <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\t  %04d  %04d  %04d  %04d\n&quot;</span>,vaddr_read(addr,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">1</span>,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">2</span>,<span class="hljs-number">1</span>),vaddr_read(addr+<span class="hljs-number">3</span>,<span class="hljs-number">1</span>));<br>          addr += <span class="hljs-number">4</span>;<br>        &#125;<br>      &#125;<br>      <span class="hljs-keyword">else</span><br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the result of the given expression is NOT hexadecimal!&quot;</span>);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="表达式求值">表达式求值</h3>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="category-chain-item">项目</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OS/">#OS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>南大PA记录</div>
+      <div>https://nqoinaen.github.io/2024/02/29/南大PA课程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>nq0inaen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年2月29日</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2024年3月4日</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/02/28/%E7%BF%BB%E8%AF%91/" title="Joint computation offloading and resource allocation in vehicular edge computing networks">
+                        <span class="hidden-mobile">Joint computation offloading and resource allocation in vehicular edge computing networks</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div style="font-size: 0.85rem">时间慢点走啊</div> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
